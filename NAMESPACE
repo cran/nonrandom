@@ -1,0 +1,51 @@
+export(
+	relative.effect,   
+	pscore,   
+	ps.makestrata,
+	ps.match,   
+	dist.plot,
+	ps.balance,   
+	ps.estimate
+)
+
+import(
+	lme4
+)
+
+exportClasses(
+		pscore,	      
+		stratified.pscore,
+	        stratified.data.frame,	      
+	        matched.pscore,
+	        matched.data.frame,
+	        matched.data.frames
+)
+
+S3method(ps.makestrata, pscore)
+S3method(ps.makestrata, data.frame)
+
+S3method(ps.match, pscore)
+S3method(ps.match, data.frame)
+
+S3method(dist.plot, pscore)
+S3method(dist.plot, stratified.pscore)
+S3method(dist.plot, stratified.data.frame)
+S3method(dist.plot, matched.pscore)
+S3method(dist.plot, matched.data.frame)
+S3method(dist.plot, matched.data.frames)
+S3method(dist.plot, data.frame)
+
+S3method(ps.balance, stratified.pscore)
+S3method(ps.balance, stratified.data.frame)
+S3method(ps.balance, matched.pscore)
+S3method(ps.balance, matched.data.frame)
+S3method(ps.balance, matched.data.frames)
+S3method(ps.balance, data.frame)
+
+S3method(ps.estimate, data.frame)
+S3method(ps.estimate, stratified.pscore)
+S3method(ps.estimate, stratified.data.frame)
+S3method(ps.estimate, matched.pscore)
+S3method(ps.estimate, matched.data.frame)
+S3method(ps.estimate, matched.data.frames)
+
