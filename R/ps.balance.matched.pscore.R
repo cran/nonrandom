@@ -124,12 +124,15 @@ ps.balance.matched.pscore <- function(object,
                                       equal      = equal)      
     }
 
-  object$data.matched      <- d2[,-c(names(d2)=="match.strata")]
+  object$data.matched      <- d2[,-which(c(names(d2)=="match.strata"))]
   object$bal.test          <- bal.test
   object$treat             <- treat
   object$name.treat        <- name.treat
   object$match.index       <- match.index
   object$name.match.index  <- name.match.index
+
+  class(object) <- c("bal.matched.pscore",
+                     class(object)[class(object)!="bal.matched.pscore"])
   
   return(object)
   

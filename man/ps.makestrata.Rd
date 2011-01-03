@@ -16,12 +16,12 @@
     stratum bounds are automatically determined (see \code{cut()}).}
 
   \item{name.stratum.index}{a string indicating the name of the variable
-    containing the stratum indices. The default is 'stratum.index'.}
+    containing stratum indices. The default is 'stratum.index'.}
 
   \item{stratified.by}{an integer or a string indicating the
     stratification variable in data. The default is NULL, i.e., if the
-    class of the input object is 'pscore', object value 'pscore' is
-    automatically used as stratification variable.}
+    class of the input object is 'pscore', value 'pscore' of
+    \code{object} is automatically used as stratification variable.}
 
   \item{...}{further arguments passed to or from other methods.}
 }  
@@ -31,13 +31,15 @@
   balance covariate distributions between treatment groups within
   strata.
   
-  If function \code{pscore()} is previously used with default settings,
-  \code{stratified.by} has not to be specified. But it is needed, if the
-  stratification variable in data is not labeled by 'pscore'.
+  If function \code{pscore()} is previously used, \code{stratified.by}
+  has not to be specified and value 'pscore' of the input object is
+  automatically used. A specification is needed if the input object is a
+  data frame or another stratification variable other than that stored
+  in value 'pscore' of the input object should be used.
   
   Several options for the argument \code{breaks} are available. The
   default is 'NULL', i.e., values of the stratification variable are
-  factorized and each factor correspond to a stratum. Using an integer,
+  factorized and each factor corresponds to a stratum. Using an integer,
   the number of strata is specified. If a numeric vector is given, its
   values indicate the stratum bounds.
 }
@@ -46,7 +48,7 @@
   or 'stratified.data.frame' depending on the class of the input
   object. If the class of the input object is 'pscore', the output
   object inherits all components from the input object. The following
-  components can be available:
+  components are available:
   
   \item{data}{a data frame containing the input data, extended by
     column(s) including stratum indices labeled by
@@ -82,12 +84,10 @@
   \item{treat}{a numeric vector containing treatment labeled by
     'name.treat'.}
 }
-\references{
-}
+
 \author{Susanne Stampf \email{susta@imbi.uni-freiburg.de}
 }
-\note{
-}
+
 \seealso{
   \link{cut}, \link{quantile}
 }

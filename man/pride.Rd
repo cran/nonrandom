@@ -34,12 +34,7 @@
     \item{KRANKSUM}{ number of diagnosed LRTI}
   }
 }
-\details{
-}
-\source{
-}
-\references{
-}
+
 \examples{
 data(pride)
 }

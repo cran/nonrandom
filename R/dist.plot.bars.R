@@ -1,3 +1,4 @@
+## plot.type=1
 dist.plot.bars <- function(sel,
                            treat,
                            name.treat,

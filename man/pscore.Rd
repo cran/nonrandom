@@ -31,12 +31,11 @@
 }  
 \details{
   The propensity score is the conditional probability of receiving a
-  certain treatment given patient's covariates. It is generally unknown
-  and has to be estimated, e.g., by using logistic
-  regression. \code{pscore} can be used repeatedly and all estimated
-  propensity scores are added on 'data'. But only the information of the
-  propensity score estimated at last will be stored in values of the
-  output object.
+  certain treatment given covariates. It is generally unknown and has to
+  be estimated, e.g., by using logistic regression. \code{pscore} can be
+  used repeatedly and all estimated propensity scores are added on
+  'data'. However, the information of the propensity score estimated at
+  last will be stored in values of the output object.
 }
 \value{
   \code{pscore} returns an object of class 'pscore' containing the
@@ -64,12 +63,10 @@
   \item{treat}{a numeric vector containing treatment labeled by
     'name.treat'.}
 }
-\references{
-}
+
 \author{Susanne Stampf \email{susta@imbi.uni-freiburg.de}
 }
-\note{
-}
+
 \seealso{
   \code{\link{glm}}, \link{formula}
 }

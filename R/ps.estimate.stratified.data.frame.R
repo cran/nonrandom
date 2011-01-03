@@ -227,7 +227,12 @@ ps.estimate.stratified.data.frame <- function(object,
   
   object$stratum.index <- stratum.index
   object$name.stratum.index <- name.stratum.index
-  
+
+  object$family <- family
+
+  class(object) <- c("est.stratified.data.frame",
+                     class(object)[class(object)!="est.stratified.data.frame"])
+
   return(object)
   
 }

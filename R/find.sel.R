@@ -37,7 +37,7 @@ find.sel <- function(data,
           }else{
             stop(paste("One or more entries in argument '",
                        sel.name,
-                       "'are not contained in data.", sep=""))  
+                       "' are not contained in data.", sep=""))  
           }       
         }
       }

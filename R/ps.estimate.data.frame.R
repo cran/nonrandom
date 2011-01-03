@@ -71,24 +71,25 @@ ps.estimate.data.frame <- function(object,
   if (any(name.adj == name.resp)){
     warning("Argmuent 'adj' contains argument 'resp'.")}
   
+
   
   ## #################################
   ## find stratum.index or match.index
-  if (is.null(stratum.index) & is.null(match.index)){
+  if ( is.null(stratum.index) & is.null(match.index) ){
     
     stop("Either argument 'stratum.index' or 'match.index' is needed.")
     
   }else{
     
-    if (!is.null(stratum.index) & !is.null(match.index)){     
+    if ( !is.null(stratum.index) & !is.null(match.index) ){     
       warning("Both arguments 'stratum.index' and 'match.index' are given: 'match.index' is used.")
     }
-    if (!is.null(match.index)){ ## matching
+    if ( !is.null(match.index) ){ ## matching
       
       stratum.index      <- NULL
       name.stratum.index <- NULL
       
-      if (is.character(match.index) | is.numeric(match.index)){
+      if ( is.character(match.index) | is.numeric(match.index) ){
         
         A <- find.strata(data    = data,
                          strata  = match.index,
@@ -100,11 +101,13 @@ ps.estimate.data.frame <- function(object,
                           rep(2,nrow(data[match.index != 0,])))  
         data.new <- rbind(data, data[match.index != 0,])
         data.new$match.strata <- match.strata
-        
-        if (!is.null(adj)){         
+
+        if ( !is.null(adj) ){         
           adj.match.index        <- as.data.frame(adj[match.index != 0,])
           names(adj.match.index) <- names(adj)
-          adj <- rbind(adj, adj.match.index)
+          adj1 <- rbind(adj, adj.match.index)
+        }else{         
+          adj1 <- NULL
         }
         
         treat1 <- c(treat, treat[match.index != 0])
@@ -131,7 +134,7 @@ ps.estimate.data.frame <- function(object,
       }else{
         
         stop("Argument 'stratum.index' has to be either numeric or a string.")
-        
+
       }
       
       if (is.null(stratum.index)){
@@ -148,17 +151,20 @@ ps.estimate.data.frame <- function(object,
     }
   }
     
-  if (is.null(stratum.index)){
-    
+  if (is.null(stratum.index)){ ## matched
+
+    data.lr  <- data
     data     <- data.new
     treat    <- treat1
     resp     <- resp1
+    adj      <- adj1
     index    <- data.new$match.strata
     match.T  <- TRUE
     match.id <- match.index
     
-  }else{
-    
+  }else{ ## stratified
+
+    data.lr  <- data
     index    <- stratum.index
     match.T  <- FALSE
     match.id <- NULL
@@ -218,7 +224,7 @@ ps.estimate.data.frame <- function(object,
 
     if (!is.logical(regr)){
       if (!inherits(regr, "formula")){      
-        regr <- find.sel(data, ## data = original data
+        regr <- find.sel(data.lr, ## data = original data
                          regr,
                          "regr")
         
@@ -227,9 +233,9 @@ ps.estimate.data.frame <- function(object,
         lr.form <- formula(paste(name.resp,
                                  paste(c(name.treat, name.regr),collapse="+"), sep="~"))
         
-        resp.regr  <- as.data.frame(model.frame(lr.form,data)[,1]) ## resp
-        treat.regr <- as.data.frame(model.frame(lr.form,data)[,2]) ## treat
-        regr       <- as.data.frame(model.matrix(lr.form,data)[,-c(1:2)]) ## w/o resp, treat
+        resp.regr  <- as.data.frame(model.frame(lr.form,data.lr)[,1]) ## resp
+        treat.regr <- as.data.frame(model.frame(lr.form,data.lr)[,2]) ## treat
+        regr       <- as.data.frame(model.matrix(lr.form,data.lr)[,-c(1:2)]) ## w/o resp, treat
         
         ## Falls nur eine Var in 'regr' ausgewählt, names(regr) nach
         ## model.frame funktioniert nicht, deswegen ==>
@@ -245,19 +251,19 @@ ps.estimate.data.frame <- function(object,
         
       }else{
         
-        resp.regr  <- as.data.frame(model.frame(regr,data)[,1]) ## resp
-        treat.regr <- as.data.frame(model.frame(regr,data)[,2]) ## treat
-        name.regr <- names(as.data.frame(model.frame(regr,data)))[-c(1:2)]
+        resp.regr  <- as.data.frame(model.frame(regr,data.lr)[,1]) ## resp
+        treat.regr <- as.data.frame(model.frame(regr,data.lr)[,2]) ## treat
+        name.regr <- names(as.data.frame(model.frame(regr,data.lr)))[-c(1:2)]
 
-        if (any(names(as.data.frame(model.frame(regr,data)))[c(1)] != name.resp))
+        if (any(names(as.data.frame(model.frame(regr,data.lr)))[c(1)] != name.resp))
           stop(paste("Argument 'regr' does not include ", name.resp,
                      " as response.", sep=""))
         
-        if (any(names(as.data.frame(model.frame(regr,data)))[c(2)] != name.treat))
+        if (any(names(as.data.frame(model.frame(regr,data.lr)))[c(2)] != name.treat))
           stop(paste("Argument 'regr' does not include ", name.treat,
                      " as treatment.", sep=""))
         
-        regr       <- as.data.frame(model.matrix(regr,data)[,-c(1:2)]) ## w/o resp
+        regr       <- as.data.frame(model.matrix(regr,data.lr)[,-c(1:2)]) ## w/o resp
         data.regr <- as.data.frame(cbind(resp.regr, treat.regr, regr))
         
         ## Falls nur eine Var in 'regr' ausgewählt, names(regr) nach
@@ -291,7 +297,7 @@ ps.estimate.data.frame <- function(object,
   }
 
   ## Output
-  object <- list(data               = data,
+  object <- list(data               = data.lr,
                  resp               = resp,
                  name.resp          = name.resp,
                  treat              = treat,
@@ -301,8 +307,12 @@ ps.estimate.data.frame <- function(object,
                  name.match.index   = name.match.index,
                  match.index        = match.index,
                  ps.estimation      = ps.estimation,
-                 lr.estimation      = lr.estimation)
-                 
+                 lr.estimation      = lr.estimation,
+                 family             = family)
+
+  class(object) <- c("est.data.frame",
+                     class(object)[class(object)!="est.data.frame"])
+  
   return(object)
   
 }

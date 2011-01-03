@@ -12,6 +12,7 @@ ps.balance.matched.data.frame <- function(object,
                                           alpha         = 5,
                                           equal         = TRUE) 
 {
+  
   ## #################
   ## Check match.index
   if (is.null(match.index)){
@@ -124,13 +125,17 @@ ps.balance.matched.data.frame <- function(object,
                                     equal      = equal)
   }
   
-  object$data.matched      <- d2[,-c(names(d2)=="match.strata")]
+  object$data.matched      <- d2[,-which(c(names(d2)=="match.strata"))]
   object$bal.test          <- bal.test
   object$treat             <- treat
   object$name.treat        <- name.treat
   object$match.index       <- object$match.index
   object$name.match.index  <- object$name.match.index
 
+  class(object) <- c("bal.matched.data.frame",
+                     class(object)[class(object)!="bal.matched.data.frame"])
+  
+  
   return(object)
   
 }

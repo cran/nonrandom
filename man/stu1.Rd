@@ -38,12 +38,7 @@
    \item{pst}{physical status}
  }
 }
-\details{
-}
-\source{
-}
-\references{
-}
+
 \examples{
 data(stu1)
 }

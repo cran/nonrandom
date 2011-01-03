@@ -10,8 +10,8 @@ balance.classical <- function(sel,
   data  <- sel
   
   ## Vectors for significance results before/after stratification
-  table.before <- table.after <- vector(length=dim(data)[2])
-  names(table.before) <- names(table.after) <- names(data)
+  Before <- After <- vector(length=dim(data)[2])
+  names(Before) <- names(After) <- names(data)
   
   ## Vectors for methods used for each covariate
   meth <- vector(length=dim(data)[2])
@@ -40,8 +40,9 @@ balance.classical <- function(sel,
  
     if (nlevels(as.factor(cov)) == 1){
 
-      meth[i] <- "none"
-      table.before[i] <- table.after[i] <- NA
+      ##meth[i] <- "none"
+      meth[i] <- ""
+      Before[i] <- After[i] <- NA
       next
 
     }else{
@@ -49,7 +50,8 @@ balance.classical <- function(sel,
       ## binary/categorical covariates
       if (nlevels(as.factor(cov)) <= cat.levels){
 
-        meth[i]  <- "cat"
+        ## meth[i]  <- "cat"
+        meth[i]  <- "chi^2"
         
         if (!match.T){ ## if stratification
           
@@ -61,13 +63,13 @@ balance.classical <- function(sel,
           if (dim(table.cov)[2] != nlevels(as.factor(treat)) |
               dim(table.cov)[1] != nlevels(as.factor(cov))){
             
-            test.cov <- table.before[i] <- NA
+            test.cov <- Before[i] <- NA
             p.matrix[1,i] <- value.matrix[1,i] <- NA
             
           }else{
             
             test.cov          <- chisq.test(table.cov)
-            table.before[i]   <- ifelse(test.cov$p.value <= (alpha/100), 0, 1)
+            Before[i]   <- ifelse(test.cov$p.value <= (alpha/100), 0, 1)
             ## 0: sign, 1: not sign
             p.matrix[1,i]     <- round(test.cov$p.value, 3)
             value.matrix[1,i] <- round(test.cov$stat, 3)
@@ -101,7 +103,7 @@ balance.classical <- function(sel,
 
           help.NA <- which(help.NA != 0)+1
           
-          table.after[i] <- ifelse(sum(p.matrix[-c(1, help.NA),i] <= (alpha/100)) == 0, 1, 0)
+          After[i] <- ifelse(sum(p.matrix[-c(1, help.NA),i] <= (alpha/100)) == 0, 1, 0)
           ## 0: at least one significant difference in strata, 1: no significance
           ## NA: in at least one stratum no test was available 
 
@@ -129,13 +131,14 @@ balance.classical <- function(sel,
               value.matrix[j,i] <- round(test.cov.s$stat, 3)
             }
           }
-          table.before[i] <- ifelse(p.matrix[1,i] <= (alpha/100), 0, 1)
-          table.after[i]  <- ifelse(p.matrix[2,i] <= (alpha/100), 0, 1)
+          Before[i] <- ifelse(p.matrix[1,i] <= (alpha/100), 0, 1)
+          After[i]  <- ifelse(p.matrix[2,i] <= (alpha/100), 0, 1)
           ## 0: significance, 1: no significance
         }
       }else{ ## continuous covariates
 
-        meth[i] <- "non-cat"
+        ##meth[i] <- "non-cat"
+        meth[i] <- "t"
         
         if (!match.T){ ## stratification
           
@@ -143,14 +146,14 @@ balance.classical <- function(sel,
           if (any(length(na.omit(cov[treat==min(treat, na.rm=TRUE)])) == c(0,1)) |
               any(length(na.omit(cov[treat==max(treat, na.rm=TRUE)])) == c(0,1))){
             
-            table.before[i] <- p.matrix[1,i] <- value.matrix[1,i] <- NA
+            Before[i] <- p.matrix[1,i] <- value.matrix[1,i] <- NA
             
           }else{
             
             test.cov  <- t.test(cov[treat==min(treat, na.rm=TRUE)],
                                 cov[treat==max(treat, na.rm=TRUE)])
             
-            table.before[i]   <- ifelse(test.cov$p.value <= (alpha/100), 0, 1)
+            Before[i]   <- ifelse(test.cov$p.value <= (alpha/100), 0, 1)
             p.matrix[1,i]     <- round(test.cov$p.value, 3)
             value.matrix[1,i] <- round(test.cov$stat, 3)
             
@@ -181,7 +184,7 @@ balance.classical <- function(sel,
           }
           help.NA <- which(help.NA != 0)+1
           
-          table.after[i] <- ifelse(sum(p.matrix[-c(1, help.NA),i] <= (alpha/100)) == 0, 1, 0)
+          After[i] <- ifelse(sum(p.matrix[-c(1, help.NA),i] <= (alpha/100)) == 0, 1, 0)
           ## 0: at least one significant difference in strata, 1: no significance
           
         }else{ ## IF MATCHING
@@ -202,15 +205,15 @@ balance.classical <- function(sel,
               p.matrix[j,i]     <- round(test.cov.s$p.value, 3)
               value.matrix[j,i] <- round(test.cov.s$stat, 3)
             }
-            table.before[i] <- ifelse(p.matrix[1,i] <= (alpha/100), 0, 1)
-            table.after[i]  <- ifelse(p.matrix[2,i] <= (alpha/100), 0, 1)
+            Before[i] <- ifelse(p.matrix[1,i] <= (alpha/100), 0, 1)
+            After[i]  <- ifelse(p.matrix[2,i] <= (alpha/100), 0, 1)
             ## 0: at least one significant difference in strata, 1: no significance 
           }
         } 
       } 
     } 
   }
-  tab <- rbind(table.before, table.after)
+  tab <- rbind(Before, After)
   colnames(tab) <- names(data)
   
 
@@ -221,13 +224,13 @@ balance.classical <- function(sel,
   ##   s after  |          |           
   ##  ns after  |          |
   
-  bal.tab[1,1] <- length(which(table.before == 0 & table.after ==0))
-  bal.tab[2,2] <- length(which(table.before == 1 & table.after ==1))
-  bal.tab[2,1] <- length(which(table.before == 0 & table.after ==1))
-  bal.tab[1,2] <- length(which(table.before == 1 & table.after ==0))
+  bal.tab[1,1] <- length(which(Before == 0 & After ==0))
+  bal.tab[2,2] <- length(which(Before == 1 & After ==1))
+  bal.tab[2,1] <- length(which(Before == 0 & After ==1))
+  bal.tab[1,2] <- length(which(Before == 1 & After ==0))
   
-  colnames(bal.tab) <- c("before: no balance (0)", "before: balance (1)") 
-  rownames(bal.tab) <- c("after: no balance (0)" , "after: balance (1)") 
+  colnames(bal.tab) <- c("Before: no bal (0)", "Before: bal (1)") 
+  rownames(bal.tab) <- c("After: no bal (0)" , "After: bal (1)") 
                                                                        
   cov.NA <- colnames(tab)[is.na(tab[1,]) | is.na(tab[2,])]
   cov.bal.before <- colnames(tab)[tab[1,]==1 & !is.na(tab[1,])]

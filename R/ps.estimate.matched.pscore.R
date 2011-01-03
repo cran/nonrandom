@@ -278,6 +278,11 @@ ps.estimate.matched.pscore <- function(object,
 
   object$match.index  <- data$match.strata
 
+  object$family <- family
+
+  class(object) <- c("est.matched.pscore",
+                     class(object)[class(object)!="est.matched.pscore"])
+
 
   return(object)
   

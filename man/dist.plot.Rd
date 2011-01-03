@@ -8,11 +8,11 @@
   Plot covariate disitribution in treatment groups
 }
 \usage{
-  dist.plot(object, sel=NULL, treat=NULL, stratum.index=NULL,
-  match.index=NULL, plot.type=1, cat.levels=10, plot.levels=5,
-  compare=FALSE, label.match=NULL, label.stratum="Stratum",
+  dist.plot(object,sel=NULL, treat=NULL, stratum.index=NULL,
+  match.index=NULL, plot.type=1, compare=FALSE, cat.levels=10, 
+  plot.levels=5, label.match=NULL, label.stratum=c("Stratum","Orginal"),
   with.legend=TRUE, legend.title=NULL, legend.cex=0.9, myoma=c(2,2,2,2),
-  mymar=c(2,4,1,2), width=1, xlim=NULL, ylim=NULL, col=NULL, las=1,
+  mymar=c(2,4,1,2), width=0.5, xlim=NULL, ylim=NULL, col=NULL, las=1,
   font.main=2, font=1, main=NULL, main.cex=1.2, sub.cex=0.9,
   bar.cex=0.8, ...)
 }
@@ -25,7 +25,7 @@
   
   \item{sel}{a data frame or a vector of integers or strings indicating
     covariates whose distribution to be plotted. The default is
-    'NULL',i.e., complete data are selected.}
+    'NULL', i.e., complete data are selected.}
   
   \item{treat}{an integer or a string indicating treatment in 'data' and
     'data.matched' if \code{ps.match()} is previously used,
@@ -34,40 +34,41 @@
     is needed.}
 
   \item{stratum.index}{an integer or a string indicating the vector
-    containing the stratum indices in stratified data. The default is
+    containing stratum indices in stratified data. The default is
     'NULL'. No specification is needed if \code{ps.makestrata()} is
     previously used.}
 
   \item{match.index}{an integer or a string indicating the vector
-    containing the matching indices in data and in the matched
-    data. The default is 'NULL'. No specification is needed if
-    \code{ps.match()} is previously used.}
+    containing matching indices in data and in the matched data. The
+    default is 'NULL'. No specification is needed if \code{ps.match()}
+    is previously used.}
 
   \item{plot.type}{an integer specifying the type of plot. The default
     is '1', i.e., means for non-categorical and frequencies for
     categorical covariates are plotted as barplots separated by
-    treatment. If \code{plot.type}='2', histograms are used.}
+    treatment. If \code{plot.type} is set to '2', histograms are
+    plotted.}
+
+  \item{compare}{a logical value indicating whether covariate
+    distribution in the original data are plotted as well. The default
+    is 'FALSE'.}
 
   \item{cat.levels}{an integer. The default is '10', i.e., covariates
     with more than ten different values are considered as
     non-categorical.}
 
   \item{plot.levels}{an integer. The default is '5', i.e., five
-    cutpoints are used to define classes for the histogram for
+    cutpoints are used to define classes for histograms for
     non-categorical covariates. The classification still depends on the
     data structure such that the number of classes can differ from the
-    statement in \code{plot.levels}.}
-
-  \item{compare}{a logical value indicating whether covariate
-    distribution in the original data are plotted. The default is
-    'FALSE'.}
+    statement in \code{plot.levels}.}  
   
   \item{label.match}{a vector of two strings describing the labels for
-    the original and the matched data. The default is 'NULL', i.e.,
+    original and matched data. The default is 'NULL', i.e.,
     c('Original', 'Matched') is used.}
 
-  \item{label.stratum}{a string describing the labels for the
-    stratum-specific data. The default is 'Stratum'.}
+  \item{label.stratum}{a vector of two strings describing the labels for
+    stratum-specific data. The default is c('Original', 'Stratum').}
 
   \item{with.legend}{a logical value indicating whether a legend is
     shown. The default is 'TRUE'.}
@@ -88,7 +89,7 @@
     see \code{par}. The default is 'c(2,4,1,2)' if \code{plot.type}='1'
     and 'c(5,4,4,2)+0.1' if \code{plot.type}='2'.}
 
-  \item{width}{an integer indicating bar widths. The default is '1'.}
+  \item{width}{an integer indicating bar widths. The default is '0.5'.}
 
   \item{xlim}{a vector of integers of length two indicating limits for
     the x axis. The default is 'NULL'.}
@@ -136,12 +137,12 @@
 }
 \value{
   \code{dist.plot()} returns a list with information about the
-  plots. The number and the manner of the list entries depends on
+  plots. The number and the manner of the list entries depends both on
   \code{plot.type} and on the type of covariates to be plotted:
 
-  \item{name.sel}{a string containing names of the selected covariates.}
+  \item{name.sel}{a string containing names of selected covariates.}
 
-  \item{sel}{a data frame containing the selected covariates labeled by
+  \item{sel}{a data frame containing selected covariates labeled by
     'name.sel'.}
   
   \item{name.treat}{a string indicating the name of treatment used.}
@@ -178,18 +179,18 @@
     \code{plot.type}=1.}
   
   \item{frequency}{a list with length according to the number of
-    categorical covariates whereas the list elements depend on
-    \code{compare}. If \code{compare}='FALSE', list elements contain
-    standardized frequency tables separated by treatment (rows)
-    and by strata or by matched/unmatched data (columns). The order and
-    the number of list elements is w.r.t. 'var.cat'. If
-    \code{compare}='TRUE', there are two list elements which
-    are again lists of frequency tables. The first list element contains
-    lists of frequency tables separated by treatment before
-    stratification or matching and the second list element includes
-    lists of frequency tables separated by treatment and strata or
-    matched/unmatched data. The order of list elements is in accordance
-    to the order of 'var.cat'. It is only available if
+    categorical covariates whereas the list elements depend on the
+    specification of \code{compare}. If \code{compare}='FALSE', list
+    elements contain standardized frequency tables separated by
+    treatment (rows) and by strata or by matched/unmatched data
+    (columns). The order and the number of list elements is
+    w.r.t. 'var.cat'. If \code{compare}='TRUE', there are two list
+    elements which are again lists of frequency tables. The first list
+    element contains lists of frequency tables separated by treatment
+    before stratification or matching and the second list element
+    includes lists of frequency tables separated by treatment and strata
+    or matched/unmatched data. The order of list elements is in
+    accordance to the order of 'var.cat'. It is only available if
     \code{plot.type}=1.}
 
   \item{breaks.noncat}{a list with length according to the number of
@@ -251,12 +252,10 @@
     with the upper value and w.r.t. the original data and the matched
     dats. It is only available if \code{plot.type}=2.}
 }
-\references{
-}
+
 \author{Susanne Stampf \email{susta@imbi.uni-freiburg.de}
 }
-\note{
-}
+
 \seealso{
   \link{barplot}
 }

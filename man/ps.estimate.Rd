@@ -8,15 +8,9 @@
 }
 
 \usage{
-  ps.estimate(object,resp,
-                        treat         = NULL,
-                        stratum.index = NULL,
-                        match.index   = NULL,
-                        adj           = NULL,
-                        weights       = "rr",
-                        family        = "gaussian",
-                        regr          = NULL,
-                        ...)
+  ps.estimate(object,resp, treat = NULL, stratum.index = NULL,
+  match.index = NULL, adj = NULL, weights = "rr", family = "gaussian",
+  regr = NULL, ...)
 }
 \arguments{
   \item{object}{an object of class 'stratified.pscore',
@@ -41,39 +35,40 @@
     is 'NULL'. No specification is needed if \code{ps.match()} is
     previously used.}
 
-
   \item{adj}{a formula or a vector of integers or strings indicating
-    covariates in data and matched data. The default is NULL, i.e., no
+    covariates in data and matched data for which an adjustment of the
+    treatment effect should be done. The default is NULL, i.e., no
     adjustment is done. If \code{adj} is a formula, it must be
     formulated as 'response~treatment+covariates' according to
-    \code{resp} and \code{treat}. If \code{adj} is a vector, it contains
-    names or integers indicating covariates for which the treatment
-    effect has to be adjusted for.}
+    \code{resp} and \code{treat}.}
 
-  \item{weights}{a string indicating how to weight stratum-specific
-    estimates to obtain the overall estimate in case of stratified data.
-    The default is 'rr' indicating stratum-specific weights proportional
-    to the number of observations per stratum. In case of linear
-    response, using \code{weights} = 'opt' means that weights are
-    optimal in sence of variance minimizing.}
+  \item{weights}{a string indicating how stratum-specific estimates
+    should be weighted to obtain the overall estimate in case of
+    stratified data. The default is 'rr' indicating stratum-specific
+    weights proportional to the number of observations per stratum. In
+    case of linear response, using \code{weights} = 'opt' means that
+    weights are optimal in sence of variance minimizing.}
 
   \item{family}{a description of the error distribution and link
-    function to be used in the model (see 'glm).}
+    function to be used in the model (see 'glm). \code{ps.estimate()} is
+    only allows continous and binary response, i.e., family='gaussian'
+    and family='binomial' are available.}
 
   \item{regr}{a formula or a vector of integers or strings indicating
     covariates in data. The default is NULL, i.e., no
     regression model is fitted. If \code{regr} is a formula, it must be
     formulated as 'response~treatment+covariates' according to
-    \code{resp} and \code{treat}. If \code{regr}, it contains names
-    integers indicating covariates for which the treatment effect on
-    response estimated by regression has to be adjusted.}
+    \code{resp} and \code{treat}. If \code{regr} is a vector containing
+    names or integers indicating treatment and covariates, a regression
+    model including those covariates is fitted to estimate the treatment
+    effect on response.}
 
   \item{...}{further arguments passed to or from other methods.}
 }
 \details{
   Propensity score methods are used to estimate treatment effects in
-  observational data. The treatment effects are estimated without
-  adjustment and has to be interpreted as marginal effects. However, it
+  observational data. The treatment effect is estimated without
+  adjustment and has to be interpreted as marginal effect. However, it
   is additionally possible to adjust for residual imbalances in strata
   or in the matched data (\code{adj}) and also to apply traditional
   regression (\code{regr}).
@@ -87,7 +82,7 @@
   ignored. If one specifies \code{adj} and \code{regr} as
   formulas, they must be identical in form of
   'response~treatment+covariates' and 'response' and 'treatment' must
-  agree with \code{resp} and \code{treat}.
+  coincide with \code{resp} and \code{treat}.
 }
 \value{
   \code{ps.estimate} returns an object of the same class as the input
@@ -251,11 +246,10 @@
       \item{weights.str}{a numeric vector containing stratum-specific
 	weights. It is only available for stratified data.}
     }
-  }
 }
-\references{ } \author{Susanne Stampf \email{susta@imbi.uni-freiburg.de}
 }
-\note{
+\author{
+  Susanne Stampf \email{susta@imbi.uni-freiburg.de}
 }
 \seealso{
   \code{\link{glm}}, \link{formula}, \code{\link[lme4]{lmer}}

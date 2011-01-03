@@ -3,80 +3,91 @@
 % \VignetteKeyword{Matching}
 % \VignetteKeyword{Covariate balance}
 
-\documentclass[10pt,oneside]{article}
-
+\documentclass[11pt,oneside]{article}
 \usepackage{hyperref}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsfonts}
 \usepackage{enumerate}
-\usepackage{natbib} 
+\usepackage{chicago} 
 \usepackage{longtable}
 \usepackage{Sweave}
+\usepackage{color}
 
+\textwidth15cm
+\oddsidemargin4mm 
+\evensidemargin-4.5mm
 
 \begin{document}
+
+\hyphenation{stra-ti-fi-cation using}
+
 
 \setlength{\baselineskip}{1.25em}
 \setlength{\parskip}{0.5em}
 \setlength{\parindent}{0.0em}
 
 \setlength{\skip\footins}{5ex} %%Abstand Fuﬂnote Text festlegen
-%\setlength{\textheight}{20cm} %%20
-%\setlength{\textwidth}{16cm}  %% 16
-%\setlength{\hoffset}{-1.5cm}  %% -1.5
-%\setlength{\voffset}{-1.0cm}
 
+\textheight20cm
+
+\topmargin-10mm
+\parindent0em 
+\parskip0.5ex plus0.5ex minus0.5ex
+\headheight2.5cm 
+\headsep0.5cm 
 
 \begin{titlepage}
   \title{Propensity score based data analysis using nonrandom}
-  \author{Susanne Stampf} \date{2009-11-30}
+  \author{Susanne Stampf} \date{2011-01-05}
 
   \maketitle
 \thispagestyle{empty}
 
 \begin{abstract}
-   
   For some time, propensity score based methods have been frequently
   applied in the analysis of data from observational studies. The
   propensity score is the conditional probability of a certain
-  treatment or exposure given patient's covariates.  Propensity score
-  methods are used to eliminate baseline imbalances in covariate
-  distributions between treatment or exposure groups and permit to
+  treatment (exposure) given patient's covariates. Propensity score
+  based methods are used to eliminate imbalances in baseline covariate
+  distributions between treatment (exposure) groups and permit to
   estimate marginal effects.
   
-  The package \texttt{nonrandom} is a tool for a comprehensive data
+  The package {\tt nonrandom} is a tool for a comprehensive data
   analysis using stratification and matching by the propensity score.
   Several functions are implemented, starting from the selection of
   the propensity score model up to estimating propensity score based
-  treatment or exposure effects. Before estimating the propensity
-  score, \texttt{relative.effect()} permits to investigate the extent
-  to which a covariate is confounding the treatment or exposure
-  effect. This measure may support the decision to include a covariate
-  in the propensity score model. \texttt{pscore()} estimates the
-  propensity score and provides all information about the model.
-  Stratification and matching by the propensity score are implemented
-  in \texttt{ps.makestrata()} and \texttt{ps.match()}, respectively.
-  To check the balance of covariate distributions between treatment or
-  exposure groups, \texttt{ps.balance()} tests the distributions using
-  statistical tests or standardized differences and
-  \texttt{dist.plot()} allows for a graphical balance check. Finally,
-  propensity score based estimators for the treatment or exposure
-  effect can be determined by \texttt{ps.estimate()}. It also provides
-  a comparison to regression based estimates alternatively used.
+  treatment (exposure) effects. Before estimating the propensity
+  score, function {\tt relative.effect()} permits to investigate the
+  extent to which a covariate is confounding the treatment (exposure)
+  effect on outcome. This measure may support the decision which
+  covariates should be involved to estimate the propensity score.  The
+  function {\tt pscore()} estimates the propensity score by fitting a
+  logisitc model. The function {\tt pscore.plot()} visualize the
+  distribution of the estimated propensity score in treatment
+  (exposure) groups. Stratification and matching by the propensity
+  score are implemented in functions {\tt ps.makestrata()} and {\tt
+    ps.match()}, respectively. To check covariate balance between
+  treatment or exposure groups, the function {\tt ps.balance()}
+  applies statistical tests and standardized differences,
+  respectively, to detect covariate differences in groups. In
+  addition, functions {\text dist.plot()} and {\tt stdf.plot()}
+  provides a graphical balance check. Finally, propensity score based
+  estimators for the treatment (exposure) effect can be determined by
+  functionn {\text ps.estimate()}. It also offers a comparison to
+  regression based estimates alternatively used.
   
   All functions can be applied separately as well as combined.
   Additionally, it is possible to apply all functions repeatedly to
-  decide which analysis strategy is the most suitable one.
-  
-  There are two data examples to illustrate the application of
-  \texttt{nonrandom}. In the first data example, quality of life is
+  decide which analysis strategy is the most suitable one. Print and
+  summary functions are available for the most implemented functions.
+  There are two data examples to illustrate the application of {\tt
+    nonrandom}. In the first data example, quality of life is
   investigated in breast cancer patients in an observational treatment
   study of the German Breast Cancer Study Group (GBSG). The second
   data example deals with lower respiratory tract infections (LRTI) in
   infants and children in the observational study Pri.DE (Pediatric
   Respiratory Infection, Deutschland) in Germany.
- 
 \end{abstract}
 
 \end{titlepage}
@@ -88,1076 +99,1174 @@
 
 \section{Introduction}
 
-For some time, propensity score based methods have been frequently
-applied in the analysis of data from observational studies. In 1983,
-Rosenbaum and Rubin introduced the propensity score as conditional
-probability of receiving a certain treatment\footnote{In the
-  following, we only use the phrase '... conditional probability of
-  receiving a certain treatment', i.e., we concentrate on the
-  comparison of response in treated and untreated observations. The
-  comparison of two treatments, e.g.,new and standard therapy are also
-  possible. The propensity score can be also be the conditional
-  probability of being exposed given covariates, respectively, such
-  that the comparison of exposed and unexposed observations is of
-  interest.} given covariates \cite{Rose:Rubi:cent:1983}. In general,
-the propensity score is unknown and has to be estimated using an
-appropriate model. The selection of the correct propensity score model
-is often the first obstacle. Lunt et
-al.\cite{Lunt:Solo:Roth:Glyn:Hyri:Symm:Strm:2009} proposed a measure
-estimating the extent to which a covariate is confounding the
-treatment effect. Covariates with a large extent are potential
-candidates for the inclusion in the propensity score model.
-
-Propensity score methods are embedded in the framework of causal
-modeling dealing with counterfactuals
-\cite{Pear:caus:2000}\nocite{Hern:defi:2003}-\cite{Hern:Robi:esti:2006}.
-Consider a pair of random variables ($Y_0$, $Y_1$), where $Y_1$
-denotes the response of an individual if treated, and $Y_0$ represents
-the response of the same individual if not treated. The observed
-response is $Y = ZY_1+(1-Z)Y_0$, and the expected values of
-counterfactuals $\mathbf{E}[Y_1]$ and $\mathbf{E}[Y_0]$ can be derived
-if an identifying assumption called 'strongly ignorable treatment
-assignment' (SITA) holds \cite{Rose:Rubi:cent:1983}. This assumption
-states, that, within subgroups defined by the propensity score, the
-observed response of individuals assigned to treatment $Z = 0$ has the
-same distribution as the unobserved response of individualss assigned
-to treatment $Z = 1$, if the latter had been assigned to treatment $Z
-= 0$. The idea of the propensity score was initiated to estimate
-average linear treatment effects as $\mathbf{E}[Y_1] -
-\mathbf{E}[Y_0]$ \cite{Rose:Rubi:cent:1983}. By now, the idea has been
-transferred to estimating the marginal odds ratio of response, i.e.,
-the change in odds of response, if everybody versus nobody were
-treated
-\cite{Graf:Schu:lett:2008}\nocite{Forb:Shor:inve:2008}-\cite{Stam:Graf:Schm:Schu:esti:2010}.
+For some time, propensity score (PS) based methods have been
+frequently applied in the analysis of data from observational studies.
+The PS is defined as conditional probability of receiving a certain
+treatment\footnote{In the following, we only use the phrase '...
+  conditional probability of receiving a certain treatment', i.e., we
+  concentrate on the comparison of outcome in treated and untreated
+  individuals. The comparison of two treatments, e.g., new and
+  standard therapy are also possible. The PS can be also be the
+  conditional probability of being exposed given covariates,
+  respectively, such that the comparison of outcome for exposed and
+  unexposed individuals is of interest.} given covariates
+\cite{Rose:Rubi:cent:1983}. In general, the PS is unknown and has to
+be appropriately estimated, e.g., by fitting a regression model. The
+selection of an adequate PS model is often the first obstacle. Lunt et
+al.~proposed a measure estimating the extent to which a covariate is
+confounding the treatment effect on outcome
+\cite{Lunt:Solo:Roth:Glyn:Hyri:Symm:Strm:2009}. Covariates with a
+large extent are potential candidates for the inclusion in the PS
+model. This proposal is implemented in the {\tt nonrandom}-package.
 
 In observational studies, covariate distributions differ generally
-between treatment groups and propensity score methods aim to eliminate
-such imbalances. There are several propensity score methods:
-stratification, matching and covariate adjustment by the propensity
-score. An further approach is the inverse probability weighting by the
-propensity score
-\cite{Rose:mode:1987}\nocite{Hira:Imbe:esti:2001}-\cite{Free:Berk:weig:2008},
-but it is rarely used. Stratification and matching by the propensity
-are more popular methods since they are easy to understand. But
-matching by the propensity score is applied at most in medical
-research
+between treatment groups and PS methods aim to eliminate such
+imbalances. There are four PS based methods: stratification, matching,
+covariate adjustment and inverse probability weighting by PS. The
+first both methods are commonly used and intend to create data
+situations as in randomized controlled trials (RCTs) within which a
+direct comparison of treatment groups is meaningful. Covariate
+adjustment by PS is also a favourite approach since it is easily used
+as traditional regression modeling including PS in the regression
+model in addition to treatment. The fourth approach, namely the
+inverse probability weighting by PS, is rather rarely used
+\cite{Rose:mode:1987,Hira:Imbe:esti:2001}. The PS is here used to
+weight each individual and it is often applied as weighted regression
+\cite{Free:Berk:weig:2008}. Stratification and matching by PS are more
+popular methods since they are easy to understand. However, matching
+by PS is applied at most in medical research
 \cite{Shah:Laup:Hux:Aust:prop:2005,Strm:Josh:Glyn:Avor:Roth:Schn:revi:2006}.
 
-Stratification by the propensity score groups observations such that
-distributions of measured covariates are sufficiently balanced in
-treatment groups within each stratum
-\cite{Rose:Rubi:cent:1983,Rose:Rubi:redu:1984}. It can be supposed
-that each stratum mimics a randomized situation in which distribution
-of measured covariates are balanced in expectation. If then the
-assumption of 'SITA' holds, stratum-specific parameters can be
-estimated unbiasedly \cite{Rose:Rubi:cent:1983}. Those can be summed
-up using appropriate weights to estimate the marginal parameter of
-interest.
+Stratification by PS is used to stratify individuals with similar or
+even equal PS such that distributions of measured covariates are
+sufficiently balanced in treatment groups within each stratum defined
+by PS \cite{Rose:Rubi:cent:1983,Rose:Rubi:redu:1984}. It can be
+supposed that each stratum mimics a randomized situation within which
+distributions of measured covariates are balanced in expectation. If
+the assumption of 'SITA' holds (see below), stratum-specific
+parameters can be unbiasedly estimated \cite{Rose:Rubi:cent:1983} and
+those estimates are then summed up across strata using appropriate
+weights to estimate the marginal parameter of interest.
 
-If matching by the propensity score is used, one or more untreated
-observations are matched to one treated observation or vice versa.
-Observations within matched sets have similar propensity scores
-whereas the similarity is often defined by a caliper, generally used
-as one-fifth of the standard deviation of the logit of the estimated
-propensity score \cite{Coch:Rubi:cont:1973}. Although matching by the
-propensity score has been frequently applied
+If matching by PS is used, one or more untreated individuals are
+matched to one treated individual or vice versa. Individuals within
+matched sets have similar or even equal PS whereas the similarity is
+often defined by a caliper, generally used as one-fifth of the
+standard deviation of the logit of the estimated PS
+\cite{Coch:Rubi:cont:1973}.  Although matching by PS has been
+frequently applied
 \cite{Shah:Laup:Hux:Aust:prop:2005,Strm:Josh:Glyn:Avor:Roth:Schn:revi:2006},
 it has been shown that the dependence structure in the total matched
-sample is often not accounted for the estimation of the parameter of
-interest
+sample is often not accounted for the estimation of the interesting
+parameter
 \cite{Rubi:Tham:char:1992}\nocite{Aust:prop:2007}-\cite{Aust:crit:2008}.
-Approaches such as generalized linear mixed models and generalized
-estimation equations are appropriate to analyze data with correlated
-observations
+Approaches such as generalized linear mixed models or generalized
+estimation equations are appropriate to analyze data with correlation
+structure
 \cite{Neld:Wedd:gene:1972}\nocite{Cox:Snel:anal:1989,Digg:Lian:Zege:anal:1994,Hanl:Nega:Edwa:Forr:stat:2003}-\cite{Dobs:Barn:intr:2008}.\\
 
-In the following, the application of the package \texttt{nonrandom} is
+In general, PS methods are embedded in the framework of causal
+modeling dealing with potential outcomes
+\cite{Pear:caus:2000}\nocite{Hern:defi:2003}-\cite{Hern:Robi:esti:2006}.
+Consider a pair of random variables ($Y_0$, $Y_1$), where $Y_1$
+denotes the outcome of an individual if treated, and $Y_0$ represents
+the outcome of the same individual if not treated. The observed
+outcome is $Y = ZY_1+(1-Z)Y_0$, and the expected values of
+counterfactuals $\mathbf{E}[Y_1]$ and $\mathbf{E}[Y_0]$ can be derived
+if the identifying assumption called 'strongly ignorable treatment
+assignment' (SITA) holds \cite{Rose:Rubi:cent:1983}. This assumption
+states, that, within subgroups defined by PS, the observed outcome of
+individuals assigned to treatment $Z = 0$ has the same distribution as
+the unobserved outcome of individuals assigned to treatment $Z = 1$,
+if the latter had been assigned to treatment $Z = 0$. This means,
+individuals in treatment groups are comparable and the measured
+treatment difference between groups can be attributed to treatment
+itself.
+
+The idea of PS was initiated to estimate marginal linear treatment
+effects defined as $\Delta=\mathbf{E}[Y_1-Y_0]$
+\cite{Rose:Rubi:cent:1983}.  By now, the idea has been transferred to
+estimating the marginal odds ratio of outcome, i.e., the change in
+odds of outcome, if everybody versus nobody were treated
+\cite{Graf:Schu:lett:2008}\nocite{Forb:Shor:inve:2008}-\cite{Stam:Graf:Schm:Schu:esti:2010}.
+Therefore, marginal probabilities for potential outcomes
+$\mathbf{P}[Y_1=0]$ and $\mathbf{P}[Y_1=1]$ have to be estimated which
+are used to construct to an appropriate estimator for the marginal
+odds ratio defined as $\delta=\frac{p_1/(1-p_1)}{p_0/(1-p_0)}$ with
+$p_z=\mathbf{P}[Y_z=1]$, $z=0,1$. In case of stratified data, marginal
+probabilities of potential outcomes can be estimated by outcome rates
+from PS strata or derived from standard regression results
+\cite{Graf:Schu:lett:2008}.\\
+
+In the following, the application of the \texttt{nonrandom} package is
 demonstrated step by step introducing all implemented functions. The
-usage of the function is illustrated by the exemplary analysis of two
-data sets. First, there are data on quality of life in n = 646 breast
-cancer patients in an observational treatment study of the German
-Breast Cancer Study Group (GBSG)
+usage is illustrated by the exemplary analysis of two data sets.
+First, there are data on quality of life in breast cancer patients in
+an observational treatment study of the German Breast Cancer Study
+Group (GBSG)
 \cite{Raus:Saue:Scha:Schu:Olsc:Saue:Seeg:Schm:ther:1995,Senn:Graf:Capu:stra:2007}.
 Patients with mastectomy and lumpectomy, respectively, are compared
 with each other regarding the quality of life measured as a linear sum
-score.  The second data example deals with lower respiratory tract
-infections (LRTI) in a population of n = 3.078 infants and children
-aged less than three years in the observational study Pri.DE
-(Pediatric Respiratory Infection, Deutschland) in Germany
+score. The second data example deals with lower respiratory tract
+infections (LRTI) in a population of infants and children aged less
+than three years in the observational study Pri.DE (Pediatric
+Respiratory Infection, Deutschland) in Germany
 \cite{Fors:Ihor:Rieg:Step:Fran:Gurt:Bern:Rohw:Werc:Schu:Tsai:Pete:pros:2004}.
-Here, the impact of a current infection with the respiratory syncytial
-virus (RSV) on the severity of LRTI is investigated
+Here, the impact of the exposure to an infection with the respiratory
+syncytial virus (RSV) on the severity of LRTI is investigated
 \cite{Stam:Graf:Schm:Schu:esti:2010}.
 
 
 \section{The estimation of the propensity score}\label{est-ps}
 
-The propensity score, i.e., the conditional probability of receiving a
-certain treatment given observed covariates is generally unknown and
-has to be estimated by an appropriate model. The selection of the
-propensity score model is often a delicate issue
+The PS is generally unknown and has to be estimated often done by
+fitting an appropriate regression model. The selection of such a PS
+model is mostly a delicate issue
 \cite{Drak:effe:1993}-\nocite{Hupp:Loui:prop:2002,Weit:Lapa:Tole:Hume:Mor:prin:2004,Broo:Schn:Roth:Glyn:Avor:Strm:vari:2006}\cite{Rubi:desi:2007}.
 A measure describing the extent to which a covariate is confounding
-the treatment effect on response is proposed by Lunt et
-al.~\cite{Lunt:Solo:Roth:Glyn:Hyri:Symm:Strm:2009} and covariates with
-a large impact are potential candidates for the propensity score
-model. This proposal is implemented in \texttt{relative.effect()}. If
-an appropriate propensity score model is selected, \texttt{pscore()}
-estimates the propensity score based on the selection.
+the treatment effect on outcome is proposed by Lunt et
+al.~\cite{Lunt:Solo:Roth:Glyn:Hyri:Symm:Strm:2009}. Covariates with a
+large impact are potential candidates for the inclusion in the PS
+model. This proposal is implemented in function {\tt
+  relative.effect()}. If an appropriate PS model is selected, function
+{\tt pscore()} then offers the estimation of PS by fitting a logistic
+model.
 
-\subsection{\texttt{relative.effect}}
+\subsection{Selection of the propensity score model: {\tt
+    relative.effect()}}
 
-An important step is to decide which covariates $X_k$, $k=1,...,K$
-should be included in the propensity score model. The measure
+An important step is to decide which covariates $X_k$, $k=1,...,K$,
+measured at baseline should be included in the PS model. The measure
 describing the extent to which a covariate $X_k$ is confounding the
-effect of treatment $Z$ on response $Y$ is defined as a relative
-effect (per cent)
+effect of treatment $Z$ on outcome $Y$ is defined as relative effect
+(per cent)
 \begin{equation*}
-  \left(\frac{\beta_{z,x_k} - \beta_{z}}{\beta_{z}}\right) \times 100
+  \left( \frac{\beta_{z,x_k} - \beta_{z}}{\beta_{z}} \right) \times 100
 \end{equation*}
-with the unadjusted treatment effect $\beta_{z}$ on response $Y$ and
-the treatment effect $\beta_{z,x_k}$ adjusted for covariate $X_k$. If
-the response is binary, the relative effect (per cent) is defined as
+with unadjusted treatment effect $\beta_{z}$ and treatment effect
+$\beta_{z,x_k}$ adjusted for covariate $X_k$, $k=1,\hdots,K$. In case
+of binary outcome, the relative effect (per cent) is defined as
 \begin{equation*}
-  \left(\frac{exp\{\beta_{z,x_k}\} - exp\{\beta_{z}\}}{exp\{\beta_{z}\}}\right) \times 100.
+  \left( \frac{exp\{\beta_{z,x_k}\} - exp\{\beta_{z}\}}{exp\{\beta_{z}\}} \right) \times 100.
 \end{equation*}
-Therefor, $K+1$ regression models for response $Y$, both unadjusted
-and adjusted for covariates $X_k$, $k=1,...,K$, are fitted using an
-appropriate generalized linear regression model with a response
-function according to the scale of response (internal use of 'glm').
-There are two options fitting a generalized linear regression model
-for response. Either use the argument \texttt{formula} to specify a
-formula, typically as '$Y \sim Z + X_1 + ... + X_K$',
+Therefore, $K+1$ regression models for outcome $Y$, both unadjusted
+and adjusted for covariates $X_k$, $k=1,...,K$, are fitted using
+generalized linear regression models with respect to the measuring
+scale of outcome (internal use of {\tt glm()}). There are two options
+for model specification. On the one hand, it is possbile to set
+separately outcome, treatment and covariates as strings or numerics
+using arguments {\tt resp}, {\tt treat} and {\tt sel}.
 \begin{verbatim}
-load(stu1) ## data on quality of life
- 
-stu1.effect <- 
-   relative.effect(data    = stu1,
-                   formula = pst~therapie+tgr+age)
+> ## PRI.De data dealing with LRTI 
+> load(pride) 
+> pride.effect <- relative.effect(data = pride,
++                                 sel = c(2:14),   
++                                 family = "binomial",
++                                 resp = 15,       
++                                 treat = "PCR_RSV") 
 \end{verbatim}
-or specify response, treatment and covariates separately by using the
-arguments {\tt resp}, {\tt treat} and {\tt sel}.
+On the other hand, an explicit regression formula using {\tt formula}
+can be specified:
 \begin{verbatim}
-load(pride) ## data dealing with LRTI 
-    
-pride.effect <- 
-   relative.effect(data  = pride,
-                   sel   = c(2:14),   ## covariates
-                   resp  = 15,        ## response 
-                   treat = "PCR_RSV") ## exposure(!)
+> ## STU1 data on quality of life
+> load(stu1) 
+> stu1.effect <- relative.effect(data = stu1, 
++                                formula = pst~therapie+tgr+age) 
 \end{verbatim}
-Independent of the manner of the application of
-\texttt{relative.effect()}, it yields a list containing information
-about the unadjusted treatment effect $\beta_z$, the treatment effects
-$\beta_{z,x_k}$ adjusted separately for the covariates $X_k$, $K=1,
-..., K$ and their relative effects. Additionally, the names of
-treatment, response and selected covariates are given as well as the
-description of the error distribution used in the generalized linear
-regression models.
+Information about relative effects as well as corresponding unadjusted
+and adjusted treatment effects on outcome are available. In the STU1
+data example, two covariates are investigated. Both seem to affect the
+treatment effect on outcome and should be involved in the estimation
+of PS.
 \begin{verbatim}
-stu1.effect$unadj.treat     ## unadjusted treatment effect
-[1] 1.589436
+> stu1.effect
 
-stu1.effect$adj.treat.cov   ## adjusted treatment effects
-      tgr       age 
-1.7004732 0.7880392 
+ Treatment: therapie
+ Outcome: pst
+ Covariates:  tgr age 
 
-stu1.effect$rel.eff.treat   ## relative effects for covariates
-       tgr        age 
-  6.985956 -50.420198 
+ Unadjusted treatment effect: 1.5894
+
+ Adjusted and relative effects: 
+
+    adj. treatment effect rel. effect
+age             0.7880392   50.420198
+tgr             1.7004732    6.985956
 \end{verbatim}
 
 
-\subsection{\texttt{pscore}}
 
-If an appropriate propensity score model is selected,
-\texttt{pscore()} estimates the propensity score, i.e., the
-conditional probability of receiving a certain treatment $Z$ given
-covariates $X_k$, $k=1,...,K$, using a logistic regression model
-\begin{equation*}
-  P(Z=1|X_1, ..., X_K) =
-  \frac{exp\{\alpha_0 + \alpha_1X_1 + ... + \alpha_KX_K\}}{1+exp\{\alpha_0 + \alpha_1X_1 + ... + \alpha_KX_K\}}.
-\end{equation*}
-Applying \texttt{pscore()}, it is possible to specify a name for the
-variable including the estimated propensity score
-(\texttt{name.pscore}). The default is 'pscore'.
+\subsection{Estimation of the propensity score: {\tt pscore()}}
+
+If an appropriate model for PS is selected, it can be estimated using
+function {\tt pscore()}:
 \begin{verbatim}
-## STU1
-stu1.ps <- pscore(data    = stu1, 
-                  formula = therapie~tgr+age)
-
-## PRIDE
-pride.ps <- pscore(data        = pride,
-                   formula     = PCR_RSV~SEX+RSVINF+REGION+
-                                 AGE+ELTATOP+EINZ+EXT,
-                   name.pscore = "ps")
+> stu1.ps <- pscore(data = stu1, 
++                    formula = therapie~tgr+age)
+>
+> pride.ps <- pscore(data = pride,
++                    formula = PCR_RSV~SEX+RSVINF+REGION+
++                                      AGE+ELTATOP+EINZ+EXT,
++                    name.pscore = "ps")
 \end{verbatim}
-The output object is of class '"pscore"' and contains a list with
-information about the propensity score model.
-\begin{verbatim}
-## STU1
-stu1.ps$name.pscore     ## name of the estimated propensity 
-[1] "pscore"            ## score added to data
+A logistic regression model is internally fitted using function {\tt
+  glm()}. The argument {\tt name.pscore} offers to specify the label
+for the estimated propensity score with which the estimated propensity
+score is in turn stored in data. In the PRI.De data example, the
+default setting {\it pscore} is modified to {\it ps}. The output
+object is of class {\it pscore} and it contains a list including
+comprehensive information about the PS model, e.g., names of the
+estimated PS ({\tt \$name.pscore}), treatment ({\tt \$name.treat}) and
+outcome ({\tt \$name.resp}) as well as the specified formula of the PS
+model ({\tt \$formula.pscore}). Furthermore, the complete data set
+({\tt \$data}) extended by the estimated PS, the estimated PS itself
+({\tt \$pscore}) and treatment variable ({\tt \$treat}) are separately
+available.\\
 
-stu1.ps$name.treat      ## name of the treatment variable
-[1] "therapie"
-
-stu1.ps$formula.pscore  ## formula of the propensity
-therapie ~ tgr + age    ## score model
-
-
-##PRIDE
-pride.ps$name.pscore    ## name of the estimated propensity
-[1] "ps"                ## score
-
-pride.ps$name.treat
-[1] "PCR_RSV"
-\end{verbatim}
-Furthermore, the complete data set (\texttt{\$data}), extended by the
-estimated propensity score labeled by \texttt{name.pscore}, the
-estimated individual propensity scores (\texttt{\$pscore}) and the
-treatment variable (\texttt{\$treat}) are available.
-
+In the new released version of {\tt nonrandom} (version 1.1), it is
+possible to visualize the distribution of the estimated PS in
+treatment groups ({\tt pscore.plot()}).  Therefore, the density of the
+estimated PS is internally estimated in treatment groups using
+function {\tt density}. However, the previous use of function {\tt
+  pscore()} is needed since the estimated PS sourced from {\tt
+  \$pscore} of the input object is needed:
 \nocite{Rose:obse:1995,Joff:Rose:prop:1999}
+\begin{verbatim}
+> pscore.plot(object=pride.ps,
++             main="PRI.De study: Density estimation of estimated PS",
++             with.legend=TRUE,
++             cex.main=1.6, cex.axis=1.4, legend.cex=1.25, cex.lab=1.5,
++             par.1=list(lty=1, lwd=2), par.0=list(lty=3, lwd=2),
++             xlab="",
++             ylim=c(0,4.5))
+\end{verbatim}
+\begin{figure}[h]
+  \begin{center}
+    %\hspace{-1cm}
+    \includegraphics[width=9cm]{pride-psplot.pdf}
+    \caption{Density estimation of the estimated PS in PRI.De data
+      using function {\tt pscore.plot}}\label{stu1-plot1}
+  \end{center}
+\end{figure}
 
 
-\section{Propensity score methods}
+
+\section{Propensity score based methods}
 
 Observational studies frequently exhibit imbalances in covariate
-distributions between treatment groups. Stratification and matching
-methods are used to eliminate these imbalances.
+distributions between treatment groups. Stratification and matching by
+PS are used to eliminate these imbalances by creating data situation
+as in randomized experiments.
 
-\subsection{\texttt{ps.makestrata} - stratification by the propensity
-  score}
 
-Stratification by the estimated propensity score groups observations
-with similar or identical estimated propensity score. In
-\texttt{ps.makestrata()}, stratification can be done in several ways
-whereas stratification using quintiles of the distribution of the
-estimated propensity score yields a 90 per cent reduction of bias
+\subsection{Stratification by the propensity score: {\tt ps.makestrata()}}
+
+Stratification by PS groups individuals with similar or even identical
+PS. Several ways for stratification (argument {\it breaks}) are
+implemented in function {\tt ps.makestrata()} whereas it has been
+shown that stratification using quintiles of the PS distribution
+yields a ninety per cent bias reduction
 \cite{Rose:Rubi:redu:1984,Coch:effe:1968}.
 
-The usage of \texttt{ps.makestrata()} depends on the class of the
-input object whereas '"data.frame"' and '"pscore"' (if
-\texttt{pscore()} is previously used) are permitted. No specification
-of the stratification variable (\texttt{stratified.by}) is needed if
-the input object is of class '"pscore"' (the estimated propensity
-score stored in '"object$\$$pscore"' is automatically sourced),
-contrary to the case where the input object is a data frame.
+The usage of {\tt ps.makestrata()} depends on the class of the input
+object whereas two object classes are allowed: {\it data.frame} and
+{\it pscore} (if {\tt pscore()} is previously used) are permitted. No
+specification of the stratification variable (argument {\tt
+  stratified.by}) is needed if the input object is of class {\it
+  pscore}. The estimated PS stored in {\tt \$pscore} is automatically
+sourced. This in contrast to the case where the input object is of
+class {\it data frame}.\\
 
-Several options for the argument \texttt{breaks} used to define the
-strata, are available. The default is 'NULL', i.e., the stratification
-variable is factorized and each factor corresponds to one stratum:
+Strata bounds can be set either by defining a fixed number of strata,
+using pre-defined strata bounds or applying appropriate {\tt R}
+functions. However, the default is {\it NULL}, i.e., the
+stratification variable is factorized and each factor corresponds to
+one stratum. This is only meaningful when the stratification variable
+has only few values. 
 \begin{verbatim}
-stu1.strata4 <- ps.makestrata(object = stu1.ps)
+> stu1.str4 <- ps.makestrata(object = stu1.ps)
+> stu1.str4
 
-stu1.strata4$intervals
-[1] "0.601" "0.709" "0.824" "0.883"
+ Stratified by:  pscore 
+
+ Strata information: 
+
+    Strata bounds     n     n (per cent)
+1           0.601   231            35.8
+2           0.709    65            10.1
+3           0.824   255            39.5
+4           0.883    95            14.7
 \end{verbatim}
-If an integer is given in \texttt{breaks}, the number of strata
-w.r.t.~the stratification variable is specified:
+In case of the STU1 data, the PS is estimated using function {\tt
+  pscore()} and stored in value {\tt \$pscore} of the outpt object
+{\tt stu1.ps}. It is chosen as stratification variable. Since the
+estimated PS consists only four values, the arguments {\tt breaks}
+does not need to be specified. Using print or summary functions, the
+name of the used stratification variable is autmoatically given, e.g.,
+{\tt 'pscore'} in case of STU1 data stratified by PS.\\
+
+If an integer is given in argument {\tt breaks}, the number of strata
+with respect to the stratification variable is specified:
 \begin{verbatim}
-pride.strata.b5 <- ps.makestrata(object = pride.ps,
-                                 breaks = 5,
-                                 name.stratum.index = "stratum")
-pride.strata.b5$intervals
-[1] "[0.0619,0.168]" "(0.168,0.275]"  "(0.275,0.382]"   
-[4] "(0.382,0.488]" "(0.488,0.595]"
+> pride.str.b5 <- ps.makestrata(object = pride.ps, breaks = 5)
+> pride.str.b5 
+
+ Stratified by:  ps 
+
+ Strata information: 
+
+    Strata bounds     n     n (per cent)
+1  [0.0619,0.168]   175             5.7
+2   (0.168,0.275]   796            25.9
+3   (0.275,0.382]  1015              33
+4   (0.382,0.488]   866            28.1
+5   (0.488,0.595]   226             7.3
 \end{verbatim}
-The argument \texttt{name.stratum.index} specifies the name of the
-variable including the generated stratum indices. If a numeric vector
-is given or an appropriate \texttt{R}-function is used, e.g.,
-\texttt{quantile()}, whose values indicate the stratum bounds:
+If a numeric vector is given or an appropriate \texttt{R}-function is
+used, e.g., {\tt quantile()}, these values explicitly indicate the
+stratum bounds. In case of PRI.De data, quintiles from the
+distribution of the estimated PS are used for stratification by the
+estimated PS. The argument {\tt name.stratum.index} specifies the name
+of the variable including the generated stratum indices which is in
+turn stored in data.
 \begin{verbatim}
-pride.strata5 <- ps.makestrata(object = pride.ps,
-                               breaks = quantile(pride.ps$pscore,  
-                                                 seq(0,1,0.2)))
-pride.strata5$intervals
-[1] "[0.0624,0.236]" "(0.236,0.306]"  "(0.306,0.369]"   
-[4] "(0.369,0.431]" "(0.431,0.594]" 
+> pride.str5 <- ps.makestrata(object = pride.ps,
++                             breaks = quantile(pride.ps$pscore,  
++                                               seq(0,1,0.2)),
++                             name.stratum.index = "stratum")
+> pride.str5
+
+ Stratified by:  ps 
+
+ Strata information: 
+
+    Strata bounds     n     n (per cent)
+1  [0.0624,0.236]   616              20
+2   (0.236,0.306]   615              20
+3   (0.306,0.369]   616              20
+4   (0.369,0.431]   615              20
+5   (0.431,0.594]   616              20
 \end{verbatim}
 Depending on the class of the input object, {\tt ps.makestrata()}
-returns an object of class '"stratified.pscore"' or
-'"stratified.data.frame"'. If the class of the input object is
-'"pscore"', the output object inherits all values from the input
-object. Similar to \texttt{pscore()}, the complete data set
-(\texttt{\$data}) extended by the stratum indices labeled by
-\texttt{name.stratum.index} and the name of the stratification
-variable (\texttt{\$stratified.by}) are available.
+returns an object of class {\it stratified.pscore} or {\it
+  stratified.data.frame}. If the class of the input object is {\it
+  pscore}, the output object inherits all values from the input
+object. Similar to function {\tt pscore()}, the complete data set
+({\tt \$data}) extended by stratum indices labeled by {\tt
+  \$name.stratum.index} is available for the output object.
+Furthermore, the name of the stratification variable ({\tt
+  \$stratified.by}), individual stratum indices ({\tt
+  \$stratum.index}) generated at least as well as the corresponding
+stratum bounds ({\tt \$intervals}) are stored in the output object.
 
-Furthermore, the individual stratum indices (\texttt{\$stratum.index})
-generated at least as well as the corresponding stratum intervals
-(\texttt{\$intervals}) are stored in the output object.
+Stratification of data can be done repeatedly, but only information
+from the last application is stored separately in values of the output
+object. However, stratum indices from all stratification procedures
+previously done are included in the data set stored in the output
+object. 
+
+
+\subsection{Matching by PS: {\tt ps.match()}}
+
+The most popular PS method to cope with covariate imbalances is
+matching by PS. One or more untreated individuals are matched to
+treated individuals (or vice versa) according to the estimated PS.
+Individuals matched to each other have similar or identical estimated
+PS wheres the similarity is determined by a caliper size with a
+pre-defined maximum width of one-fifth of the standard deviation of
+the logit of the estimated PS \cite{Coch:Rubi:cont:1973}.
+
+Similar to the function {\tt ps.makestrata()}, the use of {\tt
+  ps.match()} depends both on classes ({\it data.frame} and {\it
+  pscore}) and numbers of input objects (one or two data frames). No
+specification of the matching variable ({\tt matched.by}) is needed if
+the input object is of class {\it pscore}.  The estimated PS stored in
+the input object ({\tt \$pscore}) is automatically sourced.
 \begin{verbatim}
-##STU1
-stu1.strata4$name.stratum.index    ## default
-[1] "stratum.index"
+> pride.m1 <- ps.match(object = pride.ps,
++                      ratio = 1, x = 0.2, caliper = "logit",
++                      matched.by = "ps", setseed = 38902)
+> pride.m1
 
-stu1.strata4$stratified.by         ## default
-[1] "pscore"
+ Matched by:  ps 
 
+ Matching parameter:
+                      
+Caliper size:    0.102
+Ratio:           1.000
+Who is treated?: 1.000
 
-## PRIDE
-pride.strata5$name.stratum.index   
-[1] "stratum"
+ Matching information:
+                           
+Untreated to treated?: TRUE
+Best match?:           TRUE
 
-pride.strata5$stratified.by       
-[1] "ps"
+ Matching data:
+                                        
+Number of matched obs:              2062
+Number of matched treated obs:      1031
+Number of matched untreated obs:    1031
+Number of dropped obs:              1016
+Number of matching sets:            1031
+Number of incomplete matching sets:    0
 \end{verbatim}
-
-
-
-\subsection{\texttt{ps.match} - matching by the propensity score}
-
-The most popular propensity score method to cope with covariate
-imbalances is matching by the propensity score.
-
-One or more untreated observations will be matched to each treated
-observation (or vice versa) according to the estimated propensity
-score. Matched treated and untreated observations have similar or
-identical estimated propensity scores wheres the similarity is defined
-by a caliper, often with a maximum width of one-fifth of the standard
-deviation of the logit of the estimated propensity score
-\cite{Coch:Rubi:cont:1973}.
-
-Similar to \texttt{ps.makestrata()}, the usage of the function
-\texttt{ps.match()} depends both on the classes and on the number of
-the input objects. Allowed classes are '"data.frame"' and '"pscore"'
-(if \texttt{pscore()} is previously used) and one or two input
-objects, respectively, are permitted.
-
-No specification of the matching variable (\texttt{matched.by}) and
-the treatment variable (\texttt{treat}) is needed if the input object
-is of class '"pscore"'. The estimated propensity score and the
-treatment variable stored in '"object$\$$pscore"' and
-'"object$\$$treat"' are automatically sourced. In case of one or two
-data frames as input objects, both arguments are needed. A second data
-frame (\texttt{object.control}) is necessary if the first input object
-is a data frame (\texttt{object}) containing only treated or only
-untreated observations. If the matching variable differs in both data
-frames given, the matching variable in the second data frame
-(\texttt{control.matched.by}) must be specified. Independent of the
-classes and the numbers of the input objects, the value of the
-treatment variable indicating 'treated' must be given
-(\texttt{who.treated}).  The default is '1'.
-
-There are some parameters to define the matching procedure: the
-matching ratio (\texttt{ratio}) indicating how many observations
-should be matched, the caliper size (\texttt{caliper}) and the
-corresponding scale \texttt{x}, the statement \texttt{givenTmatchingC}
-indicating who should be matched to whom (treated to untreated
-observations or vice versa) and the statement \texttt{bestmatch.first}
-indicating whether matching partners should be taken randomly from the
-pool of potential matching partners or those with the most similar
-estimated propensity score. Furthermore, a random number can be
-specified (\texttt{setseed}) to make the matching procedure
-reproducible.
-
-As demonstrated in the data example 'pride', one untreated observation
-is matched to each treated observation (\texttt{ratio} $=$1) and the
-caliper size is set to one-fifth of the standard deviation of the
-logit of the estimated propensity score (\texttt{caliper}$=$'logit',
-\texttt{x}$=$0.2). The matching variable is 'ps' indicating the
-estimated propensity score stored in the input object.
+In case of one or two data frames as input objects, the matching ({\tt
+  matched.by}) as well as the treatment variable (argument {\tt
+  treat}) are needed. If the first data frame only contains data from
+treated (or untreated) individuals, a second input object (argument
+{\tt object.control}) comprising data from untreated (or treated)
+individuals is necessary. The indicated matching variable must be the
+same in both input data frames. If it differs, the matching variable
+in the second data frame (argument {\tt control.matched.by}) must be
+specified. Independent of classes and numbers of input objects, the
+value of treatment indicating {\it treated} individuals must be given
+(argument {\tt who.treated}, default is '1').
 \begin{verbatim}
-pride.match1 <- ps.match(object     = pride.ps,
-                         ratio      = 1,        ## default
-                         caliper    = "logit",  ## default
-                         matched.by = "ps",     
-                         setSeed    = 38902)
-\end{verbatim}
-In the data example 'stu1', the matching algorithm is switched such
-that two treated observations were matched to each untreated
-observation because fewer untreated than treated observations were
-observed. Furthermore, the caliper size is set to '0.5'.
-\begin{verbatim}
-stu1.match2 <- ps.match(object          = stu1.ps,
-                        ratio           = 2,
-                        caliper         = 0.5,
-                        givenTmatchingC = FALSE,
-                        setseed         = 39062)
-Argument 'givenTmatchingC'=FALSE: Treated elements were matched to 
+> stu1.m2 <- ps.match(object = stu1.ps,
++                     ratio = 2, caliper = 0.5,
++                     givenTmatchingC = FALSE,
++                     setseed = 39062)
+Argument 'givenTmatchingC'=FALSE: Treated elements were matched to
 each untreated element.
+> stu1.m2
+
+ Matched by:  pscore 
+
+ Matching parameter:
+                    
+Caliper size:    0.5
+Ratio:           2.0
+Who is treated?: 1.0
+
+ Matching information:
+                            
+Untreated to treated?: FALSE
+Best match?:            TRUE
+
+ Matching data:
+                                       
+Number of matched obs:              501
+Number of matched treated obs:      334
+Number of matched untreated obs:    167
+Number of dropped obs:              145
+Number of matching sets:            167
+Number of incomplete matching sets:   0
 \end{verbatim}
-\texttt{ps.match()} returns an object of class '"matched.pscore"',
-'"matched.data.frame"' or '"matched.data.frames"' depending on the
-class(es) of the input object(s) and on the argument
-\texttt{combine.output}. The complete data set (\texttt{\$data}) and a
-data set limited to the matched observations (\texttt{\$data.matched})
-are available. Both are extended by column(s) including the matching
-indices labeled by \texttt{name.match.index}. Furthermore the
-individual matching indices generated at last (\texttt{\$match.index},
-\texttt{\$name.match.index}), the name of the matching variable
-(\texttt{\$matched.by}) and the matching parameters
-(\texttt{\$match.parameters}) used at last are stored in the output
-object. If there are two input objects and argument
-\texttt{combine.output} is set to 'TRUE' (default), the values 'data',
-'data.matched' and 'match.index' are data frames and a vector,
-respectively. If \texttt{combine.output} is 'FALSE', these values are
-lists with entries corresponding to the input objects. If the class of
-the input object is '"pscore"', the output object also inherits all
-values from the input object.
-\begin{verbatim}
-## PRIDE
-pride.match1$match.parameters
-$caliper
-[1] 0.1018815
+There are further parameters to specify the matching procedure: the
+matching ratio ({\tt ratio}) indicating how many individuals should be
+matched and a statement concerning who should be matched to whom ({\tt
+  givenTmatchingC=TRUE}: treated to untreated individuals). The
+argument {\tt bestmatch.first} indicating whether matching partners
+should be taken randomly from the pool of potential matching partners
+({\tt FALSE}) or those with the most similar estimated PS ({\tt TRUE};
+default). Furthermore, a random number can be specified ({\tt
+  setseed}) to make the matching procedure reproducible. The caliper
+size can be defined using arguments {\tt caliper} and {\tt x}.  The
+default setting for the caliper size is one-fifth ({\tt x=2}) of the
+standard deviation of the logit of estimated PS ({\tt
+  caliper="logit"}). However, it is possible to specify numerics in
+argument {\tt caliper} (argument {\tt x} is then disregarded) or to
+modify argument {\tt x} in connection with {\tt caliper="logit"}.\\
 
-$ratio
-[1] 1
+As demonstrated in PRI.De data, one untreated individual is matched to
+a treated individual ({\tt ratio=1}) and the default caliper size is
+used. The matching variable is {\it ps} indicating the estimated PS
+stored in data of the input object {\tt pride.ps}. It is here
+identical to the value {\tt \$pscore} of the input object. The
+matching algorithm for the STU1 data is switched such that two treated
+individuals are matched to one untreated individual ({\tt ratio=2},
+{\tt givenTmatchingC=FALSE}) since fewer untreated than treated
+individuals are available. Furthermore, the caliper size is set to
+0.5.\\
 
-$who.treated
-[1] 1
+The function {\tt ps.match()} may return three different types of
+classes for output object(s): {\it matched.pscore}, {\it
+  matched.data.frame} or {\it matched.data.frames}. This depends on
+class(es) and numbers of input object(s) and on the specification of
+argument {\tt combine.output}. This argument is reasonable if there
+are two data frames as input objects. The default is {\tt
+  combine.output=TRUE} such that both input data frames extended by
+matching information are combined for output. The complete data set
+({\tt \$data}) and the data set limited to matched individuals are
+stored in the output object ({\tt \$data.matched}).  Both data sets
+are extended by a column including matching indices labeled by {\tt
+  name.match.index}. Furthermore, individual matching indices
+generated at last ({\tt \$match.index}, {\tt \$name.match.index}), the
+name of the matching variable ({\tt \$matched.by}) and several
+matching parameters used at last ({\tt \$match.parameter}) are stored.
+If there are two input objects and argument {\tt combine.output} is
+set to {\tt FALSE}, values {\tt \$data}, {\tt \$data.matched} and {\tt
+  \$match.index} are lists of data frames and vectors corresponding to
+input objects, respectively. If the class of the input object is {\it
+  pscore}, the output object also inherits all values from the input
+object.
 
-$givenTmatchingC
-[1] TRUE
-
-$bestmatch.first
-[1] TRUE
-
-pride.match1$matched.by
-[1] "ps"
-
-pride.match1$name.match.index
-[1] "match.index"
-\end{verbatim}
 
 
-\section{The balance check for covariate distributions}
+\section{Balance check for covariates}
 
-Propensity score methods are used to eliminate imbalances in covariate
-distributions between treatment groups. An important, but often
-neglected issue is to check those covariate distributions after the
-balancing procedure (stratification or matching). Graphical checks,
-statistical tests and standardized differences can be used to examine
-covariate distributions
+PS methods are used to eliminate imbalances in covariate distributions
+between treatment groups. An important, but often neglected issue is
+the balance check of covariate distributions after stratification or
+matching by PS. Graphics, statistical tests and standardized
+differences can be used to examine covariate distributions
 \cite{Aust:asse:2008}\nocite{Hans:esse:2008}-\cite{Aust:rela:2009}.
 
 
-\subsection{\texttt{dist.plot} - graphical checks}
+\subsection{Grahical balance check: {\tt dist.plot()}}
 
-\texttt{dist.plot()} offers to plot the distributions of selected
-covariates in the treatment groups. There are a couple of arguments to
-configurate the plots illustrated by means of both data examples.
+The function {\tt dist.plot()} offers an illustration of covariate
+distributions in treatment groups. As before, the use of function {\tt
+  dist.plot()} depends on the class of the input object. Therefore,
+arguments {\tt treat}, {\tt stratum.index} and {\tt match.index} do
+not be specficied if the input object results from a previous
+application of {\tt ps.makestrata()} or {\tt ps.match()}.  This is in
+contrast to the case where the input object is a {\it data frame}.
 
-The usage of \texttt{dist.plot()} depends on the class of the input
-object. The arguments \texttt{treat}, \texttt{stratum.index} or
-\texttt{match.index} have not to be specified if
-\texttt{ps.makestrata()} and \texttt{ps.match()} are previously used,
-respectively. The corresponding values stored in the input object are
-used. This is in contrast to the case where the input object is a data
-frame.
-
-If the input object is of class '"stratified.data.frame"' or
-'"stratified.pscore"', the distributions of the selected covariates
-given in the argument \texttt{sel} are plotted, automatically
-separated by treatment and strata. If the class of the input object is
-either '"matched.data.frame"', '"matched.data.frames "' or
-'"matched.pscore"', the covariate distributions in the treatment
-groups are only illustrated in the matched data. If a comparison to
-the original data is desired, the argument \texttt{compare} has to be
-set to 'TRUE' and the graphics will be extended.
-
-There are two different plot types which act depending on the type of
-covariates. The selected covariates are classified in categorical and
-non-categorical covariates. Whether a covariate is categorical or not
-is decided by means of the argument \texttt{cat.level}. The default is
-'10', i.e., if the covariate has more than ten different values, it is
-considered as non-categorical.
-
-If the argument \texttt{plot.type} is '1' (default), bar plots are
-used to show frequencies for categorical and means for non-categorical
-covariates (see Figure \ref{pride-plot1}). The covariate distributions
-are illustrated by means of histograms if \texttt{plot.type} is set to
-'2' (see Figure \ref{pride-plot2}). Here, the argument
-\texttt{plot.levels} specifies the number of cutpoints needed to
-define the classes for the histogram if the covariate is
-non-categorical. But the classification still depends on the sructure
-of the covariate to be plotted such that the number of classes can
-differ from the specified \texttt{plot.levels}. If the covariate is
-non-categorical, the number of its categories are used to define the
-cutpoints.
+If input object is of class {\it stratified.data.frame} or {\it
+  stratified.pscore}, covariate distributions are plotted separately
+by treatment and strata. If the class of the input object is either
+{\it matched.data.frame}, {\it matched.data.frames} or {\it
+  matched.pscore}, covariate distributions are illustrated per
+treatment group in the matched data. If covariate distributions in
+strata or matched data should be compared to distributions in original
+data, i.e., in data before stratification or matching, argument {\tt
+  compare} has to be set to {\tt TRUE}.
 \begin{verbatim}
-## Figure 1
-pride.plot1 <- 
-   dist.plot(object    = pride.strata5,      
-             sel       = c("REGION", "AGE"),
-             plot.type = 1)                  ## default
-
-pride.plot1$var.cat                          ## categorical 
-[1] "REGION"                                 ## covariates
-
-pride.plot1$var.noncat                       ## non-categorical 
-[1] "AGE"                                    ## covariates 
-
-
-## Figure 2
-pride.plot2 <- 
-   dist.plot(object       = pride.match1,      
-             sel          = c("AGE"),
-             plot.type    = 2,  
-             compare      = TRUE,            
-             legend.title = "RSV infection", ## title of legend
-             sub.cex      = 0.7)             ## font size of 
-                                             ## sub titles
-
-pride.plot2$breaks.noncat                    ## cutpoints of the 
-[[1]]                                        ## histogram for 
-[1] 0.0 0.5 1.0 1.5 2.0 2.5 3.0              ## non-categorical 
-                                             ## covariate
+> ## Figure 2 (left)
+> stu1.plot1 <- dist.plot(object = stu1.m2, sel = c("tgr"),
++                         plot.type = 1, compare = TRUE,
++                         bar.cex = 1.2, legend.cex=1.5, sub.cex=1.2,
++                         label.match = c("original data","matched sample"),
++                         col=c("gray65", "gray35"))
+>
+> ## Figure 2 (right)
+> stu1.plot2 <- dist.plot(object = stu1.m2, sel = c("age"),
++                         plot.type = 2, compare = TRUE,
++                         bar.cex = 1.2, legend.cex=1.2, sub.cex=1.2, 
++                         legend.title = "Therapy",
++                         col=c("gray65", "gray35"))
 \end{verbatim}
+There are two different plot types (argument {\tt plot.type}) which
+act depending on the measuring scale of covariates. The selected
+covariates (argument {\tt sel}) are classified in categorical and
+non-categorical (i.e., numerical) covariates. This classification is
+done by argument {\tt cat.level}. The default is 10, i.e., covariates
+with more than 10 different values are considered as non-categorical.
+The default of argument {\tt plot.type} is 1, i.e., bar plots are used
+to show frequencies for categorical and means for numerical
+covariates. 
+
+If argument {\tt plot.type} is set to 2, covariate distributions are
+illustrated by means of histograms. The argument {\tt plot.levels}
+specifies here the number of cutpoints needed to define histogram
+classes for non-categorical covariates. When the covariate is
+categorical, the number of its categories are used to define
+cutpoints. However, the use of {\tt plot.levels} still depends on the
+covariate structure to be plotted such that the used number of classes
+may differ from its specification.
+
 \begin{figure}[h]
-  \hspace{-1cm}
-  \includegraphics[width=7cm]{pride-plot1.pdf} 
-  \includegraphics[width=7cm]{pride1-plot1.pdf}
-  \caption{Frequencies of the categorical covariate 'REGION' (left)
-    and means of the non-categorical covariate 'AGE' (right) in the
-    stratified data set 'pride' are illustrated using standard
-    settings}\label{pride-plot1}
-\end{figure}
-\begin{figure}[h]
+  \vspace{-0.5cm}
   \begin{center}
-    \includegraphics[width=9cm]{pride-plot2.pdf} 
-    \caption{The distribution of the non-categorical covariate 'AGE'
-      in the matched data set of 'pride' (left) compared to its
-      distribution in the original data set 'pride' (right) are shown
-      using histograms}\label{pride-plot2}
+    \includegraphics[width=7cm]{stu1-plot1.pdf}
+    \includegraphics[width=7cm]{stu1-plot2.pdf}
+    \caption{Frequencies of categorical covariate 'tgr' indicating tumor
+      size (1: $\leq 10$mm, 2: $>$10mm) of patients in STU1 data before
+      and after matching; different types of plots in function {\tt
+        dist.plot()} are used: {\tt plot.type=1} (left) and {\tt
+        plot.type=2} (right)}\label{fig:stu1}
   \end{center}
 \end{figure}
-Furthermore, there are three useful arguments. The argument
-\texttt{with.legend} is set to 'TRUE' by default, i.e., a legend is
-shown. If \texttt{plot.type} is set to 1, the labels of the categories
-(categorical covariate) or the labels of the treatment variable
-(non-categorical covariate) are presented in the legend. Therefore be
-careful to modify the argument when different covariate types are to
-be plotted simultaneously. If \texttt{plot.type} is set to '2', labels
-of the treatment variable are shown in the legend independent of the
-covariate type.
+
+There are three further useful arguments. Argument {\tt
+  with.legend=TRUE} (default) includes a legend in plots. If {\tt
+  plot.type=1}, category labels (if covariate is categorical) or
+treatment labels (in case of non-categorical covariates) are given in
+the legend. Therefore, users have to be careful to modify this
+argument when categorical and non-categorical covariates are
+simultaneously plotted. If {\tt plot.type} is set to 2, treatment
+labels are always shown in the legend independent of the covariate
+type. The arguments {\tt label.stratum} and {\tt label.match} permit
+modification of labels within plots. Defaults are {\it Original} and
+{\it Stratum} and {\it Matched}, respectively. Further arguments can
+be used to modify, among others, font sizes, labels, colors and plot
+margins as illustrated for STU1 data (Figure \ref{fig:stu1}) and
+PRI.De data (Figure \ref{fig:pride-plot1}).
 \begin{verbatim}
-## Figure 3 (left)
-stu1.plot1 <- 
-    dist.plot(object  = stu1.match2,     
-              sel     = c("tgr"),
-              compare = TRUE,
-              label.match = c("original data","matched sample"))
 
-
-## Figure 3 (right)
-stu1.plot2 <- 
-    dist.plot(object      = stu1.match2, 
-              sel         = c("age"),
-              compare     = TRUE,
-              plot.type   = 2,
-              with.legend = FALSE)
+> ## Figure 3 (left)
+> pride.plot1 <- dist.plot(object = pride.str5, 
++                          sel = c("AGE"), plot.type = 1                          
++                          bar.cex = 1.2, sub.cex = 1.3, legend.cex = 1.2,
++                          col=c("gray65", "gray35"))
+>
+> ## Figure 3 (right)
+> pride.plot2 <- dist.plot(object = pride.m1, sel = c("AGE"),
++                          plot.type = 2, compare = TRUE,
++                          legend.title = "RSV infection",
++                          legend.cex = 1.2, bar.cex = 1.2, sub.cex = 1.2,
++                          col=c("gray65", "gray35"))
 \end{verbatim}
-The arguments \texttt{label.stratum} and \texttt{label.match} can be
-changed if the defaults set to '"Stratum"' and '"c(Original,
-Matched)"' are not appropriate. All other available arguments should
-be mainly used to modify font sizes, inner and outer margins of the
-plot and so on.
 \begin{figure}[h]
-  \hspace{-1cm}
-  \includegraphics[width=7cm]{stu1-plot1.pdf} 
-  \includegraphics[width=7cm]{stu1-plot2.pdf}
-  \caption{The distribution of both categorical covariates 'tgr'
-    (left) and 'age' (right) in the matched data set 'stu1' are
-    illustrated using different plot types}\label{stu1-plot1}
+  \vspace{-0.5cm}
+  \begin{center}
+    \includegraphics[width=7cm]{pride-plot1.pdf} 
+    \includegraphics[width=7cm]{pride-plot2.pdf}
+    \caption{Illustration of function {\tt distplot()} using different
+      {\tt plot.types}: (Left) Means of covariate 'AGE' in treatment
+      groups in five PS strata of PRI.De data; (Right) Histograms of
+      covariate 'AGE' in PRI.De data per treatment group before and
+      after matching}\label{fig:pride-plot1}
+  \end{center}
 \end{figure}
-All values which are plotted are additionally stored in the output
-list. The number and the manner of the list entries depend on the type
-both of the covariates and of the plot. Using
-\texttt{plot.type}$=$'1', the frequencies for the categorical and the
-means for the non-categorical covariates are stored in lists. The
-length of these lists is related to the number of categorical and
-non-categorical covariates.
+Numerous values from plotted data using function {\tt dist.plot()} are
+stored as lists in the output object, among others, names of
+categorical ({\tt \$var.cat}) and non-categorical covariates ({\tt
+  \$var.noncat}), frequencies ({\tt \$frequency}) or means ({\tt
+  \$means}) of covariates separated by treatment. The length and the
+manner of list entries depend on the type of selected covariates and
+the chosen plot type. For example, the value {\tt frequency} of output
+object {\tt stu1.plot1} is a list with length equal to the number of
+plotted categorical covariates. The list entries contain frequencies
+(scaled to 1) of different values (1 and 2) of covariate {\tt tgr} per
+treatment group (0 and 1) in original data and in the matched sample.
 \begin{verbatim}
-## Figure 1
-pride.plot1$frequency      ## frequencies scaled to one for
-[[1]]                      ## categorical covariates
-, , index = 1              ## Stratum 1
+> ## STU1 data matched by PS
+> ## Means of covariate 'tgr' in PS strata; plotted in Figure 2 (left)
+> stu1.plot1$var.cat
+[1] "tgr"
+>
+> stu1.plot1$frequency
+[[1]]
+, , index = original data
 
    treat
-             0          1
-  1 0.47302905 0.51492537
-  2 0.32157676 0.38059701  
-  3 0.11825726 0.05223881
-  4 0.08713693 0.05223881
+            0         1
+  1 0.1796407 0.2713987
+  2 0.8203593 0.7286013
 
-    ...                    ## ...
-
-, , index = 5              ## Stratum 5
+, , index = matched sample
 
    treat
-             0          1
-  1 0.11824324 0.13750000
-  2 0.25337838 0.20000000
-  3 0.14527027 0.16562500
-  4 0.48310811 0.49687500
+            0         1
+  1 0.1796407 0.1676647
+  2 0.8203593 0.8323353
+\end{verbatim}
+If argument {\tt plot.type} is set to 2, frequencies of covariates in
+histogram classes are separately stored for both treatment groups.
+Furthermore, cutpoints of histograms for non-categorical covariates
+are stored in the output object ({\tt \$breaks.noncat}).
+\begin{verbatim}
+> ## STU1 data matched by PS
+> ## Frequencies for values of covariate 'age' in original and matched 
+> ## sample; plotted in Figure 2 (right)
+> 
+> stu1.plot2$var.cat
+[1] "age"
+> 
+> ## Frequencies from categories of covariate 'age' in treatment group 0
+> ## (Therapy=0) in original data (1st column) and in the matched 
+> ## sample (2nd column)
+> stu1.plot2$x.s.cat  
+[[1]]
+   index
+      1   2
+  1  56  56
+  2 111 111
+> ## Frequencies from categories of covariate 'age' in treatment group 1
+> ## (Therapy=1) in original data (1st column) and in the matched 
+> ## sample (2nd column)
+> stu1.plot2$y.s.cat  
+[[1]]
+   index
+      1   2
+  1 294 149
+  2 185 185
+\end{verbatim}
 
-pride.plot1$mean           ## means only for non-categorical 
-[[1]]                      ## covariates
+The specification {\tt plot.type=1} in {\tt dist.plot()} for
+non-categorical covariates results in visualization of means of
+covariates per treatment group. There are stored in lists of the
+output object:
+\begin{verbatim}
+> ## PRI.De data stratified by quintiles of the 
+> ## distribution of estimated PS
+> ## Means of covariate'AGE' per treatment and strata, Figure 3 (left)
+> pride.plot1$var.noncat
+[1] "AGE"
+> 
+> ## Means in PS strata (columns) in exposure groups (1st row: no 
+> ## infection '0', 2nd row: RSV infection '1')
+> pride.plot1$mean  
+[[1]]                    
          1        2         3         4         5
 0 2.174609 1.482517 0.9733666 0.6686585 0.4156446
 1 2.185500 1.563706 1.0035175 0.5804821 0.3117728
 \end{verbatim}
-In case of \texttt{plot.type}$=$'2', frequencies are stored in lists
-w.r.t.~the lower and upper value of the treatment variable,
-respectively, which are indicated by \texttt{x.} and \texttt{y.} at
-the beginning of the value name.
+
+If histograms are used to plot the distribution of non-categorical
+covariates ({\tt plot.type=2}), list entries are in turn lists:
 \begin{verbatim}
-## Figure 2
-pride.plot2$x.s.noncat    ## left side in graphics
+> ## PRI.De data matched by PS
+> ## Figure 3 (right)
+> pride.plot2$var.noncat
+[1] "AGE"
+>
+> ## Frequencies per histogram class in group 'RSV infection = 0' for 
+> ## original data (1st list) and in matched sample (2nd list)
+> pride.plot2$x.s.noncat
 [[1]]
-[[1]]$`1`   ## original data
+[[1]]$`1`
 [1] 383 554 405 310 225 170
 
-[[1]]$`2`   ## matched data
+[[1]]$`2`
 [1] 315 321 178 101  78  38
-
-pride.plot2$y.s.noncat    ## right side in graphics
+> 
+> ## Frequencies per histogram class in group 'RSV infection = 1' for 
+> ## original data (1st list) and in matched sample (2nd list)
+> pride.plot2$y.s.noncat
 [[1]]
-[[1]]$`1`   ## original data
+[[1]]$`1`
 [1] 393 261 135 123  67  52
 
-[[1]]$`2`   ## matched data
+[[1]]$`2`
 [1] 393 261 135 123  67  52
 \end{verbatim}
-Furthermore, information about treatment (\texttt{\$treatment}), the
-individual stratum indices (\texttt{\$stratum.index}) or matching
-indices (\texttt{\$match.index}) and the selected covariates
-(\texttt{\$name.sel}, \texttt{\$sel}) are also saved in the output
-list.
+
+In addition to data information which is plotted, treatment ({\tt
+  \$treatment}), individual stratum indices ({\tt \$stratum.index}) or
+matching indices ({\tt \$match.index}) and selected covariates ({\tt
+  \$name.sel}, {\tt \$sel}) are stored in the output object.
 
 
 
-\subsection{\texttt{ps.balance} - statistical tests and standardized
-  differences}
+\subsection{Statistical tests and standardized differences: {\tt
+    ps.balance()} }
 
-\texttt{ps.balance()} permits the application of statistical tests or
-the calculation of standardized differences to access whether
-covariate distributions between treatment groups are balanced. The
-method of standardized differences is preferred in the literature
-since they do not depend on the sample size
+Graphical illustration of covariate distributions in treatment groups
+may give a first insight in covariate differences between treatment
+groups. However, statistical tests decide whether differences between
+groups are significant. The function {\tt ps.balance()} permits the
+application of statistical tests and the computation of standardized
+differences. There is an ongoing discussion about the appropriateness
+of statistical tests for balance decision such that standardized
+differences are recommended for balance decision especially in matched
+data
 \cite{Hill:disc:2008}-\nocite{Hans:esse:2008,Stua:deve:2008}\cite{Aust:disc:2008}.
 
-Similar to the functions described above, the usage of
-\texttt{ps.balance()} depends on the class of the input object. If
-either \texttt{ps.makestrata()} or \texttt{ps.match()} are previously
-used, the arguments \texttt{treat}, \texttt{stratum.index} or
-\texttt{match.index} are not needed, contrary to the case if the input
-object is a data frame.
+Similar to functions described above, the usage of function {\tt
+  ps.balance()} depends on the class of the input object. If
+information about treatment, stratum or matching indices is stored in
+the input object, it is not necessary to specify them since they are
+automatically sourced from the input object. If the input object is a
+{\it data frame}, the corresponding arguments have to be given. By
+default, statistical tests (argument {\tt method="classical"}) are
+used with respect to the measuring scale of selected covariates. That
+means, the $t$-test and the $\chi^2$- test for non-categorical and
+categorical covariates (internal use of {\tt t.test()} and {\tt
+  chisq.test()}) are applied whereas the argument {\tt cat.levels}
+defines whether a covariate is categorical or non-categorical (see
+function {\tt dist.plot()}). The tests are applied to data both before
+and after the balancing procedure (stratification or matching). A
+table summarizing balance decisions for all tested covariates is given
+({\tt Summary of balance check}). Furthermore, the balance decision
+for each selected covariate is shown as well as more detailed
+information about test results.
+\begin{verbatim}
+> ## Balance check for stratified PRI.De data using statistical tests 
+> pride.str5.bal <- ps.balance(object = pride.str5, sel = c(2:8), 
++                              method = "classical", alpha = 5) 
+> pride.str5.bal
 
-To apply classical statistical tests on data, i.e., $t$-test for
-non-categorical covariates and $\chi^2$- test for categorical
-covariates (internal use of \texttt{t.test()} and
-\texttt{chisq.test()}), the argument \texttt{method} must be set to
-'classical' (default). The argument \texttt{cat.levels} specifies
-whether a covariate is categorical or not (see \texttt{dist.plot()}).
-The tests are employed to the data both before and after the balancing
-procedure (stratification or matching).
-\begin{verbatim}
-## PRIDE
-pride.balance <- ps.balance(object  = pride.strata5,
-                            sel     = c(2:8),
-                            method  = "classical",
-                            alpha   = 5) 
-\end{verbatim}
-If the argmuent \texttt{method} is set to '"stand.diff"', standardized
-differences are calculated for each selected covariate before and
-after the balancing procedure. 
-\begin{verbatim}
-## STU1 
-stu1.balance <- ps.balance(object  = stu1.match2,
-                           sel     = c("tgr","age"),
-                           method  = "stand.diff",    
-                           alpha   =  20)  
-\end{verbatim}
-The value '"bal.test"' of the output object (of the same class as the
-input object) contains comprehensive information about the balance
-between treatment groups for each selected covariate. Here, the values
-'0' and '1' describe whether the covariate distribution is
-'imbalanced' and 'balanced', respectively. In case of stratified data,
-the covariate distribution is considered as balanced after
-stratification, if each stratum-specific distribution is balanced. If
-there is an imbalance in at least one stratum, the covariate
-distribution is considered as imbalanced after stratification.
-\begin{verbatim}
-## STU1
-stu1.balance$bal.test$balance.table   
-             tgr age         
-table.before   0   0    ## 'tgr' are imbalanced before, but balanced   
-table.after    1   0    ## after matching; 'age' remains imbalanced
+ Summary of balance check: 
 
-stu1.balance$bal.test$balance.table.summary
+                  Before: no bal (0) Before: bal (1)
+After: no bal (0)                  2               1
+After: bal (1)                     1               2
+
+ Covariates not completely tested: 
+RSVINF
+
+ Detailed balance check (overall): 
+
+       SEX ETHNO FRUEHG RSVINF HERZ REGION AGE
+Before   0     1      1      0    1      0   0
+After    1     0      1     NA    1      0   0
+
+ Detailed balance check (per stratum):
+ [p-values from tests (significance level: 0.05)]
+
+            SEX ETHNO FRUEHG RSVINF  HERZ REGION   AGE
+Before     0.01 0.907  0.413      0 0.518      0     0
+------    ----- -----  -----  ----- -----  ----- -----
+Stratum 1 0.296 0.632  0.223  0.647 0.766  0.058  0.83
+Stratum 2  0.16 0.003   0.98  0.422 0.642  0.133 0.084
+Stratum 3 0.798 0.169  0.678  0.757 0.484  0.038 0.429
+Stratum 4 0.124 0.212  0.724     NA 0.843  0.542 0.002
+Stratum 5  0.96 0.882  0.404     NA 0.523  0.415     0
+                                                      
+---------  ----  ----   ----   ----  ----   ----  ----
+Test      chi^2 chi^2  chi^2  chi^2 chi^2  chi^2     t
+\end{verbatim}
+In case of the PRI.De data, p-values from statistical tests applied to
+data before and after stratification are given. Covariates, for which
+tests are not applicable or standardized differences are not
+computable, are not contained in the summary balance table, but listed
+separately. It concerns the covariate 'RSVINF' (describing whether
+there was a former infection to RSV) since it can be tested in the
+fourth and fifth stratum.\\
+
+If the argmuent {\tt method="stand.diff"}, standardized differences
+are calculated before and after the balancing procedure. The table for
+detailed balance information then contains standardized differences
+instead of p-values:
+\begin{verbatim}
+> ## Balance check for matched STU1 data using standardized differences
+> stu1.m2.bal <- ps.balance(object = stu1.m2,
++                           sel = c("tgr","age"),
++                           method = "stand.diff",
++                           alpha =  20)
+> stu1.m2.bal
+
+ Summary of balance check: 
+
                       before: no balance (0) before: balance (1)
 after: no balance (0)                      1                   0
 after: balance (1)                         1                   0
 
-stu1.balance$bal.test$covariates.NA             
-character(0)
+ Covariates not completely tested: ---
 
-stu1.balance$bal.test$covariates.bal.before    
-character(0)
+ Detailed balance check (overall): 
 
-stu1.balance$bal.test$covariates.bal.after     
-[1] "tgr" 
+             tgr age
+table.before   0   0
+table.after    1   0
 
+ Detailed balance check:
+ [Standardized differences (cut point: 20)]
 
-## PRIDE
-pride.balance$bal.test$balance.table
-             SEX ETHNO FRUEHG RSVINF HERZ REGION AGE
-table.before   0     1      1      0    1      0   0
-table.after    1     0      1     NA    1      0   0
-
-pride.balance$bal.test$balance.table.summary
-                      before: no balance (0) before: balance (1)
-after: no balance (0)                      2                   1
-after: balance (1)                         1                   2
-
-pride.balance$bal.test$covariates.NA
-[1] "RSVINF"
-
-pride.balance$bal.test$covariates.bal.before
-[1] "ETHNO"  "FRUEHG" "HERZ"  
-
-pride.balance$bal.test$covariates.bal.after
-[1] "SEX"    "FRUEHG" "HERZ"  
+             tgr    age
+Before    22.089 58.065
+------     -----  -----
+After      3.162 22.852
+                       
+---------   ----   ----
+Scale        bin    bin
 \end{verbatim}
-Additionally, the names of covariates for which either the statistical
-test could not be applied or standardized differences could not be
-calculated are saved (\texttt{\$covariates.NA}). The names of balanced
-covariates before and after the balancing procedure are also stored in
-the output list (\texttt{\$covariates.bal.before} and
-\texttt{\$covariates.bal.after}).
-
-Depending on the selected method, information about test results or
-standardized differences is available. If statistical tests are
-applied, resultant p-values for each covariate are given as a matrix
-(\texttt{\$p.value}). Here, there is a column for each covariate and
-p-values from the tests in the original data can be found in the first
-row and those from the tests within the stratified or the matched data
-are placed in rows $2, ..., S$. 
+The shown information of covariate balance for selected covariates is
+stored in value {\tt \$bal.test} of the output object. When
+standardized differences are calculated (argument {\tt
+  method="stand.diff"}), means and standard deviations (SD) for each
+covariate per treatment group are additionally stored:
 \begin{verbatim}
-pride.balance$bal.test$p.value                     ## p-values of tests
-       SEX ETHNO FRUEHG RSVINF  HERZ REGION   AGE
-[1,] 0.010 0.907  0.413  0.000 0.518  0.000 0.000  ## original data
-[2,] 0.296 0.632  0.223  0.647 0.766  0.058 0.830  ## stratum 1
-[3,] 0.160 0.003  0.980  0.422 0.642  0.133 0.084  ##
-[4,] 0.798 0.169  0.678  0.757 0.484  0.038 0.429  ## ...
-[5,] 0.124 0.212  0.724     NA 0.843  0.542 0.002  ##
-[6,] 0.960 0.882  0.404     NA 0.523  0.415 0.000  ## stratum 5
-
-pride.balance$bal.test$method   ## applied tests
-      SEX  ETHNO  FRUEHG  RSVINF  HERZ  REGION        AGE
-    "cat"  "cat"   "cat"   "cat" "cat"   "cat"  "non-cat"
-
-
-pride.balance$bal.test$alpha
-[1] 5                           ## significance level
+> ## Means for covariates 'tgr' and 'age' before (1st row) and after 
+> ## matching (2nd row) in treatment group 1
+> stu1.balance$bal.test$Means.treat.1
+           tgr       age
+[1,] 0.7286013 0.3862213
+[2,] 0.8323353 0.5538922
+>
+> ## Standard deviations for covariates 'tgr' and 'age' before (1st row) 
+> ## and after matching (2nd row) in treatment group 1
+> stu1.balance$bal.test$SDs.treat.1
+           tgr       age
+[1,] 0.4446813 0.4868823
+[2,] 0.3735682 0.4970871
 \end{verbatim}
-If standardized differences are calculated, the standardized
-differences (per cent), the means and the standard deviations (SD) in
-the treatment groups for each covariate are given in the same manner
-as in value \texttt{\$p.value}.
+Information about statistical tests applied or covariate types needed
+for correct calculation of standardized differences is also stored
+({\tt \$bal.test\$method} in the output object. In addition, the
+significance level is available ({\tt \$bal.test\$alpha}). It has to
+be interpreted as cutpoint at which the decision about the balance of
+a covariate distribution is made if standardized differences are
+calculated.\\
+
+In the new released version 1.1 of {\tt nonrandom} it is possible to
+visualize standardized differences of selected covariates before and
+after matching (Figure \ref{fig:pride-stdf}).
+\begin{figure}[h]
+  \vspace{0.5cm}
+  \begin{center}
+    \includegraphics[width=8cm]{pride-plotstdf.pdf} 
+    \caption{Illustration of standardized differences of several
+      covariates in PRI.De data before and after matching by the
+      estimated PS using function {\tt
+        stdf.plot()}}\label{fig:pride-stdf}
+  \end{center}
+\end{figure}
 \begin{verbatim}
-stu1.balance$bal.test$Means.treat.0            
-           tgr       age   ## means w.r.t. treatment '0' 
-[1,] 0.8203593 0.6646707   ## ... before matching
-[2,] 0.8203593 0.6646707   ## ... after matching
-
-stu1.balance$bal.test$Means.treat.1            
-           tgr       age   ## means w.r.t. treatment '1' 
-[1,] 0.7286013 0.3862213   
-[2,] 0.8323353 0.5538922   
-
-stu1.balance$bal.test$SDs.treat.0 
-           tgr       age   ## SDs w.r.t. treatment '0' 
-[1,] 0.3838879 0.4721055   
-[2,] 0.3838879 0.4721055  
-
-stu1.balance$bal.test$SDs.treat.1  
-           tgr       age   ## SDs w.r.t. treatment '1'
-[1,] 0.4446813 0.4868823   
-[2,] 0.3735682 0.4970871  
-
-stu1.balance$bal.test$Standardized.differences 
-           tgr      age    ## standard differences 
-[1,] 22.089171 58.06462
-[2,]  3.161882 22.85235
-
-stu1.balance$bal.test$method                   
-  tgr      age 
-"bin"    "bin"          ## type of covariate
-
-stu1.balance$bal.test$alpha   
-[1] 20                     ## cutpoint for the decision
-                           ## about balance
+> ## Plot standardized differences of selected covariates 
+> ## in (matched) PRI.De data
+> pride.m1.bal <- ps.balance(object = pride.m1, sel = c(2:8),
++                            method = "stand.diff", alpha = 20)
+>
+> ## Figure 4
+> stdf.plot(objct = pride.m1.bal, 
++           main = "PRI.De: Matching by PS",
++           sub = "Standardized differences",
++           las = 1, cex.main = 1.4, cex.sub = 1.3,
++           legend.label=c("before matching","after matching"),
++           legend.xy=c(7.5,1.5),
++           mymar=c(6,6,4,2), col.p=c("gray65", "gray35"))
 \end{verbatim}
-In value \texttt{\$method}, the type of each covariates is stored. The
-significance level is also available (\texttt{\$alpha}). It has to be
-interpreted as cutpoint at which the decision about the balance of a
-covariate distribution is made if standardized differences are
-calculated.
-
 The check for balance of covariate distributions entails the knowledge
-about the correctness of the propensity score model. If the propensity
-score model is correctly fitted, at least covariates included in
-propensity score model should be sufficiently balanced after the
-stratification or matching. Otherwise re-modeling of the propensity
-score model should be considered.
+about the correctness of the PS model. If the PS model is correctly
+fitted, at least covariates included in PS model should be
+sufficiently balanced after the stratification or matching. Otherwise
+re-modeling of the PS model should be considered.
 
 
-\section{Propensity score based treatment effects}
 
-The estimation of the propensity score based treatment effect differs
-in the application of the propensity score method. Therefore, the
-following section is separated by the propensity score methods which
-can be applied.
+\section{Propensity score based treatment effects: {\tt ps.estimate()}}
 
-In general, the usage of \texttt{ps.estimate()} depends on the class
-of the input object. If \texttt{ps.makestrata()} or
-\texttt{ps.match()} are previously used, the arguments \texttt{treat},
-\texttt{stratum.index} or \texttt{match.index} are not needed,
-contrary to the case if the input object is a data frame.
+The estimation of PS based treatment effect differs in the previous
+application of PS method and in the measuring scale of outcome.
+Therefore, the description of function {\tt ps.estimate()} is in the
+following separated by PS methods directly applicable in the {\tt
+  nonrandom} package.
+
+In general, the use of function {\tt ps.estimate()} depends on the
+class of the input object. If function {\tt ps.makestrata()} or {\tt
+  ps.match()} are previously used, arguments for treatment ({\tt
+  treat}), stratum ({\tt stratum.index}) or matching indices ({\tt
+  match.index}) are not needed, contrary to the case if the input
+object is a {\it data frame}. In addition to PS based effect
+estimates, it is possible to fit a regression model (argument {\tt
+  regr}) for the issue of comparison. The resulting estimates are
+those for conditional parameters in regression models. They are
+automatically projected to estimates for corresponding marginal
+parameters. Furthermore, additional adjustment for still imbalanced
+covariates in stratified or matched data can be done (argument {\tt
+  adj}).
 
 
-\subsection{Estimator based on stratification by the propensity score}
+\subsection{Effect estimator based on stratification by PS}
 
-If stratification is applied in data with continuous response, the
-marginal treatment effect based on the propensity score is estimated
-as a weighted sum of differences of the mean responses in treated and
-untreated observations over the propensity score strata. To summarize,
-two different kinds of weights $w_s$ are possible.  Firstly, the
-weights are equal to the proportion of observations in each stratum
-(\texttt{weights}$=$'rr') or, secondly, the weights are related to the
-inverse variance of the stratum-specific treatment effect
-(\texttt{weights}$=$'opt').
+If stratification is applied in data with continuous outcome, the
+marginal treatment effect based on PS is estimated as a weighted sum
+of differences of the mean outcomes in treated and untreated
+individuals across PS strata. Therefore, two different weighting
+schemes are available: on the one hand, weights are equal to the
+proportion of individuals per stratum ({\tt weights="rr"}) and on the
+other hand weights are related to the inverse variance of
+stratum-specific treatment effects ({\tt weights="opt"}).
 \begin{verbatim}
-stu1.estimate <- 
-    ps.estimate(object    = stu1.strata4,
-                resp    = "pst",           ## continuous response   
-                weights = "opt",
-                regr    = c("tgr", "age")  ## regression model
+> ## STU1: Effect estimation of therapy on quality of life ('pst')
+> ## based on PS stratification
+> stu1.estimate <- ps.estimate(object = stu1.str4,
++                              resp = "pst", 
++                              weights = "opt",
++                              regr = c("tgr", "age")  
+> summary(stu1.estimate)
+
+         Summary for effect estimation 
+
+
+ Treatment/exposure: therapie
+ Outcome: pst
+ Effect measure: effects 
+
+ Effect estimates:
+
+                effect  SE[effect]  [95%-CI[effect]]
+                ------  ----------  ----------------
+Crude            1.589       1.261    [-0.883,4.061]
+Stratification                                      
+ Unadjusted      0.793      1.3068    [-1.768,3.354]
+ Adjusted                                        [,]
+Regression       0.788      1.2951     [-1.75,3.326]
+                                                    
+
+ Stratum-specific parameter estimates:
+
+                     S1     S2    S3     S4
+                  -----  ----- -----  -----
+Unadjusted effect 3.453 -6.703 1.223 -7.001
+
+ Stratum-specific adjusted parameter estimates:
+
+ Stratum-specific weights:
+0.47 0.13 0.34 0.06
 \end{verbatim}
-In case of stratified data with binary response, both the stratified
-Mantel-Haenszel estimator and the estimator based on response rates
-\cite{Graf:Schu:lett:2008} are used to estimate a treatment effect as
-an odds ratio. Both methods estimate different parameters and
-therefore they differ in their interpretation of the estimated odds
-ratio \cite{Stam:Graf:Schm:Schu:esti:2010}. Propensity score methods
-are used to estimate marginal treatment effects, but only the response
-rates estimator fulfills the criteria for an estimator of the marginal
-odds ratio. It is defined as an odds ratio of marginal response
-probabilities, contrary to the stratified Mantel-Haenszel estimator
-which is a weighted sum of stratum-specific odds ratios
-\cite{Graf:Schu:lett:2008,Stam:Graf:Schm:Schu:esti:2010}. A marginal
-odds ratio for response describes the change in odds of response, if
-everybody versus nobody were treated. It is different to the
-conditional odds ratio, e.g., estimated by logistic regression (with
-the assumption of constant individual odds ratios). The popular
-Mantel-Haenszel estimator stratified by the propensity score can fail
+The summary function for {\tt ps.estimate()} offers an overview about
+all estimated effects, standard errors and confidence intervals. In
+the example of stratified STU1 data, no further adjustment in PS
+strata is specified such that the respective row in the result table
+remains empty. Furthermore, stratum-specific parameter estimates and
+weights are given.\\
+
+In case of stratified data with binary outcome, the estimator based on
+outcome rates from PS strata \cite{Graf:Schu:lett:2008} is implemented
+in function {\tt ps.estimate()} to estimate the marginal odds ratio as
+effect measure. The marginal odds ratio for outcome describes the
+change in odds for outcome, if everybody versus nobody were treated.
+It is different to the conditional odds ratio, e.g., estimated by
+logistic regression (with the assumption of constant individual odds
+ratios). The popular stratified MH estimator stratified by PS can fail
 to estimate both the indivdiual, conditional and the marginal odds
-ratio \cite{Stam:Graf:Schm:Schu:esti:2010}.
+ratio \cite{Stam:Graf:Schm:Schu:esti:2010,Gree:inte:1987}. However,
+the stratified MH estimator is implemented since often used in the
+analysis of stratified data. The approach of outcome rates from PS
+strata is proposed by Graf et al.~\cite{Graf:Schu:lett:2008}. PS
+methods are used to estimate marginal treatment effects, but only the
+outcome rates based estimator fulfills the criteria for an estimator
+of the marginal odds ratio. It is defined as an odds ratio of marginal
+outcome probabilities, contrary to the stratified MH estimator which
+is a weighted sum of stratum-specific odds ratios
+\cite{Graf:Schu:lett:2008,Stam:Graf:Schm:Schu:esti:2010}.
 \begin{verbatim}
-pride.estimate <- 
-   ps.estimate(object  = pride.strata5,
-               resp    = "SEVERE",         ## binary response
-               treat   = "PCR_RSV",
-               family  = "binomial",
-               adj     = c("AGE", "EXT", "KRANKSUM"),
-               regr    = SEVERE ~ PCR_RSV + SEX + ETHNO + FRUEHG + 
-                                  HERZ + ELTATOP + REGION + AGE +   
-                                  TOBACCO + VOLLSTIL +EXT + EINZ +
-                                  KRANKSUM,
-               weights = "rr")
+> ## PRI.De: Effect estimation of exposure to RSV infection on the 
+> ## severity of LRTI based on data stratified by PS
+> pride.estimate <- ps.estimate(object = pride.str5, 
++                               family = "binomial",
++                               resp = "SEVERE", 
++                               treat = "PCR_RSV", 
++                               adj = c("REGION", "ETHNO", "AGE"),
++                               regr = SEVERE~PCR_RSV+SEX+ETHNO+FRUEHG + 
++                                      HERZ+ELTATOP+REGION+AGE+KRANKSUM+
++                                      TOBACCO+VOLLSTIL+EXT+EINZ,
++                               weights = "rr")
+> summary(pride.estimate)
+
+         Summary for effect estimation 
+
+ Treatment/exposure: PCR_RSV
+ Outcome: SEVERE
+ Effect measure: odds ratios 
+
+ Effect estimates:
+                    or  SE[log[or]]  [95%-CI[or]]
+                 -----  -----------  ------------
+Crude            1.677       0.0796  [1.435,1.96]
+Stratification                                   
+  Outcome rates  1.362       0.0805 [1.163,1.595]
+  MH             1.419       0.0823 [1.208,1.667]
+  Adjusted       1.565       0.2013 [1.055,2.322]
+Regression                                       
+  Conditional    1.515       0.0904 [1.269,1.809]
+  Marginal       1.399       0.0691 [1.222,1.602]
+                                                 
+ Stratum-specific parameter estimates:
+
+                          S1    S2    S3    S4    S5
+                       ----- ----- ----- ----- -----
+  outcome rates 'p0'    0.44  0.53  0.55   0.6  0.66
+  outcome rates 'p1'    0.48  0.57  0.58  0.71  0.81
+  odds ratio            1.16  1.15  1.16  1.67  2.17
+
+ Stratum-specific adjusted parameter estimates:
+1.407 1.398 1.245 1.62 2.154
+ Stratum-specific weights:
+0.2 0.2 0.2 0.2 0.2
 \end{verbatim}
-In addition to the estimation of the unadjusted propensity score based
-treatment effect, it is possible to adjust for residual imbalances in
-strata using argument \texttt{adj}. Stratum-specific treatment effects
-are then estimated using generalized linear models which are the same
-in each stratum. Furthermore, traditional regression models can be
-fitted using argument \texttt{regr}. There are two options to specify
-both arguments \texttt{adj} and \texttt{regr}. First, they can be
-given as formulas, typically as 'Y$\sim$Z+$X_1$+...+$X_K$'. Here,
-response $Y$ and treatment $Z$ must be the same as arguments
-\texttt{resp} and \texttt{treat} if given. Another option is to
-specifiy only a vector with names or integers related to the
-covariates in the data for which the treatment effect on response
-should be adjusted for in the strata.
+There are two options to specify arguments {\tt adj} and {\tt regr}.
+On the one hand, they can be specified as typical formulas whereas
+treatment has to be the first independent variable. Furthermore,
+outcome and treatment must be the same as specified in arguments {\tt
+  resp} and {\tt treat}. On the other hand, a vector of strings or
+numerics can be given which indicate covariates to be adjusted for in
+original data and in each stratum, respectively. The used formulas for
+those fitted regression models are stored in the output object.
+Corresponding stratum-specific adjusted treatment effects and weights
+are also stored in the output object.\\
 
-The output object contains information about all estimates which are
-listed separated by the estimation procedure. Furthermore, the values
-depend on the type of response (continuous or binary). Regression
-based estimates are included in value \texttt{\$lr.estimation}. Here,
-both the estimated conditional and marginal treatment effects and
-their standard errors are given. If the response is binary, the
-standard errors are given on the log scale. Information about the
-regression model is also available. In case of continuous response,
-the continuous and the marginal treatment effects are identical.
-\begin{verbatim}
-## STU1
-stu1.estimate$lr.estimation   ## regression based treatment effect
-$effect                  
-[1] 0.8979454                 ## conditional treatment effect
-
-$se               
-[1] 1.299290                  ## standard error of conditional effect
-
-$regr.formula               
-pst ~ therapie + tgr + age    ## regression model used
-\end{verbatim}
-The value \texttt{\$ps.estimation} includes the crude treatment effect
-(\texttt{\$crude}) and the estimated propensity score based treatment
-effects, both unadjusted (\texttt{\$unadj}) and adjusted
-(\texttt{\$adj}) if desired. Additionally, the estimated
-stratum-specific treatment effects, estimated standard errors (on the
-log scale for binary response) and the used weights per stratum are
-given. In case of binary response, both the estimated stratum-specific
-odds ratios needed for the stratified Mantel-Haenszel estimator and
-the estimated stratum-specific response probabilities used by the
-response rates estimator are also stored.
-\begin{verbatim}
-## PRIDE
-pride.estimate$ps.estimation ## propensity score based estimates
-$crude
-$crude$effect                ## crude treatment effect via 'Y~Z'
-[1] 1.676623
-
-$crude$se                    ## standard error for the crude 
-[1] 0.07961634               ## treatment effect
+Information stored in the output object is managed as follows. Results
+from regression modeling is stored in value {\tt \$lr.estimation}. PS
+based results can be found in value {\tt \$ps.estimation}. This value
+is in turn divided in {\tt \$ps.estimation\$unadj} and {\tt
+  \$ps.estimation\$adj} for unadjusted and adjusted analyses,
+respectively. In both values, stratum-specific information are stored.
+Further values of the output object contain information about outcome
+({\tt \$name.resp}, {\tt \$resp}), treatment ({\tt \$name.treat}, {\tt
+  \$treat}) and stratum indices ({\tt \$name.stratum.index}, {\tt
+  \$stratum.index}). The output object inherits all values from the
+input object as well.
 
 
-$unadj
-$unadj$effect.mh            ## stratified Mantel-Haenszel estimator
-[1] 1.418535
-
-$unadj$odds.str             ## stratum-specific odds ratios
-       1        2        3        4        5 
-1.164420 1.147405 1.164530 1.671525 2.166276 
-
-$unadj$se.mh                ## standard error for the 
-[1] 0.08234186              ## Mantel-Haenszel estimator
-
-$unadj$effect               ## response rates based estimator
-[1] 1.361594
-
-$unadj$se                   ## standard error on log scale for the
-[1] 0.08051982              ## response rates based estimator
-
-$unadj$p1                   ## estimated marginal response 
-[1] 0.6303096               ## probabilities for treatment '1'
-
-$unadj$p0                   ## estimated marginal response 
-[1] 0.5559866               ## probabilities for treatment '0'
-
-$unadj$p1.str  ## stratum-specific response prob's for treatment '1'
-        1         2         3         4         5 
-0.4776119 0.5686275 0.5828877 0.7130802 0.8093750 
-
-$unadj$p0.str  ## stratum-specific response prob's for treatment '0'
-        1         2         3         4         5 
-0.4398340 0.5346320 0.5454545 0.5978836 0.6621622 
-
-
-$adj
-$adj$model                  ## adjustment within strata
-SEVERE ~ PCR_RSV + AGE + EXT + KRANKSUM
-
-$adj$effect.str             ## adjusted stratum-specific effects
-[1] 1.181630 1.205805 1.111415 1.534873 2.094389
-
-$adj$effect                 ## adjusted overall propensity score 
-[1] 1.425658                ## based treatment effect
-
-$adj$se                     ## standard error for the adjusted 
-[1] 0.1893357               ## propensity score based estimator
-
-
-$weights
-[1] "rr"
-
-$weights.str                ## weights per stratum
-[1] 0.2001300 0.1998051 0.2001300 0.1998051 0.2001300
-\end{verbatim}
-Further values in the output object contain information about the
-response (\texttt{\$name.resp}, \texttt{\$resp}), the treatment
-(\texttt{\$name.treat}, \texttt{\$treat}) and the stratum indices
-(\texttt{\$name.stratum.index}, \texttt{\$stratum.index}). The output
-object inherits all values from the input object as well.
-
-
-\subsection{Estimator based on matching by the propensity score}
+\subsection{Effect estimator based on matching by PS}
 
 If matching is applied, the dependency structure of the matched sample
-can be accounted for in the data analysis
+has to be accounted for in the data analysis
 \cite{Bres:stat:1980}\nocite{Roth:Gree:Lash:mode:1998}-\cite{Agre:Min:effe:2004}.
-Generalized linear mixed models are appropriate and implemented in
-\texttt{lmer} (package \texttt{lme4}). It is used in
-\texttt{ps.estimate()} for the estimation of treatment effects in data
-matched by the propensity score. Therefore, random intercepts for each
-matching set are modeled.
+Generalized linear mixed models are appropriate and involved in the
+{\tt nonrandom} package. Therefore, the function {\tt lmer}
+implemented in the \texttt{lme4} package is internally used whereas
+random intercepts for matching set are modeled.
 
-The data analysis of a matched sample can be done in the same way as
-for stratified data. The values of the output object in case of
-matched data differ slightly from the those based on the analysis of
-stratified data. There are naturally no stratum-specific effect
-estimates and corresponding weights available, but only an estimated
-overall treatment effect and its estimated standard error. If the
-response is binary, the standard error are given on the log scale.
+The data analysis of matched data can be done in the same way as for
+stratified data. The values of the output object in case of matched
+data differ slightly from the those based on the analysis of
+stratified data. There are naturally no stratum-specific information
+and no corresponding weights available, but only an estimated overall
+unadjusted and adjusted treatment effects (if argument {\tt adj} is
+specified) and corresponding standard errors and confidence intervals.
+If the outcome is binary, the standard error is given for the effect
+estimate on log-scale.
 \begin{verbatim}
-## STU1, matched sample
-stu1.estimate.match <- 
-    ps.estimate(object = stu1.match2,
-                resp   = "pst")
+> ## STU1: Effect estimation of therapy on quality of life ('pst')
+> ## based on PS matching
+> stu1.estimate.m2 <- ps.estimate(object = stu1.m2,
++                                 resp = "pst")
+> stu1.estimate.m2
 
-stu1.estimate.match$ps.estimation  ## crude effect, identical to that 
-$crude                             ## of analysis of stratified data
-$crude$effect
-[1] 1.589436
+ Effect estimation for treatment/exposure on outcome 
 
-$crude$se
-[1] 1.260993
-
-
-$unadj
-$unadj$effect
-[1] 0.8732535
-
-$unadj$se
-[1] 1.317626
+ Treatment/exposure: therapie
+ Outcome: pst
+ Effect measure: difference ('effect')
 
 
-$adj
-[1] "No adjustment"
+ Table of effect estimates:
 
-$weights
-NULL
-
-$weights.str
-NULL
-
-
-## PRIDE, matched sample
-pride.estimate.match <-
-   ps.estimate(object  = pride.match1,
-               resp    = "SEVERE",
-               family  = "binomial")
-
-pride.estimate.match$ps.estimation$unadj
-$unadj$effect
-[1] 1.378804
-
-$unadj$se
-[1] 0.09157813
+               effect   SE[effect]  [95%-CI[effect]]
+                -----  -----------  ----------------
+Crude           1.589        1.261    [-0.883,4.061]
+Matching                                            
+  Unadjusted    0.873       1.3176    [-1.709,3.455]
+  Adjusted                                       [,]
+Regression                                       [,]
 \end{verbatim}
-As above, information about the response (\texttt{\$name.resp},
-\texttt{\$resp}), the treatment (\texttt{\$name.treat},
-\texttt{\$treat})and the matching indices
-(\texttt{\$name.match.index}, \texttt{\$match.index}) are stored in
-the output object. The output object also inherits all values from the
-input object.
+The print function again provides an overview about effect estimates,
+corresponding standard errors and confidence intervals. The output
+object contains the same information as above when the data analysis
+is based on stratified data unless stratum-specific information.
+\begin{verbatim}
+> ## PRI.De: Effect estimation of exposure to RSV infection on the 
+> ## severity of LRTI based on data matched by PS
+> pride.estimate.m <- ps.estimate(object = pride.m1,
++                                 resp = "SEVERE",
++                                 family = "binomial")
+> pride.estimate.m
 
+ Effect estimation for treatment/exposure on outcome 
 
+ Treatment/exposure: PCR_RSV
+ Outcome: SEVERE
+ Effect measure: odds ratio ('or')
+
+ Table of effect estimates:
+
+                  or  SE[log[or]]  [95%-CI[or]]
+               -----  -----------  ------------
+Crude          1.677       0.0796  [1.435,1.96]
+Matching                                       
+  Unadjusted   1.379       0.0916  [1.152,1.65]
+  Adjusted                                  [,]
+Regression                                     
+  Conditional                               [,]
+  Marginal                                  [,]
+\end{verbatim}
+
+Altogether, the {\tt nonrandom} package offers PS based ana\-lyses in
+an easy way, however, suitable knowledge for adequaete interpretation
+of results is still needed. The estimation of treatment effects on
+linear and binary outcome is implemented, limited to the situation
+considering a binary treatment. It provides the experienced user a set
+of functions for an easy and flexible implementation of PS based
+analyses. Users who are not familiar with the application of such
+methods and the underlying theory are enabled to conduct an adequate
+PS based analysis guided by the package.
 
 \bibliographystyle{unsrt}
 \bibliography{bib}

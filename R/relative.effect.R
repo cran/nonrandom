@@ -1,9 +1,4 @@
 ## Function for estimating the relative effect of selected variables
-##
-## A measure is defined as difference between the unadjusted
-## exposure/treatment effect on response and the exposure/treatment
-## effect on response adjusted by a variable relative to the
-## unadjusted exposure/treatment effect
 
 relative.effect <- function(formula = NULL, ## Y~Z+X_1+...+X_p
                             data,           ## data.frame
@@ -122,10 +117,10 @@ relative.effect <- function(formula = NULL, ## Y~Z+X_1+...+X_p
     eff.cov[i] <- as.numeric(cov.model$coeff[2])
 
     if (fam == "binomial"){
-      rel.eff[i] <- 100*((exp(eff.cov[i]) - exp(eff.treat))/exp(eff.treat))
+      rel.eff[i] <- 100*(abs((exp(eff.cov[i]) - exp(eff.treat))/exp(eff.treat)))
       
     }else{
-      rel.eff[i] <- 100*((eff.cov[i] - eff.treat)/eff.treat)
+      rel.eff[i] <- 100*(abs((eff.cov[i] - eff.treat)/eff.treat))
     }
   }
   output <- list(unadj.treat   = eff.treat,
@@ -135,6 +130,9 @@ relative.effect <- function(formula = NULL, ## Y~Z+X_1+...+X_p
                  name.resp     = name.resp,
                  name.sel      = name.sel,
                  family        = fam)
+
+  ## NEW
+  class(output) <- c("relative.effect") 
 
   return(output)
 }

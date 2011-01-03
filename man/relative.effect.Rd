@@ -15,11 +15,14 @@
   \item{data}{a data frame containing response, treatment and
     covariates.}
 
-  \item{sel}{a vector of integers or strings indicating covariates.}
+  \item{sel}{a vector of integers or strings indicating
+    covariates. Specification is needed if 'formula' is not specified.}
 
-  \item{resp}{an integer or a string indicating response.}
+  \item{resp}{an integer or a string indicating response. Specification
+    is needed if 'formula' is not specified.}
 
-  \item{treat}{an integer or a string indicating treatment.}
+  \item{treat}{an integer or a string indicating
+    treatment. Specification is needed if 'formula' is not specified.}
 
   \item{...}{further arguments passed to or from other methods.}
 }  
@@ -39,10 +42,9 @@
   Two options are available to fit appropriate regression models. Either
   a formula is specified, typically as 'response ~ treatment +
   covariates' (\code{formula}), or \code{resp}, \code{treat} and
-  \code{sel} are given to specify the response, the treatment and the
-  covariates.
-}
-\value{
+  \code{sel} are given to specify response, treatment and covariates.
+} 
+  \value{
   \code{relative.effect} returns a list containing the following
   components:
 
@@ -65,12 +67,10 @@
   \item{family}{the error distribution and link function used in the
     model (see \code{glm}).}
 }
-\references{
-}
+
 \author{Susanne Stampf \email{susta@imbi.uni-freiburg.de}
 }
-\note{
-}
+
 \seealso{
   \code{\link{glm}}, \link{formula}
 }

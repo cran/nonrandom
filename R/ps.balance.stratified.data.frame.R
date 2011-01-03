@@ -92,7 +92,10 @@ ps.balance.stratified.data.frame <- function(object,
   object$stratum.index        <- stratum.index
   object$name.stratum.index   <- name.stratum.index
   #object$levels.stratum.index <- levels.stratum.index
+
+  class(object) <- c("bal.stratified.data.frame",
+                     class(object)[class(object)!="bal.stratified.data.frame"])
   
   return(object)
-  
+
 }

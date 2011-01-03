@@ -22,9 +22,8 @@ dist.plot.hist <- function(sel,
   ## define function to calculate breaks, counts, ...
 
   ## redefine plot.levels if ylim is given
-
-  if (!is.null(ylim))
-    if (ylim[2] <= 1)
+  if ( !is.null(ylim) )
+    if ( ylim[2] <= 1 )
       plot.levels <- seq(ylim[1], ylim[2], 1/plot.levels)
     else
       plot.levels <- seq(ylim[1], ylim[2], (ylim[2]-ylim[1])/plot.levels)
@@ -37,7 +36,7 @@ dist.plot.hist <- function(sel,
     hist(as.numeric(sel[,x]), breaks = plot.levels, plot = FALSE)$breaks
   
   breaks.noncat <- lapply(var.noncat, func.breaks)
-  
+
   ## lists for treatment == 0
   func.x <- function(x){
     noncat.breaks <- lapply(x, func.breaks)
@@ -108,10 +107,12 @@ dist.plot.hist <- function(sel,
   if(length(var.noncat) > 0){
     
     var.noncat.x.s.list   <- lapply(var.noncat, func.x.s)
-    var.noncat.x.s.counts <- lapply(lapply(var.noncat.x.s.list, func.list),func.counts.s)
+    var.noncat.x.s.counts <-
+      lapply(lapply(var.noncat.x.s.list, func.list),func.counts.s)
     
     var.noncat.y.s.list   <- lapply(var.noncat, func.y.s)
-    var.noncat.y.s.counts <- lapply(lapply(var.noncat.y.s.list, func.list),func.counts.s) 
+    var.noncat.y.s.counts <-
+      lapply(lapply(var.noncat.y.s.list, func.list),func.counts.s) 
 
   }
   

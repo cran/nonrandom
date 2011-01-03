@@ -9,9 +9,11 @@ ps.estimate.matched.data.frame <- function(object,
                                            regr          = FALSE,
                                            ...)
 {
+ 
   ## #################
   ## Check match.index
   if (is.null(match.index)){
+
     d1 <- object$data
     d2 <- object$data.matched
  
@@ -273,6 +275,11 @@ ps.estimate.matched.data.frame <- function(object,
   object$name.treat <- name.treat
   
   object$match.index  <- data$match.strata
+
+  object$family <- family
+
+  class(object) <- c("est.matched.data.frame",
+                     class(object)[class(object)!="est.matched.data.frame"])
   
   return(object)
   

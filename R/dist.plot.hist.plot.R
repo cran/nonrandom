@@ -4,7 +4,7 @@ dist.plot.hist.plot <- function(res,
                                 compare,
                                 match.T,
                                 label.match   = NULL,
-                                label.stratum = "Stratum",
+                                label.stratum = c("Stratum","Original"),
                                 legend.title  = NULL,
                                 legend.cex    = 0.9,
                                 main.cex      = 1.2, 
@@ -12,7 +12,7 @@ dist.plot.hist.plot <- function(res,
                                 bar.cex       = 0.8, 
                                 myoma         = c(2,2,2,2), ## c(2,3,2,2)
                                 mymar         = c(5,4,4,2)+0.1,
-                                width         = 1,
+                                width         = 0.5,
                                 ylim          = NULL,
                                 xlim          = NULL,
                                 with.legend   = TRUE,
@@ -25,65 +25,67 @@ dist.plot.hist.plot <- function(res,
 {
   k <- 0
   
-  if (is.null(legend.title))
+  if ( is.null(legend.title) )
     legend.title <- name.treat
 
   len.treat <- nlevels(as.factor(res$treat))
 
-  if (match.T){
-    if (!compare){
+  if ( match.T ){ ## matching
+    if ( !compare ){ ## no comparison
       len.index <- nlevels(as.factor(res$index))-1
-    }else{
+    }else{ ## comparison
       len.index <- nlevels(as.factor(res$index))
     }
-  }else{
-    if (!compare){
+  }else{ ## no matching
+    if ( !compare ){ ## no comparison
       len.index <- nlevels(as.factor(res$index))
-    }else{
+    }else{ ## comparison
       len.index <- nlevels(as.factor(res$index))+1 ## for unstratified/original data
     }
   }
 
-  if (match.T){
-    if (is.null(label.match)){
+  if ( match.T ){
+    if ( is.null(label.match) ){
       levels(res$index) <- label.match<- c("Original", "Matched")
     }else{
-      if (length(label.match)==2){
+      if ( length(label.match)==2 ){
         levels(res$index) <- label.match
       }else{
         stop("Argument 'label.match' must be of length 2.")
       }
     }
   }else{
-    if (length(label.stratum) != 1){
-      stop("Argument 'label.stratum' must be of length 1.")
-    }
+    ##if (length(label.stratum) != 1){
+    ##  stop("Argument 'label.stratum' must be of length 1.")
+    ##}
+    if ( !is.null(label.stratum) )
+      if ( length(label.stratum) != 2 )
+        stop("Argument 'label.stratum' must be of length 2.") 
   }
  
   ## #########################
   ## Non-categorical variables
-  if(length(res$var.noncat)>0){    
+  if( length(res$var.noncat)>0 ){    
     k <- 1
     
-    if (with.legend == TRUE){
-      width <- rep(0.6, (len.index*len.treat))
-      ylim  <- c(0, (len.index*len.treat)+0.5)
-    }else{      
-      if(missing(width))
-        width <- rep(0.9, (len.index*len.treat))
-      if(missing(ylim))
-        ylim  <- c(0, (len.index*len.treat)+0.5)
-    }
-
-    
-    for(i in 1:length(res$var.noncat)){       
-      if(i>1) x11()
+    #if ( with.legend == TRUE ){
+    #  width.bars <- rep(width, (len.index*len.treat))
+    #  ylim  <- c(0, (len.index*len.treat)+0.75)
+    #}#else{      
+    #  if( missing(width) )
+    #    width <- rep(0.9, (len.index*len.treat))
+    #  if(missing(ylim))
+    #    ylim  <- c(0, (len.index*len.treat)+0.5)
+    #}
+        
+    for( i in 1:length(res$var.noncat) ){       
+      if( i>1 ) x11()
       
       par(oma=myoma,
           mfrow=c(trunc(sqrt(len.index)),
             ceiling(len.index/trunc(sqrt(len.index)))))
       
-      if (!is.null(col)){
+      if ( !is.null(col) ){
         co <- col
       }else{
         if( require( "colorspace", character.only=TRUE ) )
@@ -96,7 +98,19 @@ dist.plot.hist.plot <- function(res,
                             res$y.noncat[[i]])))
       xl <- c(xl[1], xl[length(xl)])
 
+      if ( with.legend==TRUE ){
+        ylim <- c(0, length(res$x.noncat[[i]])+1.5)
+        y.leg <- length(res$x.noncat[[i]])+1.4
 
+        if ( !match.T & (length(res$x.noncat[[i]])>5) ){
+          ylim <- c(0, length(res$x.noncat[[i]])+2)
+          y.leg <- length(res$x.noncat[[i]])+1.9
+        }
+        
+      }else{
+        ylim <- c(0, length(res$x.noncat[[i]]))
+      }
+  
       brks.axis <- vector(length=length(res$breaks.noncat[[i]])-1)        
       for (l in 1:(length(res$breaks.noncat[[i]])-1)){
         brks.axis[l] <- paste("(",
@@ -109,11 +123,11 @@ dist.plot.hist.plot <- function(res,
 
       
       ## per stratum
-      for (j in 1:len.index){
+      for ( j in 1:len.index ){
 
-        if (j != len.index){
+        if ( j != len.index ){
 
-          if (!match.T){ # no matching
+          if ( !match.T ){ # no matching
             x.to.plot <- res$x.s.noncat[[i]][[j]]
             y.to.plot <- res$y.s.noncat[[i]][[j]]
           }else{## matching
@@ -127,10 +141,11 @@ dist.plot.hist.plot <- function(res,
                   space     = 0,
                   col       = co[1],
                   xlim      = xl,
-                  ylim      = c(0, length(res$x.noncat[[i]])+1),
+                  ylim = ylim,
+                  #ylim      = c(0, length(res$x.noncat[[i]])+1.5), ## +1
                   main      = main,
                   font.main = font.main,
-                  cex.main  = main.cex,       
+                  cex.main  = main.cex,
                   ...
                   )
           
@@ -141,7 +156,8 @@ dist.plot.hist.plot <- function(res,
                   space = 0,
                   col   = co[2],
                   xlim  = xl,
-                  ylim  = c(0, length(res$x.noncat[[i]])+1),
+                  ylim=ylim,
+                  #ylim  = c(0, length(res$x.noncat[[i]])+1.5), ## +1
                   ...
                   )
           
@@ -165,7 +181,8 @@ dist.plot.hist.plot <- function(res,
           if (with.legend)
             legend(x         = 0,
                    xjust     = 0.5,
-                   y         = length(res$x.noncat[[i]])+1.2,
+                   y=y.leg,
+                   #y         = length(res$x.noncat[[i]])+1.75, ## 1.2
                    legend    = levels(as.factor(res$treat)),
                    title     = legend.title,
                    bty       = "n",
@@ -177,7 +194,7 @@ dist.plot.hist.plot <- function(res,
 
           
           if (!match.T){                   
-            mtext(paste(label.stratum,j),
+            mtext(paste(label.stratum[1],j),
                   side = 1, line = 3, cex = bar.cex, font = font, ...)
             mtext(paste("Distribution of", res$var.noncat[i]),
                   side = 1, line = 4, cex = sub.cex, font = font, ...)
@@ -188,7 +205,7 @@ dist.plot.hist.plot <- function(res,
                   side = 1, line = 4, cex = sub.cex, font = font, ...)
           }          
 
-        }else{ ## j last stratum
+        }else{ ## j last stratum or original
 
           if (compare){ 
             x.to.plot <- res$x.noncat[[i]]
@@ -209,7 +226,8 @@ dist.plot.hist.plot <- function(res,
                   space     = 0,
                   col       = co[1],
                   xlim      = xl,
-                  ylim      = c(0, length(res$x.noncat[[i]])+1),
+                  ylim=ylim,
+                  #ylim      = c(0, length(res$x.noncat[[i]])+1.5),
                   main      = main,
                   font.main = font.main,
                   cex.main  = main.cex,
@@ -223,7 +241,8 @@ dist.plot.hist.plot <- function(res,
                   space = 0,
                   col   = co[2],
                   xlim  = xl,
-                  ylim  = c(0, length(res$x.noncat[[i]])+1),
+                  ylim=ylim,
+                  #ylim  = c(0, length(res$x.noncat[[i]])+1.5),
                   ...
                   )
           
@@ -246,7 +265,8 @@ dist.plot.hist.plot <- function(res,
           if (with.legend)
             legend(x         = 0,
                    xjust     = 0.5,
-                   y         = length(res$x.noncat[[i]])+1.2,
+                   y=y.leg,
+                   #y         = length(res$x.noncat[[i]])+1.75,
                    legend    = levels(as.factor(res$treat)),
                    title     = legend.title,
                    bty       = "n",
@@ -260,10 +280,12 @@ dist.plot.hist.plot <- function(res,
           if (compare){
             mtext(paste("Distribution of", res$var.noncat[i]),
                   side = 1, line = 4, cex = sub.cex, font = font, ...)
+            mtext(label.stratum[2],
+                      side = 1, line = 3, cex = bar.cex, font = font, ...)
           }else{
             if (!match.T){
               if (len.index != 1)
-                mtext(paste(label.stratum,j),
+                mtext(paste(label.stratum[1],j),
                       side = 1, line = 3, cex = bar.cex, font = font, ...)
               
               mtext(paste("Distribution of", res$var.noncat[i]),
@@ -285,6 +307,7 @@ dist.plot.hist.plot <- function(res,
   ## Categorical variables
   if(length(res$var.cat)>0){    
     for(i in 1:length(res$var.cat)){
+
       
       if(i>1 || k>0)  x11()      
       
@@ -303,8 +326,20 @@ dist.plot.hist.plot <- function(res,
       
       xl <- pretty(range(c(-res$x.cat[[i]], res$y.cat[[i]])))
       xl <- c(xl[1], xl[length(xl)])
-      
-      
+
+      if ( with.legend==TRUE ){
+        ylim <- c(0, length(res$x.cat[[i]])+1.5)  
+        y.leg <- length(res$x.cat[[i]])+1.4
+        
+        if ( !match.T & (length(res$x.cat[[i]])>5) ){
+          ylim <- c(0, length(res$x.cat[[i]])+2)
+          y.leg <- length(res$x.cat[[i]])+1.9
+        }
+          
+      }else{
+        ylim <- c(0, length(res$x.cat[[i]]))
+      }
+     
       #if (is.factor(res$sel[, res$var.cat[i]])){
       #  brks.axis <- levels(res$sel[, res$var.cat[i]])
       #}else{ 
@@ -340,7 +375,8 @@ dist.plot.hist.plot <- function(res,
                   space     = 0,
                   col       = co[1],
                   xlim      = xl,
-                  ylim      = c(0, length(res$x.cat[[i]])+1),
+                  ylim=ylim,
+                  #ylim      = c(0, length(res$x.cat[[i]])+1.5),
                   main      = main,
                   font.main = font.main,
                   cex.main  = main.cex,    
@@ -354,7 +390,8 @@ dist.plot.hist.plot <- function(res,
                   space = 0,
                   axes  = FALSE,
                   xlim  = xl,
-                  ylim  = c(0, length(res$x.cat[[i]])+1),
+                  ylim=ylim,
+                  #ylim  = c(0, length(res$x.cat[[i]])+1.5),
                   ...
                   )
           
@@ -376,7 +413,8 @@ dist.plot.hist.plot <- function(res,
           if (with.legend)
             legend(x         = 0,
                    xjust     = 0.5,
-                   y         = length(res$x.cat[[i]])+1.2,
+                   y=y.leg,
+                   #y         = length(res$x.cat[[i]])+1.75,
                    legend    = levels(as.factor(res$treat)),
                    title     = legend.title,
                    bty       = "n",
@@ -387,7 +425,7 @@ dist.plot.hist.plot <- function(res,
                    horiz     = TRUE)
           
           if (!match.T){                   
-            mtext(paste(label.stratum,j),
+            mtext(paste(label.stratum[1],j),
                   side=1, line=3, cex=bar.cex, font=font, ...)
             mtext(paste("Distribution of", res$var.cat[i]),
                   side=1, line=4, cex=sub.cex, font=font, ...)
@@ -398,7 +436,7 @@ dist.plot.hist.plot <- function(res,
                   side=1, line=4, cex=sub.cex, font=font, ...)
           } 
           
-        }else{
+        }else{ ## j last stratum
      
           if (compare){ 
             x.to.plot <- res$x.cat[[i]]
@@ -428,7 +466,8 @@ dist.plot.hist.plot <- function(res,
                   space     = 0,
                   col       = co[1],
                   xlim      = xl,
-                  ylim      = c(0, length(res$x.cat[[i]])+1),
+                  ylim=ylim,
+                  #ylim      = c(0, length(res$x.cat[[i]])+1.5),
                   main      = main,
                   font.main = font.main,
                   cex.main  = main.cex,    
@@ -442,7 +481,8 @@ dist.plot.hist.plot <- function(res,
                   space = 0,
                   col   = co[2],
                   xlim  = xl,
-                  ylim  = c(0, length(res$x.cat[[i]])+1),
+                  ylim=ylim,
+                  #ylim  = c(0, length(res$x.cat[[i]])+1.5),
                   ...
                   )
           
@@ -465,7 +505,8 @@ dist.plot.hist.plot <- function(res,
           if (with.legend)
             legend(x         = 0,
                    xjust     = 0.5,
-                   y         = length(res$x.cat[[i]])+1.2,  ## +1
+                   y=y.leg,
+                   #y         = length(res$x.cat[[i]])+1.75,  ## +1
                    legend    = levels(as.factor(res$treat)),
                    title     = legend.title,
                    bty       = "n",
@@ -478,10 +519,12 @@ dist.plot.hist.plot <- function(res,
           if (compare){
             mtext(paste("Distribution of", res$var.cat[i]),
                   side=1, line=4, cex=sub.cex, font=font, ...)
+            mtext(label.stratum[2],
+                      side=1, line=3, cex=bar.cex, font=font, ...)
           }else{
             if (!match.T){
               if (len.index != 1)
-                mtext(paste(label.stratum,j),
+                mtext(paste(label.stratum[1],j),
                       side=1, line=3, cex=bar.cex, font=font, ...)
               mtext(paste("Distribution of", res$var.cat[i]),
                     side=1, line=4, cex=sub.cex, font=font, ...)

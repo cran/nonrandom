@@ -158,7 +158,10 @@ ps.balance.data.frame <- function(object,
                  match.index          = match.index,
                  name.match.index     = name.match.index,
                  bal.test             = bal.test)
-    
+
+  class(object) <- c("bal.data.frame",
+                     class(object)[class(object)!="bal.data.frame"])
+  
 
   return(object)
   

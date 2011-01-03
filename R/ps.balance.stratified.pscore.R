@@ -92,6 +92,9 @@ ps.balance.stratified.pscore <- function(object,
   object$stratum.index        <- stratum.index
   object$name.stratum.index   <- name.stratum.index
   #object$levels.stratum.index <- levels.stratum.index
+
+  class(object) <- c("bal.stratified.pscore",
+                     class(object)[class(object)!="bal.stratified.pscore"])
   
   return(object)
   

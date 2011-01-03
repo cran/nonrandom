@@ -38,7 +38,7 @@ ps.match.data.frame <- function(object,
  
   ## ####################
   ## Check object.control
-  if (is.null(object.control)){
+  if ( is.null(object.control) ){
 
     ## ###########
     ## Check treat
@@ -91,8 +91,48 @@ ps.match.data.frame <- function(object,
     
     object.treated <- object
     
-    if(!is.data.frame(object.control))
+    if( !is.data.frame(object.control) )
       stop("Argument 'object.control' has to be of class 'data.frame'.")
+
+    
+    ## ###########
+    ## Check treat
+    if ( is.null(treat) ){
+      stop("Argument 'treat' is needed.") 
+    }else{
+      
+      if ( is.character(treat) | is.numeric(treat) ){
+
+        A1 <- find.treat.match(data      = object, 
+                               treat     = treat,
+                               obj.name  = "treated")
+        treat1      <- A1[[1]]
+        name.treat1 <- A1[[2]]
+        
+        A2 <- find.treat.match(data      = object.control, 
+                               treat     = treat,
+                               obj.name  = "control")
+        treat2      <- A2[[1]]
+        name.treat2 <- A2[[2]]
+
+        if ( name.treat1 != name.treat2 ){
+          stop("The name of argument 'treat' differs in input objects.")
+
+        }else{
+          if (length(levels(as.factor(c(treat1,treat2)))) != 2)
+            stop("Argument 'treat' has less or more than two values.")
+
+          treat <- c(treat1,treat2)
+          name.treat <- name.treat1
+        }
+          
+      }else{
+        stop("Argument 'treat' has to be either numeric or a string.")
+      }
+    }
+  
+      
+    
 
     ## #######################
     ## Check name.match.index
@@ -138,22 +178,25 @@ ps.match.data.frame <- function(object,
                            bestmatch.first    = match$bestmatch.first)
 
   output <- list()
+
   
   if(combine.output){
-    
+      
     output$data              <- rbind(object.treated, object.control)
     output$data.matched      <- output$data[output$data[, name.match.index] != 0, ]
     output$match.index       <- output$data[, name.match.index]
     output$name.match.index  <- name.match.index
     output$match.parameters  <- match.parameters
     output$matched.by        <- matched.by
-
+    output$name.treat        <- name.treat
+    
     if (matched.by != control.matched.by){
-      output$contorl.matched.by <- control.matched.by
+      output$control.matched.by <- control.matched.by
     }
-
+    
     class(output) <- c("matched.data.frame")
-
+    
+    
   }else{ ## combine.output = FALSE
     
     output$data             <- list(object.treated, object.control)
@@ -164,12 +207,14 @@ ps.match.data.frame <- function(object,
     output$name.match.index <- name.match.index
     output$match.parameters <- match.parameters
     output$matched.by       <- matched.by
-
+    output$name.treat       <- name.treat
+    
     if (matched.by != control.matched.by){
       output$control.matched.by <- control.matched.by
     }
     
     class(output) <- c("matched.data.frames")
+    
   }
   
   return(output)

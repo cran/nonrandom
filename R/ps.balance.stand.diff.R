@@ -200,7 +200,8 @@ balance.stand.diff <- function(sel,
         
       }else{ ## continuous covariates
 
-        meth[i] <- "non-bin"
+        ##meth[i] <- "non-bin"
+        meth[i] <- "num"
         
         if (!match.T){ ## stratification
           

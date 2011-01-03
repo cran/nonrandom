@@ -16,7 +16,7 @@ ps.estimate.bin <- function(data,
 {
   ## #####################
   ## Set match.T indicator
-  if (match.T){
+  if ( match.T ){
 
     weights <- NULL
     weights.str <- NULL
@@ -26,7 +26,7 @@ ps.estimate.bin <- function(data,
   ## ##################################
   ## crude exp(effect) in original data
   
-  if (!match.T){ ## stratified
+  if ( !match.T ){ ## stratified
 
     lr <- glm(resp ~ treat,
               data = data,
@@ -38,6 +38,7 @@ ps.estimate.bin <- function(data,
 
   }else{ ## matched
 
+ 
     data.o  <- data[stratum.index == 1,]  ## stratum.index == 1 ==> original data
     resp.o  <- resp[stratum.index == 1]
     treat.o <- treat[stratum.index == 1]
@@ -56,7 +57,7 @@ ps.estimate.bin <- function(data,
   ## unadjusted analysis ==> stratum-specific parameter will be averaged
   ##                     ==> object$matched.data are used ##############
   
-  if (!match.T){ ## stratified
+  if ( !match.T ){ ## stratified
     
     or.table <- table(resp, treat, stratum.index)
   
@@ -120,7 +121,8 @@ ps.estimate.bin <- function(data,
     match.id.m <- match.id[match.id != 0]
 
     ## accounting for matched data structure
-    require(lme4, quietly=TRUE)
+    ## require(lme4, quietly=TRUE)
+    require( "lme4", character.only=TRUE )
 
     lr.m <- glmer(resp.m ~ treat.m + (1|match.id.m),
                   data = data.m,
@@ -135,7 +137,7 @@ ps.estimate.bin <- function(data,
   ## #############################
   ## adjusted analysis per stratum
 
-  if (!is.null(adj)){
+  if ( !is.null(adj) ){
 
     if (name.resp != names(model.frame(adj.form, data))[1]){
 
@@ -149,7 +151,7 @@ ps.estimate.bin <- function(data,
         
       }else{
 
-        if (!match.T){## stratified   
+        if ( !match.T ){## stratified   
 
           effect.adj.str <-
             se.effect.adj.str <- vector(length=length(levels.stratum.index))
@@ -174,11 +176,11 @@ ps.estimate.bin <- function(data,
             }
           }
           
-          adj <- list(model     = adj.form,
-                      effectstr = effect.adj.str,
-                      ## se.str = se.effect.adj.str,
-                      effect    = sum(weights.str*effect.adj.str, na.rm=TRUE),
-                      se        = sum(weights.str*se.effect.adj.str, na.rm=TRUE))
+          adj <- list(model      = adj.form,
+                      effect.str = effect.adj.str,
+                      ## se.str  = se.effect.adj.str,
+                      effect     = sum(weights.str*effect.adj.str, na.rm=TRUE),
+                      se         = sum(weights.str*se.effect.adj.str, na.rm=TRUE))
           
         }else{ ## matched
           
