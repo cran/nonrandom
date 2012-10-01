@@ -409,7 +409,7 @@ dist.plot.bar.plot <- function(res, ## sel, treat, index,
       }
       mtext(paste("Frequency of", res$var.cat[i]),
             side = 1, outer = TRUE, line = 0, font = font, cex = sub.cex, ...)
-      close.screen(all = TRUE)    
+      close.screen(all.screens = TRUE)    
     }
   }
   

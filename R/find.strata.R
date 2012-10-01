@@ -1,6 +1,6 @@
 find.strata <- function(data,     ## a data frame
                         strata,   ## a string or numeric
-                        matched)  ## TRUE if match is given
+                        match)  ## TRUE if match is given
 {
 
   if (missing(data)){
@@ -37,7 +37,7 @@ find.strata <- function(data,     ## a data frame
     }
   }
 
-  if (!matched)
+  if (!match)
     if(any(levels(as.factor(stratum.index)) == "0"))
       stop("Argument 'stratum.index' may not involve '0' as stratum index.")
 

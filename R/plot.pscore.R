@@ -1,5 +1,5 @@
 
-pscore.plot <- function(object,
+plot.pscore <- function(x,
                         par.dens=NULL,
                         par.1=NULL,
                         par.0=NULL,
@@ -11,6 +11,8 @@ pscore.plot <- function(object,
                         xlim=NULL,
                         ...)
 {
+  object <- x
+  
   if ( any(class(object) == "pscore") ){
     
     require( "colorspace", character.only=TRUE )

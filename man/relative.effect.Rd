@@ -15,14 +15,11 @@
   \item{data}{a data frame containing response, treatment and
     covariates.}
 
-  \item{sel}{a vector of integers or strings indicating
-    covariates. Specification is needed if 'formula' is not specified.}
+  \item{sel}{a vector of integers or strings indicating covariates.}
 
-  \item{resp}{an integer or a string indicating response. Specification
-    is needed if 'formula' is not specified.}
+  \item{resp}{an integer or a string indicating response.}
 
-  \item{treat}{an integer or a string indicating
-    treatment. Specification is needed if 'formula' is not specified.}
+  \item{treat}{an integer or a string indicating treatment.}
 
   \item{...}{further arguments passed to or from other methods.}
 }  
@@ -42,9 +39,10 @@
   Two options are available to fit appropriate regression models. Either
   a formula is specified, typically as 'response ~ treatment +
   covariates' (\code{formula}), or \code{resp}, \code{treat} and
-  \code{sel} are given to specify response, treatment and covariates.
-} 
-  \value{
+  \code{sel} are given to specify the response, the treatment and the
+  covariates.
+}
+\value{
   \code{relative.effect} returns a list containing the following
   components:
 

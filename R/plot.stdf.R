@@ -1,4 +1,4 @@
-stdf.plot <- function(object,
+plot.stdf <- function(x,
                       sel          = NULL,
                       plot.alpha   = TRUE,
                       mymar        = c(5,8,4,2),
@@ -13,6 +13,8 @@ stdf.plot <- function(object,
                       legend.xy    = NULL,
                       ...)
 {
+
+  object <- x
 
   require( "colorspace", character.only=TRUE )
 

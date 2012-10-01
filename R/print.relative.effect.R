@@ -1,26 +1,26 @@
 
-print.relative.effect <- function(x,
+print.relative.effect <- function(object,
                                   ...)
 {
 
-  cat("\n Treatment:",x$name.treat)
-  cat("\n Outcome:",x$name.resp)
-  cat("\n Covariates: ",x$name.sel, "\n\n")
+  cat("\n Treatment:",object$name.treat)
+  cat("\n Outcome:",object$name.resp)
+  cat("\n Covariates: ",object$name.sel, "\n\n")
   
-  cat("\n Unadjusted treatment effect: ", round(x$unadj.treat,4),"\n", sep="")
+  cat("\n Unadjusted treatment effect: ", round(object$unadj.treat,4),"\n", sep="")
   
   cat("\n Adjusted and relative effects: \n\n")
   
-  rel.eff.tab <- matrix(c(as.numeric(x$adj.treat.cov),
-                          as.numeric(x$rel.eff.treat)),
-                        nrow=length(x$name.sel),
+  rel.eff.tab <- matrix(c(as.numeric(object$adj.treat.cov),
+                          as.numeric(object$rel.eff.treat)),
+                        nrow=length(object$name.sel),
                         ncol=2,
-                        dimnames=list(x$name.sel,
+                        dimnames=list(object$name.sel,
                           c("adj. treatment effect", "rel. effect")))
 
   if (dim(rel.eff.tab)[1] != 1)
   
-    print(rel.eff.tab[order(x$rel.eff.treat, decreasing=TRUE),])
+    print(rel.eff.tab[order(object$rel.eff.treat, decreasing=TRUE),])
 
   else
 

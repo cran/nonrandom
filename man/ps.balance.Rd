@@ -19,7 +19,7 @@
   
   \item{sel}{a data frame or a vector of integers or strings indicating
     covariates whose distribution to be checked. The default is 'NULL',
-    i.e., the complete data are selected.}
+    i.e., the completer data are selected.}
   
   \item{treat}{an integer or a string indicating treatment in data and
     matched data if \code{ps.match()} is previously used. The default is
@@ -40,25 +40,22 @@
     balance of covariate distributions between treatment groups. The
     default is 'classical', i.e., \code{ttest()} for non-categorical and
     \code{chisq.test()} for categorical covariates are applied, both in
-    original data and in stratified or matched data. If
-    method='stand.diff' is specified, standardized differences are
-    calculated for covariates before and after stratification or
-    matching.}
+    original data and in stratified or matched data. If 'stand.diff',
+    standardized differences are calculated for covariates before and
+    after stratification or matching.}
   
   \item{cat.levels}{an integer. The default is '10', i.e., covariates
     with more than ten different values are considered as
     non-categorical.}
   
   \item{alpha}{an integer indicating the significance level (per cent)
-    or the cutpoint at which the decision about balance is made in case
-    of standardized differences.}
+    or the cutpoint at which the decision about balance or imbalance is
+    made in case of standardized differences.}
   
   \item{equal}{a logical value. The default is 'TRUE', i.e.,
     equally-sized weights are used to combine standard deviations of
     covariates in case where standardized differences are calculated. If
-    'FALSE', weights are proportional to observations in treatment
-    groups.
-  }
+    'FALSE', weights are proportions of observations in strata.}
 }
 \details{
   Propensity score methods aims to eliminate imbalances in covariate
@@ -73,9 +70,9 @@
   input object is a data frame.
 }
 \value{
-  \code{ps.balance()} returns an object of class similar to the class of
-  the input object, but with prefix 'bal.'. The number and the manner of
-  the values depends on argument \code{method}:
+  \code{ps.balance()} returns an object of the same class as the input
+  object. The number and the manner of the values depends on
+  \code{method}:
   
   \item{data}{a data frame containing the input data.}
   
@@ -239,6 +236,7 @@ pride.strata <- ps.makestrata(object = pride.ps,
 pride.balance <- ps.balance(object  = pride.strata,
                             sel     = c(2:6),
                             method  = "classical",
-                            alpha   = 5)  
+                            alpha   = 5)
+
 }
 

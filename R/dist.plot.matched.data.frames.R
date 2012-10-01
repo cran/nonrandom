@@ -1,5 +1,11 @@
 
-dist.plot.matched.data.frames <- function(object,                                          
+dist.plot.matched.data.frames <- function(object,
+                                          #sel           = NULL,
+                                          #treat         = NULL,
+                                          #stratum.index = NULL,
+                                          #match.index   = NULL, 
+                                          #plot.type     = 1,
+                                          #compare       = FALSE,
                                           ...) 
 {
   data <- rbind(as.data.frame(object$data[1]),
@@ -19,9 +25,43 @@ dist.plot.matched.data.frames <- function(object,
                match.parameters  = object$match.parameters)
  
   
-  dist.plot.matched.data.frame(object = data,                              
+  dist.plot.matched.data.frame(object        = data,
+                               #sel           = NULL,
+                               #treat         = NULL,
+                               #stratum.index = NULL,
+                               #match.index   = NULL,
+                               #plot.type     = 1,
+                               #compare       = FALSE,
                                ...)
   
 }
 
 
+#dist.plot.matched.data.frames <- function(object,
+#                                          sel           = NULL,
+#                                          treat         = NULL,
+#                                          stratum.index = NULL,
+#                                          match.index   = NULL, 
+#                                          plot.type     = 1,
+#                                          cat.levels    = 10,
+#                                          plot.levels   = 5,
+#                                          compare       = FALSE,
+#                                          label.match   = NULL,
+#                                          label.stratum = "Stratum",
+#                                          with.legend  = TRUE,                
+#                                          legend.title = NULL,
+#                                          legend.cex   = 0.9,              
+#                                          myoma        = c(2,2,2,2),
+#                                          mymar        = c(2,4,1,2),
+#                                          width        = 1,
+#                                          xlim         = NULL,
+#                                          ylim         = NULL,
+#                                          col          = NULL,
+#                                          las          = 1,
+#                                          font.main    = 2,
+#                                          font         = 1,
+#                                          main         = NULL,
+#                                          main.cex     = 1.2,
+#                                          sub.cex      = 0.9,
+#                                          bar.cex      = 0.8,
+#                                          ...) 

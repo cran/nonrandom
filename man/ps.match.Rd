@@ -18,33 +18,33 @@
     data frame including only treated or untreated observations,
     respectively. The default is 'NULL'.}
   
-  \item{matched.by}{an integer or a string indicating the matching
-    variable in data. The default is 'NULL', i.e., if the class of
-    \code{object} is 'pscore', its value 'pscore' is automatically used
-    as matching variable.}
+  \item{matched.by}{an integer or a string indicating the
+    matching variable in data. The default is NULL, i.e., if the class
+    of the input object is 'pscore', object value 'pscore' is
+    automatically used as matching variable.}
     
   \item{control.matched.by}{an integer or a string indicating the
     matching variable in \code{object.control}. The default is
     'matched.by'.}
 
-  \item{who.treated}{an integer or string indicating which value of
-    \code{treat} labels 'treated' observations. The default is '1'.}
+  \item{who.treated}{an integer or a string indicating which value of
+    \code{treat} labels the 'treated' observations. The default is '1'.}
 
-  \item{treat}{an integer or a string indicating treatment in data of
-    \code{object} and \code{object.control}. The default is 'NULL'. If the
-    class of \code{object} is 'pscore', no specification is needed.}
+  \item{treat}{an integer or a string indicating treatment in data both
+    of \code{object} and \code{object.control}. The default is
+    'NULL'. If the class of the input object is 'pscore', no
+    specification is needed.}
 
   \item{name.match.index}{a string indicating the name of the variable
-    containing matching indices. The default is 'match.index'.}
+    containing the matching indices. The default is 'match.index'.}
   
   \item{ratio}{an integer k indicating the matching ratio 1:k. The
     default is '1'.}
 
-  \item{caliper}{an integer or string indicating the maximum width of
+  \item{caliper}{an integer or a string indicating the maximum width of
     the caliper for which matching should be done. The default is
     'logit', i.e., the maximum width of the caliper is \code{x} of the
-    standard deviation of the logit of the matching variable specified
-    in \code{matched.by}.}
+    standard deviation of the logit of the matching variable.}
 
   \item{x}{a numeric value indicating the scale parameter for the
     calculation of the caliper if \code{caliper}='logit'. The default is
@@ -65,8 +65,8 @@
 
   \item{combine.output}{a logical value. The default is 'TRUE', i.e., if
     \code{object} and \code{object.control} are given, 'data',
-    'data.matched' and 'match.index' are combined as data frames or
-    vectors, respectively. If 'FALSE', these values are lists with
+    'data.matched' and 'match.index' are combined as data frames or a
+    vector, respectively. If 'FALSE', these values are lists with
     entries corresponding to the input objects.}
 }
 \details{
@@ -80,11 +80,10 @@
   standard deviation of the logit of the estimated propensity score.
   
   If function \code{pscore()} is previously used with default settings,
-  \code{matched.by} has not to be specified, value 'pscore' of the input
-  object is automatically used. However, it is needed if another
-  matching variable should be used. \code{treat} has not to be specified,
-  contrary to the case where one or two data frames are given as input
-  objects.
+  \code{matched.by} has not to be specified. But it is needed, if the
+  matching variable in data is not labeled by 'pscore'. Also
+  \code{treat} has not to be specified, contrary to the case where one
+  or two data frames are given as input objects.
 }
 \value{
   \code{ps.match()} returns an object of class 'matched.pscore',

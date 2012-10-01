@@ -1,8 +1,8 @@
 
-print.pscore <- function(x,
+print.pscore <- function(object,
                          ...){
   
-  print(x$model.pscore)
+  print(object$model.pscore)
 
 }
 

@@ -17,54 +17,50 @@
 \tabular{ll}{
 Package: \tab nonrandom\cr
 Type: \tab Package\cr
-Version: \tab 1.1\cr
-Date: \tab 2011-01-03\cr
+Version: \tab 1.2\cr
+Date: \tab 2012-10-01\cr
 License: \tab What license is it under?\cr
 }
 }\section{The estimation of the propensity score}{The propensity score
   is the conditional probability of receiving a certain treatment given
-  covariates. It is generally unknown and has to be estimated, e.g.,
-  using logistic regression. The selection of an appropriate propensity
-  score model is mostly difficult. A measure describing the extent to
-  which a covariate is confounding the treatment effect on response is
-  implemented in \code{relative.effect()}. Based on it, a logistic
-  regression model for estimating the propensity score can be fitted
-  using \code{pscore()}.
+  patient's covariates. It is generally unknown and has to be
+  estimated,e.g., using logistic regression. The selection of an
+  appropriate propensity score model is mostly difficult. A measure
+  describing the extent to which a covariate is confounding the
+  treatment or exposure effect on response is implemented in
+  \code{relative.effect()}. \code{pscore} estimates then the propensity
+  score.
 }
-\section{Propensity score methods}{Propensity score methods aim to
-  balance covariate distributions between treatment groups and allow for
-  estimating marginal effects. Stratification (\code{ps.makestrata()})
-  and matching (\code{ps.match()})) by the estimated propensity score are
-  the popular methods to eliminate imbalances in covariate
-  distributions.
+\section{Propensity score methods}{Propensity score methods aims to
+  balance covariate distributions between treatment or exposure groups
+  and allow for estimating marginal effects. Stratification
+  (\code{ps.makestrata()}) and matching (\code{ps.match})) by the
+  estimated propensity score are the most popular methods to eliminate
+  imbalances in covariate distributions.
 }
 \section{Balance checks}{An important, but often neglected issue in data
   analyses using propensity score methods is to check covariate
   distributions between treatment groups in stratified or matched
-  data. Both graphical checks (\code{dist.plot()}) as well as classical
-  statistical tests and standardized differences (\code{ps.balance()})
-  can be used to examine covariate distributions. If matching by the
-  propensity score is done, standardized differences of covariates,
-  estimated before and after matching, can be visualized
-  (\code{plot.stdf()}).
+  data. Both graphical checks (\code{dist.plot}) as well as classical
+  statistical tests and standardized differences (\code{ps.balance}) can
+  be used to examine covariate distributions.
 }
-\section{Propensity score based treatment effects}{After stratification
-  and matching by the propensity score, treatment effects are estimated
-  in the stratified and matched data, respectively. \code{ps.estimate}
-  estimates those effects depending on the data structure. It is
-  available for continuous and binary outcome. Furthermore, it offers an
-  additional adjustment for residual imbalances in the stratified or
-  matched data as well as the estimation of effect using traditional
-  regression models. 
+\section{Propensity score based treatment or exposure effects}{After
+  stratification and matching by the propensity score, treatment or
+  exposure effects are estimated in the stratified an matched data,
+  respectively. \code{ps.estimate} estimates those effects depending on
+  the data structure. It offers an additional adjustment for residual
+  imbalances in the stratified or matched data as well as the estimation
+  of effect using traditional regression models.
 }
-\author{ Susanne Stampf
+\author{
+Susanne Stampf
 
 Maintainer:
 Susanne Stampf <susta@imbi.uni-freiburg.de>
 }
 
-\keyword{ package
-}
+\keyword{ package }
 
 \examples{
 ## data on quality of life

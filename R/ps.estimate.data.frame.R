@@ -93,7 +93,7 @@ ps.estimate.data.frame <- function(object,
         
         A <- find.strata(data    = data,
                          strata  = match.index,
-                         matched = TRUE)    
+                         match   = TRUE)    
         match.index      <- A[[1]]
         name.match.index <- A[[2]]
         

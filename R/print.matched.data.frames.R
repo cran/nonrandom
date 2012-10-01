@@ -1,14 +1,14 @@
 
-print.matched.data.frames <- function(x,
+print.matched.data.frames <- function(object,
                                       ...){
   
-  cat("\n Matched by: ", x$matched.by, "\n")
+  cat("\n Matched by: ", object$matched.by, "\n")
   
   cat("\n Matching parameter:\n")
   
-  print(matrix(c(round(x$match.parameters$caliper,3),
-                 x$match.parameters$ratio,
-                 x$match.parameters$who.treated),
+  print(matrix(c(round(object$match.parameters$caliper,3),
+                 object$match.parameters$ratio,
+                 object$match.parameters$who.treated),
                nrow=3,ncol=1,
                dimnames=
                list(c("Caliper size:",
@@ -18,33 +18,33 @@ print.matched.data.frames <- function(x,
   
   cat("\n Matching information:\n")
   
-  print(matrix(c(x$match.parameters$givenTmatchingC,
-                 x$match.parameters$bestmatch.first),
+  print(matrix(c(object$match.parameters$givenTmatchingC,
+                 object$match.parameters$bestmatch.first),
                nrow=2,ncol=1,
                dimnames=
                list(c("Untreated to treated?:",
                       "Best match?:"), c(""))))
   
   vec.match <-
-    c(x$match.index[[1]], x$match.index[[2]])
+    c(object$match.index[[1]], object$match.index[[2]])
   
   
   cat("\n Matching data:\n")
   
-  print(matrix(c(length(x$match.index[[1]][x$match.index[[1]]>0])+
-                 length(x$match.index[[2]][x$match.index[[2]]>0]),
+  print(matrix(c(length(object$match.index[[1]][object$match.index[[1]]>0])+
+                 length(object$match.index[[2]][object$match.index[[2]]>0]),
                  
-                 length(x$match.index[[1]][x$match.index[[1]]>0]),
+                 length(object$match.index[[1]][object$match.index[[1]]>0]),
                  
-                 length(x$match.index[[2]][x$match.index[[2]]>0]),
+                 length(object$match.index[[2]][object$match.index[[2]]>0]),
                  
-                 length(x$match.index[[1]][x$match.index[[1]]==0])+
-                 length(x$match.index[[2]][x$match.index[[2]]==0]),
+                 length(object$match.index[[1]][object$match.index[[1]]==0])+
+                 length(object$match.index[[2]][object$match.index[[2]]==0]),
                  
-                 length(unique(x$match.index[[1]]))-1,
+                 length(unique(object$match.index[[1]]))-1,
                  
                  sum(as.numeric(table(vec.match[vec.match>0])) !=
-                     (x$match.parameters$ratio +1))),
+                     (object$match.parameters$ratio +1))),
                nrow=6,ncol=1,
                dimnames=
                list(c("Number of matched obs:",

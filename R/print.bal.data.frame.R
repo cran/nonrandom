@@ -1,17 +1,17 @@
-print.bal.data.frame <- function(x,
+print.bal.data.frame <- function(object,
                                  ...){
 
-  if(!is.null(x$match.index)){
+  if(!is.null(object$match.index)){
     label <- "mat"
 
-    if (is.null(x$bal.test$p.value)){
+    if (is.null(object$bal.test$p.value)){
       meth <- "diff"
     }else{
       meth <- "pval"
     }
   }else{
     label <- "str"
-    if (is.null(x$bal.test$p.value)){
+    if (is.null(object$bal.test$p.value)){
       meth <- "diff"
     }else{
       meth <- "pval"
@@ -19,69 +19,69 @@ print.bal.data.frame <- function(x,
   }
 
   if (meth=="pval"){
-    if (dim(x$bal.test$p.value)[2]==1){
+    if (dim(object$bal.test$p.value)[2]==1){
       str.val <-
-        t(t(x$bal.test$p.value[2:dim(x$bal.test$p.value)[1],]))
+        t(t(object$bal.test$p.value[2:dim(object$bal.test$p.value)[1],]))
     }else{
       str.val <-
-        x$bal.test$p.value[2:dim(x$bal.test$p.value)[1],]
+        object$bal.test$p.value[2:dim(object$bal.test$p.value)[1],]
     }
   }else{
-    if (dim(x$bal.test$Standardized.differences)[2]==1){
+    if (dim(object$bal.test$Standardized.differences)[2]==1){
       str.val <-
-        t(t(round(x$bal.test$Standardized.differences[2:dim(x$bal.test$Standardized.differences)[1],],3)))
+        t(t(round(object$bal.test$Standardized.differences[2:dim(object$bal.test$Standardized.differences)[1],],3)))
     }else{
       str.val <-
-        round(x$bal.test$Standardized.differences[2:dim(x$bal.test$Standardized.differences)[1],],3)
+        round(object$bal.test$Standardized.differences[2:dim(object$bal.test$Standardized.differences)[1],],3)
     }
   }
 
   
   cat("\n Summary of balance check: \n\n")
-  print(x$bal.test$balance.table.summary)
+  print(object$bal.test$balance.table.summary)
 
-  if ( length(x$bal.test$covariates.NA)==0 ){
+  if ( length(object$bal.test$covariates.NA)==0 ){
     cat("\n\n Covariates not completely tested: ---\n")
   }else{
     cat("\n\n Covariates not completely tested:\n")
-    cat(x$bal.test$covariates.NA, "\n")
+    cat(object$bal.test$covariates.NA, "\n")
   }
 
   cat("\n\n Detailed balance check (overall): \n\n")
-  print(x$bal.test$balance.table)
+  print(object$bal.test$balance.table)
 
 
   if (label=="str"){
     if (meth=="pval"){
       cat(paste("\n\n Detailed balance check (per stratum):\n [p-values from tests (significance level: ",
-                x$bal.test$alpha/100, ")]\n\n", sep=""))
+                object$bal.test$alpha/100, ")]\n\n", sep=""))
 
-      print(format(data.frame(rbind(x$bal.test$p.value[1,],
-                                    rep("-----", times=dim(x$bal.test$p.value)[2]),
+      print(format(data.frame(rbind(object$bal.test$p.value[1,],
+                                    rep("-----", times=dim(object$bal.test$p.value)[2]),
                                     str.val,
-                                    rep("",times=dim(x$bal.test$p.value)[2]),
-                                    rep("----", times=dim(x$bal.test$p.value)[2]),
-                                    x$bal.test$method),
+                                    rep("",times=dim(object$bal.test$p.value)[2]),
+                                    rep("----", times=dim(object$bal.test$p.value)[2]),
+                                    object$bal.test$method),
                               row.names=c("Before",
                                 "------",
-                                paste("Stratum", seq(1:(dim(x$bal.test$p.value)[1]-1)), sep=" "),
+                                paste("Stratum", seq(1:(dim(object$bal.test$p.value)[1]-1)), sep=" "),
                                 "",
                                 "---------",
                                 "Test"))))
       cat("\n")     
     }else{
       cat(paste("\n\n Detailed balance check (per stratum):\n [standardized differences (cut point: ",
-                x$bal.test$alpha, ")]\n\n", sep=""))
+                object$bal.test$alpha, ")]\n\n", sep=""))
 
-      print(format(data.frame(rbind(round(x$bal.test$Standardized.differences[1,],3),
-                                    rep("-----", times=dim(x$bal.test$Standardized.differences)[2]),
+      print(format(data.frame(rbind(round(object$bal.test$Standardized.differences[1,],3),
+                                    rep("-----", times=dim(object$bal.test$Standardized.differences)[2]),
                                     str.val,
-                                    rep("",times=dim(x$bal.test$Standardized.differences)[2]),
-                                    rep("----", times=dim(x$bal.test$Standardized.differences)[2]),
-                                    x$bal.test$method),
+                                    rep("",times=dim(object$bal.test$Standardized.differences)[2]),
+                                    rep("----", times=dim(object$bal.test$Standardized.differences)[2]),
+                                    object$bal.test$method),
                               row.names=c("Before",
                                 "------",
-                                paste("Stratum", seq(1:(dim(x$bal.test$Standardized.differences)[1]-1)), sep=" "),
+                                paste("Stratum", seq(1:(dim(object$bal.test$Standardized.differences)[1]-1)), sep=" "),
                                 "",
                                 "---------",
                                 "Scale"))))
@@ -90,14 +90,14 @@ print.bal.data.frame <- function(x,
   }else{ ## label="mat"
     if (meth=="pval"){      
       cat(paste("\n\n Detailed balance check:\n [p-values from tests (significance level: ",
-                x$bal.test$alpha/100, ")]\n\n", sep=""))
+                object$bal.test$alpha/100, ")]\n\n", sep=""))
       
-      print(format(data.frame(rbind(x$bal.test$p.value[1,],
-                                    rep("-----", times=dim(x$bal.test$p.value)[2]),
+      print(format(data.frame(rbind(object$bal.test$p.value[1,],
+                                    rep("-----", times=dim(object$bal.test$p.value)[2]),
                                     str.val,
-                                    rep("",times=dim(x$bal.test$p.value)[2]),
-                                    rep("----", times=dim(x$bal.test$p.value)[2]),
-                                    x$bal.test$method),
+                                    rep("",times=dim(object$bal.test$p.value)[2]),
+                                    rep("----", times=dim(object$bal.test$p.value)[2]),
+                                    object$bal.test$method),
                               row.names=c("Before",
                                 "------",
                                 "After",
@@ -107,14 +107,14 @@ print.bal.data.frame <- function(x,
       cat("\n")      
     }else{     
       cat(paste("\n\n Detailed balance check:\n [standardized differences (cut point: ",
-                x$bal.test$alpha, ")]\n\n", sep=""))
+                object$bal.test$alpha, ")]\n\n", sep=""))
       
-      print(format(data.frame(rbind(round(x$bal.test$Standardized.differences[1,],3),
-                                    rep("-----", times=dim(x$bal.test$Standardized.differences)[2]),
+      print(format(data.frame(rbind(round(object$bal.test$Standardized.differences[1,],3),
+                                    rep("-----", times=dim(object$bal.test$Standardized.differences)[2]),
                                     str.val,
-                                    rep("",times=dim(x$bal.test$Standardized.differences)[2]),
-                                    rep("----", times=dim(x$bal.test$Standardized.differences)[2]),
-                                    x$bal.test$method),
+                                    rep("",times=dim(object$bal.test$Standardized.differences)[2]),
+                                    rep("----", times=dim(object$bal.test$Standardized.differences)[2]),
+                                    object$bal.test$method),
                               row.names=c("Before",
                                 "------",
                                 "After",

@@ -1,11 +1,11 @@
-print.est.matched.data.frame <- function(x,
+print.est.matched.data.frame <- function(object,
                                          ...)
 {
   cat("\n Effect estimation for treatment/exposure on outcome \n")
-  cat("\n Treatment/exposure:", x$name.treat)
-  cat("\n Outcome:", x$name.resp)
+  cat("\n Treatment/exposure:", object$name.treat)
+  cat("\n Outcome:", object$name.resp)
   
-  if( x$family == "binomial" ){
+  if( object$family == "binomial" ){
     cat("\n Effect measure: odds ratio ('or')\n\n")
     col.n <- c("or","SE[log[or]]","[95%-CI[or]]")
   }else{
@@ -14,17 +14,17 @@ print.est.matched.data.frame <- function(x,
   }
 
   
-  if ( !is.list(x$lr.estimation) ){
+  if ( !is.list(object$lr.estimation) ){
     lr.eff.c <- lr.se.c <- NULL
     lr.eff.m <- lr.se.m <- NULL
     lr.ci.c <- lr.ci.m <- NULL
     
   }else{
-    if( x$family == "binomial" ){
-      lr.eff.c <- round(x$lr.estimation$effect,3)
-      lr.se.c  <- round(x$lr.estimation$se,4)
-      lr.eff.m <- round(x$lr.estimation$effect.marg,3)
-      lr.se.m  <- round(x$lr.estimation$se.marg,4)
+    if( object$family == "binomial" ){
+      lr.eff.c <- round(object$lr.estimation$effect,3)
+      lr.se.c  <- round(object$lr.estimation$se,4)
+      lr.eff.m <- round(object$lr.estimation$effect.marg,3)
+      lr.se.m  <- round(object$lr.estimation$se.marg,4)
 
       lr.ci.c <- round(c(exp(log(lr.eff.c) - qnorm(0.975)*lr.se.c),
                          exp(log(lr.eff.c) + qnorm(0.975)*lr.se.c)),3)
@@ -32,23 +32,23 @@ print.est.matched.data.frame <- function(x,
       lr.ci.m <- round(c(exp(log(lr.eff.m) - qnorm(0.975)*lr.se.m),
                          exp(log(lr.eff.m) + qnorm(0.975)*lr.se.m)),3)
     }else{
-      lr.eff.c <- round(x$lr.estimation$effect,3)
-      lr.se.c  <- round(x$lr.estimation$se,4)
+      lr.eff.c <- round(object$lr.estimation$effect,3)
+      lr.se.c  <- round(object$lr.estimation$se,4)
       
       lr.ci.c <- round(c(lr.eff.c - qnorm(0.975)*lr.se.c,
                          lr.eff.c + qnorm(0.975)*lr.se.c),3)
     }
   }
     
-  if ( !is.list(x$ps.estimation$adj) ){    
+  if ( !is.list(object$ps.estimation$adj) ){    
     ps.adj.eff <-
       ps.adj.se <-
         ps.adj.ci <- NULL
   }else{
-    ps.adj.eff <- round(x$ps.estimation$adj$effect,3)
-    ps.adj.se  <- round(x$ps.estimation$adj$se,4)
+    ps.adj.eff <- round(object$ps.estimation$adj$effect,3)
+    ps.adj.se  <- round(object$ps.estimation$adj$se,4)
     
-    if( x$family == "binomial" ){
+    if( object$family == "binomial" ){
       ps.adj.ci <- round(c(exp(log(ps.adj.eff) - qnorm(0.975)*ps.adj.se),
                            exp(log(ps.adj.eff) + qnorm(0.975)*ps.adj.se)),3)     
     }else{
@@ -57,34 +57,34 @@ print.est.matched.data.frame <- function(x,
     }
   }
   
-  if ( x$family=="binomial" ){
+  if ( object$family=="binomial" ){
 
-    crude <- round(x$ps.estimation$crude$effect,3)
-    crude.se <- round(x$ps.estimation$crude$se,4)
+    crude <- round(object$ps.estimation$crude$effect,3)
+    crude.se <- round(object$ps.estimation$crude$se,4)
     crude.ci <- round(c(exp(log(crude)-qnorm(0.975)*crude.se),
                         exp(log(crude)+qnorm(0.975)*crude.se)),3)
     
-    diff <- round(x$ps.estimation$unadj$effect,3)
-    diff.se <- round(x$ps.estimation$unadj$se,4)  
+    diff <- round(object$ps.estimation$unadj$effect,3)
+    diff.se <- round(object$ps.estimation$unadj$se,4)  
     
     diff.ci <- round(c(exp(log(diff)-qnorm(0.975)*diff.se),
                        exp(log(diff)+qnorm(0.975)*diff.se)),3)
 
   }else{
     
-    crude <- round(x$ps.estimation$crude$effect,3)
-    crude.se <- round(x$ps.estimation$crude$se,4)
+    crude <- round(object$ps.estimation$crude$effect,3)
+    crude.se <- round(object$ps.estimation$crude$se,4)
     crude.ci <- round(c(crude-qnorm(0.975)*crude.se,
                         crude+qnorm(0.975)*crude.se),3)
     
-    diff <- round(x$ps.estimation$unadj$effect,3)
-    diff.se <- round(x$ps.estimation$unadj$se,4) 
+    diff <- round(object$ps.estimation$unadj$effect,3)
+    diff.se <- round(object$ps.estimation$unadj$se,4) 
     diff.ci <- round(c(diff-qnorm(0.975)*diff.se,
                        diff+qnorm(0.975)*diff.se),3)
   }
 
     
-  if ( x$family=="binomial" ){  
+  if ( object$family=="binomial" ){  
   
   eff <- c(" -----",
            paste("",crude,sep=""),

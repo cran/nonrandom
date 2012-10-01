@@ -1,12 +1,12 @@
 export(
        relative.effect,   
        pscore,
-       pscore.plot,
+       plot.pscore,
        ps.makestrata,
        ps.match,   
        dist.plot,
        ps.balance,
-       stdf.plot,
+       plot.stdf,
        ps.estimate
 )
 
@@ -50,60 +50,3 @@ S3method(ps.estimate, stratified.data.frame)
 S3method(ps.estimate, matched.pscore)
 S3method(ps.estimate, matched.data.frame)
 S3method(ps.estimate, matched.data.frames)
-
-
-S3method(print, bal.data.frame)
-S3method(print, bal.matched.data.frame)
-S3method(print, bal.matched.pscore)
-S3method(print, bal.stratified.data.frame)
-S3method(print, bal.stratified.pscore)
-S3method(print, est.data.frame)
-S3method(print, est.matched.data.frame)
-S3method(print, est.matched.pscore)
-S3method(print, est.stratified.data.frame)
-S3method(print, est.stratified.pscore)
-S3method(print, matched.data.frame)
-S3method(print, matched.data.frames)
-S3method(print, matched.pscore)
-S3method(print, pscore)
-S3method(print, relative.effect)
-S3method(print, stratified.data.frame)
-S3method(print, stratified.pscore)
-
-S3method(print, summary.bal.data.frame)
-S3method(print, summary.bal.matched.data.frame)
-S3method(print, summary.bal.matched.pscore)
-S3method(print, summary.bal.stratified.data.frame)
-S3method(print, summary.bal.stratified.pscore)
-S3method(print, summary.est.data.frame)
-S3method(print, summary.est.matched.data.frame)
-S3method(print, summary.est.matched.pscore)
-S3method(print, summary.est.stratified.data.frame)
-S3method(print, summary.est.stratified.pscore)
-S3method(print, summary.matched.data.frame)
-S3method(print, summary.matched.data.frames)
-S3method(print, summary.matched.pscore)
-S3method(print, summary.pscore)
-S3method(print, summary.relative.effect)
-S3method(print, summary.stratified.data.frame)
-S3method(print, summary.stratified.pscore)
-
-
-S3method(summary, bal.data.frame)
-S3method(summary, bal.matched.data.frame)
-S3method(summary, bal.matched.pscore)
-S3method(summary, bal.stratified.data.frame)
-S3method(summary, bal.stratified.pscore)
-S3method(summary, est.data.frame)
-S3method(summary, est.matched.data.frame)
-S3method(summary, est.matched.pscore)
-S3method(summary, est.stratified.data.frame)
-S3method(summary, est.stratified.pscore)
-S3method(summary, matched.data.frame)
-S3method(summary, matched.data.frames)
-S3method(summary, matched.pscore)
-S3method(summary, pscore)
-S3method(summary, relative.effect)
-S3method(summary, stratified.data.frame)
-S3method(summary, stratified.pscore)
-
