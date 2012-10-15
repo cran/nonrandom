@@ -27,12 +27,12 @@ print.bal.data.frame <- function(object,
         object$bal.test$p.value[2:dim(object$bal.test$p.value)[1],]
     }
   }else{
-    if (dim(object$bal.test$Standardized.differences)[2]==1){
+    if (dim(object$bal.test$Stand.diff)[2]==1){
       str.val <-
-        t(t(round(object$bal.test$Standardized.differences[2:dim(object$bal.test$Standardized.differences)[1],],3)))
+        t(t(round(object$bal.test$Stand.diff[2:dim(object$bal.test$Stand.diff)[1],],3)))
     }else{
       str.val <-
-        round(object$bal.test$Standardized.differences[2:dim(object$bal.test$Standardized.differences)[1],],3)
+        round(object$bal.test$Stand.diff[2:dim(object$bal.test$Stand.diff)[1],],3)
     }
   }
 
@@ -73,15 +73,15 @@ print.bal.data.frame <- function(object,
       cat(paste("\n\n Detailed balance check (per stratum):\n [standardized differences (cut point: ",
                 object$bal.test$alpha, ")]\n\n", sep=""))
 
-      print(format(data.frame(rbind(round(object$bal.test$Standardized.differences[1,],3),
-                                    rep("-----", times=dim(object$bal.test$Standardized.differences)[2]),
+      print(format(data.frame(rbind(round(object$bal.test$Stand.diff[1,],3),
+                                    rep("-----", times=dim(object$bal.test$Stand.diff)[2]),
                                     str.val,
-                                    rep("",times=dim(object$bal.test$Standardized.differences)[2]),
-                                    rep("----", times=dim(object$bal.test$Standardized.differences)[2]),
+                                    rep("",times=dim(object$bal.test$Stand.diff)[2]),
+                                    rep("----", times=dim(object$bal.test$Stand.diff)[2]),
                                     object$bal.test$method),
                               row.names=c("Before",
                                 "------",
-                                paste("Stratum", seq(1:(dim(object$bal.test$Standardized.differences)[1]-1)), sep=" "),
+                                paste("Stratum", seq(1:(dim(object$bal.test$Stand.diff)[1]-1)), sep=" "),
                                 "",
                                 "---------",
                                 "Scale"))))
@@ -109,11 +109,11 @@ print.bal.data.frame <- function(object,
       cat(paste("\n\n Detailed balance check:\n [standardized differences (cut point: ",
                 object$bal.test$alpha, ")]\n\n", sep=""))
       
-      print(format(data.frame(rbind(round(object$bal.test$Standardized.differences[1,],3),
-                                    rep("-----", times=dim(object$bal.test$Standardized.differences)[2]),
+      print(format(data.frame(rbind(round(object$bal.test$Stand.diff[1,],3),
+                                    rep("-----", times=dim(object$bal.test$Stand.diff)[2]),
                                     str.val,
-                                    rep("",times=dim(object$bal.test$Standardized.differences)[2]),
-                                    rep("----", times=dim(object$bal.test$Standardized.differences)[2]),
+                                    rep("",times=dim(object$bal.test$Stand.diff)[2]),
+                                    rep("----", times=dim(object$bal.test$Stand.diff)[2]),
                                     object$bal.test$method),
                               row.names=c("Before",
                                 "------",

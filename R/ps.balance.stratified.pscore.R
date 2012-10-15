@@ -8,7 +8,7 @@ ps.balance.stratified.pscore <- function(object,
                                          stratum.index = NULL,
                                          match.index   = NULL,
                                          method        = "classical",
-                                         cat.levels    = 10,
+                                         cat.levels    = 2,
                                          alpha         = 5,
                                          equal         = TRUE)
 {
@@ -41,7 +41,9 @@ ps.balance.stratified.pscore <- function(object,
   
   ## ##################
   ## find stratum.index  
-  if (!is.character(stratum.index) & !is.numeric(stratum.index) & !is.null(stratum.index)){
+  if (!is.character(stratum.index) &
+      !is.numeric(stratum.index) &
+      !is.null(stratum.index)){
     stop("Argument 'stratum.index' has to be either numeric or a string.")
   }else{
     if (is.null(stratum.index)){

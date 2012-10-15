@@ -19,22 +19,22 @@ print.bal.stratified.data.frame <- function(object,
     cat(paste("\n\n Detailed balance check (per stratum):\n [Standardized differences (cut point: ",
               object$bal.test$alpha, ")]\n\n", sep=""))
     
-    if (dim(object$bal.test$Standardized.difference)[2]==1){
+    if (dim(object$bal.test$Stand.diff)[2]==1){
       str.val <-
-        t(t(round(object$bal.test$Standardized.difference[2:dim(object$bal.test$Standardized.difference)[1],],3)))
+        t(t(round(object$bal.test$Stand.diff[2:dim(object$bal.test$Stand.diff)[1],],3)))
     }else{
       str.val <-
-        round(object$bal.test$Standardized.difference[2:dim(object$bal.test$Standardized.difference)[1],],3)
+        round(object$bal.test$Stand.diff[2:dim(object$bal.test$Stand.diff)[1],],3)
     }   
-    print(format(data.frame(rbind(round(object$bal.test$Standardized.difference[1,],3),
-                                  rep("-----", times=dim(object$bal.test$Standardized.difference)[2]),
+    print(format(data.frame(rbind(round(object$bal.test$Stand.diff[1,],3),
+                                  rep("-----", times=dim(object$bal.test$Stand.diff)[2]),
                                   str.val,
-                                  rep("",times=dim(object$bal.test$Standardized.difference)[2]),
-                                  rep("----", times=dim(object$bal.test$Standardized.difference)[2]),
+                                  rep("",times=dim(object$bal.test$Stand.diff)[2]),
+                                  rep("----", times=dim(object$bal.test$Stand.diff)[2]),
                                   object$bal.test$method),
                             row.names=c("Before",
                               "------",
-                              paste("Stratum", seq(1:(dim(object$bal.test$Standardized.difference)[1]-1)), sep=" "),
+                              paste("Stratum", seq(1:(dim(object$bal.test$Stand.diff)[1]-1)), sep=" "),
                               "",
                               "---------",
                               "Scale"))))

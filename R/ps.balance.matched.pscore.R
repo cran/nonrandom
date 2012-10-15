@@ -8,7 +8,7 @@ ps.balance.matched.pscore <- function(object,
                                       stratum.index = NULL,
                                       match.index   = NULL,
                                       method        = "classical",
-                                      cat.levels    = 10,
+                                      cat.levels    = 2,
                                       alpha         = 5,
                                       equal         = TRUE)
 {

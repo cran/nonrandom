@@ -5,14 +5,14 @@ dist.plot.hist <- function(sel,
                            name.index,
                            compare,
                            match.T,
-                           cat.levels = 10,
+                           cat.levels = 2,
                            plot.levels = 5,
                            ylim = NULL,
                            ...)
 {
   ## #######################################
   ## define categorical/continuous variables  
-  cat.index <- apply(sel,2, function(x) nlevels(as.factor(x))<cat.levels)
+  cat.index <- apply(sel,2, function(x) nlevels(as.factor(x))<=cat.levels)
   
   var.noncat <- names(sel)[1:length(sel)][cat.index == FALSE]
   var.cat    <- names(sel)[1:length(sel)][cat.index == TRUE]
@@ -22,13 +22,16 @@ dist.plot.hist <- function(sel,
   ## define function to calculate breaks, counts, ...
 
   ## redefine plot.levels if ylim is given
-  if ( !is.null(ylim) )
-    if ( ylim[2] <= 1 )
+  if ( !is.null(ylim) ){
+    if ( ylim[2] <= 1 ){
       plot.levels <- seq(ylim[1], ylim[2], 1/plot.levels)
-    else
+    }else{
       plot.levels <- seq(ylim[1], ylim[2], (ylim[2]-ylim[1])/plot.levels)
-   
- 
+    }
+  }
+
+
+  ## ######################################
   ## functions for non categorical variable
   
   ## breaks
@@ -98,6 +101,8 @@ dist.plot.hist <- function(sel,
     lapply(z, func.counts)
   }
 
+  
+
   var.noncat.x.s.list <- var.noncat.x.s.counts <- list()
   var.noncat.y.s.list <- var.noncat.y.s.counts <- list()
   var.noncat.x.list <- var.noncat.x.counts <- list()
@@ -127,7 +132,10 @@ dist.plot.hist <- function(sel,
 
     }
   
-    
+
+
+  
+  ## ##################################
   ## functions for categorical variable
   
   ## counts if not stratified
@@ -135,7 +143,7 @@ dist.plot.hist <- function(sel,
     if(!match.T){
       table(sel[,x], treat)[,1]
     }else{
-      table(sel[index==1,x], treat[index==1])[,1]
+      table(sel[index==1,x], treat[index==1])[,1] 
     }
   
   func3.y <- function(x)
@@ -156,8 +164,9 @@ dist.plot.hist <- function(sel,
   list.x.s.cat <- list.y.s.cat <- list()
   list.x.cat <- list.y.cat <- list()
   
-  
-  if(length(var.cat) > 0){
+
+  ## loop over var.cat
+  if( length(var.cat) > 0 ){
     
     list.x.s.cat <- lapply(var.cat,func4.x)
     list.y.s.cat <- lapply(var.cat,func4.y)

@@ -9,121 +9,112 @@
 }
 \usage{
   dist.plot(object, sel=NULL, treat=NULL, stratum.index=NULL,
-  match.index=NULL, plot.type=1, compare=FALSE, cat.levels=10,
+  match.index=NULL, plot.type=1, compare=FALSE, cat.levels=2,
   plot.levels=5, label.match=NULL, label.stratum=c("Stratum","Original"),
-  with.legend=TRUE, legend.title=NULL, legend.cex=0.9, myoma=c(2,2,2,2),
-  mymar=c(2,4,1,2), width=0.5, xlim=NULL, ylim=NULL, col=NULL, las=1,
+  with.legend=TRUE, legend.title=NULL, legend.cex=0.9, myoma=c(3,2,2,2),
+  mymar=c(5,4,1,2), width=0.5, xlim=NULL, ylim=NULL, col=NULL, las=1,
   font.main=2, font=1, main=NULL, main.cex=1.2, sub.cex=0.9,
   bar.cex=0.8, ...)
 }
 
 \arguments{
+  
   \item{object}{an object of class 'pscore', 'stratified.pscore',
     'stratified.data.frame', 'matched.pscore', 'matched.data.frame',
     'matched.data.frames' or a data frame. If object class is 'pscore',
-    arguments \code{stratum} or \code{match.index} are ignored.}
+    arguments \code{stratum.index} or \code{match.index} are ignored.}
   
   \item{sel}{a data frame or a vector of integers or strings indicating
-    covariates whose distribution to be plotted. The default is
-    'NULL',i.e., complete data are selected.}
+    covariates to be plotted. The default is 'NULL', i.e. the complete
+    data set is selected.}
   
-  \item{treat}{an integer or a string indicating treatment in 'data' and
-    'data.matched' if \code{ps.match()} is previously used,
-    respectively. The default is 'NULL'. If the class of the input
-    object is 'stratified.pscore' or 'matched.pscore', no specification
-    is needed.}
+  \item{treat}{an integer or a string describing the treatment indicator
+    in 'data' and 'data.matched', respectively, if \code{ps.match()} is
+    previously used. If the class of the input object is
+    'stratified.pscore' or 'matched.pscore', no specification is
+    needed.}
 
   \item{stratum.index}{an integer or a string indicating the vector
-    containing the stratum indices in stratified data. The default is
-    'NULL'. No specification is needed if \code{ps.makestrata()} is
-    previously used.}
+    containing the stratum indices in stratified data. No specification
+    is needed if \code{ps.makestrata()} is previously used.}
 
   \item{match.index}{an integer or a string indicating the vector
-    containing the matching indices in data and in the matched
-    data. The default is 'NULL'. No specification is needed if
-    \code{ps.match()} is previously used.}
+    containing the matching indices in data and in the matched data. No
+    specification is needed if \code{ps.match()} is previously used.}
 
-  \item{plot.type}{an integer specifying the type of plot. The default
-    is '1', i.e., means for non-categorical and frequencies for
-    categorical covariates are plotted as barplots separated by
-    treatment. If \code{plot.type}='2', histograms are used.}
+  \item{plot.type}{an integer specifying the plot type. The default is
+    '1', i.e. means for continuous and frequencies for categorical
+    covariates are plotted as barplots separated by treatment. If
+    \code{plot.type}='2', histograms are shown.}
   
-  \item{compare}{a logical value indicating whether covariate
-    distribution in the original data are plotted. The default is
-    'FALSE'.}
+  \item{compare}{a logical value indicating whether the covariate
+    distribution in the original data are plotted.}
  
-  \item{cat.levels}{an integer. The default is '10', i.e., covariates
-    with more than ten different values are considered as
-    non-categorical.}
+  \item{cat.levels}{an integer. The default is '2', i.e. covariates with
+    more than two different values are considered as continuous.}
 
-  \item{plot.levels}{an integer. The default is '5', i.e., five
-    cutpoints are used to define classes for the histogram for
-    non-categorical covariates. The classification still depends on the
-    data structure such that the number of classes can differ from the
-    statement in \code{plot.levels}.}
+  \item{plot.levels}{an integer. The default is '5', i.e. five cutpoints
+    are used to define histogram classes for continuous
+    covariates. Caution: The classification depends on the data
+    structure such that the class number used in the histogram may
+    differ from the statement in \code{plot.levels}.}
  
   \item{label.match}{a vector of two strings describing the labels for
-    the original and the matched data. The default is 'NULL', i.e.,
+    the original and the matched data. The default is 'NULL', i.e.
     c('Original', 'Matched') is used.}
 
   \item{label.stratum}{a string describing the labels for the
-    stratum-specific data. The default is 'Stratum'.}
+    stratum-specific data.}
 
   \item{with.legend}{a logical value indicating whether a legend is
-    shown. The default is 'TRUE'.}
+    shown.}
   
   \item{legend.title}{a string indicating the legend title. The default
-    is 'NULL', i.e, either categories of categorical covariates or
-    treatment labels for non-categorical covariates are given if
-    \code{plot.type}='1'. For \code{plot.type}='2', treatment labels are
-    shown.}
+    is 'NULL', i.e either covariate categories or treatment labels in
+    case of continuous covariates are given if \code{plot.type}='1'. For
+    \code{plot.type}='2', treatment labels are shown.}
 
-  \item{legend.cex}{a numeric indicating the font size in the
-    legend. The default is '0.9'.}
+  \item{legend.cex}{a numeric indicating the font size in the legend.}
 
-  \item{myoma}{the size of outer margins, see \code{par}. The default is
-    'c(2,2,2,2)'.}
+  \item{myoma}{the size of outer margins, see \code{par}.}
 
   \item{mymar}{margins to be specified on the four sides of the plot,
-    see \code{par}. The default is 'c(2,4,1,2)' if \code{plot.type}='1'
-    and 'c(5,4,4,2)+0.1' if \code{plot.type}='2'.}
+    see \code{par}.}
 
-  \item{width}{an integer indicating bar widths. The default is '1'.}
+  \item{width}{an integer indicating bar widths.}
 
   \item{xlim}{a vector of integers of length two indicating limits for
-    the x axis. The default is 'NULL'.}
+    the x axis.}
 
   \item{ylim}{a vector of integers of length two indicating limits for
-    the y axis. The default is 'NULL'. It is only meaningful if
-    \code{plot.type}='2'.}
+    the y axis. It is only meaningful if \code{plot.type}='2'.}
   
-  \item{col}{a vector of colors for bars or bar components. The default
-    is 'NULL'.}
+  \item{col}{a vector of colors for bars or bar components. The vector
+    length should depend on the \code{plot.type} and the category levels
+    of the plotted covariates.}
 
   \item{las}{a integer indicating the style of axis labels, see
-    \code{par}. The default is '1'.}
+    \code{par}.}
 
   \item{font.main}{an integer indicating the font to be used for plot
-    main titles, see \code{par}. The default is '2'.}
+    main titles, see \code{par}.}
   
   \item{font}{an integer specifying the font to use for text, see
-    \code{par}. The default is '1'.}
+    \code{par}.}
 
-  \item{main}{a string indicating the main title for graphics. The
-    default is 'NULL'.}
+  \item{main}{a string indicating the main title for graphics.}
 
-  \item{main.cex}{a numeric indicating the font size of main title. The
-    default is '1.2'.}
+  \item{main.cex}{a numeric indicating the font size of main title.}
 
-  \item{sub.cex}{a numeric indicating the font size of sub titles. The
-    default is '0.9'.}
+  \item{sub.cex}{a numeric indicating the font size of sub titles.}
 
-  \item{bar.cex}{a numeric indicating the font size of bar titles. The
-    default is '0.8'.}
+  \item{bar.cex}{a numeric indicating the font size of bar titles.}
   
   \item{...}{further arguments for graphics.}
 }
+
 \details{
+  
   Propensity score methods aims to eliminate imbalances in covariate
   distributions between treatment groups. An important issue is to
   check those after stratification or matching.
@@ -135,8 +126,9 @@
   input object is a data frame.
 }
 \value{
-  \code{dist.plot()} returns a list with information about the
-  plots. The number and the manner of the list entries depends on
+
+  \code{dist.plot()} returns a list containing information for
+  graphics. The number and the manner of the list entries depends on
   \code{plot.type} and on the type of covariates to be plotted:
 
   \item{name.sel}{a string containing names of the selected covariates.}
@@ -144,35 +136,36 @@
   \item{sel}{a data frame containing the selected covariates labeled by
     'name.sel'.}
   
-  \item{name.treat}{a string indicating the name of treatment used.}
+  \item{name.treat}{a string indicating the name of the selected
+  treatment variable.}
 
-  \item{treat}{a numeric vector containing treatment labeled by
-    'name.treat'.}
+  \item{treat}{a vector containing the treatment variable labeled by
+  'name.treat'.}
 
-  \item{name.stratum.index}{a string indicating the name of stratum
-    indices used.}
+  \item{name.stratum.index}{a string indicating the name of the selected
+    stratum indices.}
 
-  \item{stratum.index}{a numeric vector containing stratum indices
-    labeled by 'name.stratum.index'.}
+  \item{stratum.index}{a vector containing the stratum variable labeled
+    by 'name.stratum.index'.}
     
-  \item{name.match.index}{a string indicating the name of matching
-    indices used.}
+  \item{name.match.index}{a string indicating the name of the selected
+    matching indices.}
  
-  \item{match.index}{a numeric vector containing matching indices
-    labeled by 'name.match.index'.}
+  \item{match.index}{a vector containing the matching variable labeled
+    by 'name.match.index'.}
      
   \item{var.cat}{a string indicating the names of categorical
     variables.}
   
-  \item{var.noncat}{a string indicating the names of non-categorical
+  \item{var.noncat}{a string indicating the names of continuous
     variables.}
 
-  \item{mean}{a list of length two including means of non-categorical
+  \item{mean}{a list of length two including means of continuous
     covariates separated by treatment. If \code{compare}='FALSE', list
     elements are matrices with means separated by treatment (rows) and
     strata or matched/unmatched data (columns), respectively. If
-    \code{compare}='TRUE', the list elements are again lists including
-    means before (first list element) and after (second list element)
+    \code{compare}='TRUE', the list elements are lists including means
+    before (first list element) and after (second list element)
     stratification or matching. The order of list elements is in
     accordance to the order of 'var.noncat'. It is only available if
     \code{plot.type}=1.}
@@ -180,21 +173,20 @@
   \item{frequency}{a list with length according to the number of
     categorical covariates whereas the list elements depend on
     \code{compare}. If \code{compare}='FALSE', list elements contain
-    standardized frequency tables separated by treatment (rows)
-    and by strata or by matched/unmatched data (columns). The order and
-    the number of list elements is w.r.t. 'var.cat'. If
-    \code{compare}='TRUE', there are two list elements which
-    are again lists of frequency tables. The first list element contains
-    lists of frequency tables separated by treatment before
-    stratification or matching and the second list element includes
-    lists of frequency tables separated by treatment and strata or
-    matched/unmatched data. The order of list elements is in accordance
-    to the order of 'var.cat'. It is only available if
-    \code{plot.type}=1.}
+    standardized frequency tables separated by treatment (rows) and by
+    strata or by matched/unmatched data (columns). The order and the
+    number of list elements is w.r.t. 'var.cat'. If
+    \code{compare}='TRUE', there are two list elements which are lists
+    of frequency tables. The first list element contains lists of
+    frequency tables separated by treatment before stratification or
+    matching and the second list element includes lists of frequency
+    tables separated by treatment and strata or matched/unmatched
+    data. The order of list elements is in accordance to the order of
+    'var.cat'. It is only available if \code{plot.type}=1.}
 
   \item{breaks.noncat}{a list with length according to the number of
-    non-categorical covariates. The list entries are numerics indicating
-    the cutpoints of histogram classes. It is only available if
+    continuous covariates. The list entries are numerics indicating the
+    cutpoints of histogram classes. It is only available if
     \code{plot.type}=2.}
 
   \item{x.cat}{a list with length according to the number of categorical
@@ -224,33 +216,32 @@
     available if \code{plot.type}=2.}
 
   \item{x.noncat}{a list with length according to the number of
-    non-categorical covariates. It contains frequencies in histogram
-    classes w.r.t. treatment with the lower value, e.g., '0' or 'No',
-    before stratification or matching. It is only available if
+    continuous covariates. It contains frequencies in histogram classes
+    w.r.t. treatment with the lower value, e.g., '0' or 'No', before
+    stratification or matching. It is only available if
     \code{plot.type}=2 and \code{compare}='TRUE'.}
 
   \item{y.noncat}{a list with length according to the number of
-    non-categorical covariates. It contains frequencies in histogram
-    classes w.r.t. treatment with the upper value, e.g., '1' or 'Yes',
-    before stratification or matching. It is only available if
+    continuous covariates. It contains frequencies in histogram classes
+    w.r.t. treatment with the upper value, e.g., '1' or 'Yes', before
+    stratification or matching. It is only available if
     \code{plot.type}=2 and \code{compare}='TRUE'.}
 
-  \item{x.s.noncat}{a list with length according to number of
-    non-categorical covariates. It contains lists with frequencies in
-    histogram classes w.r.t. strata and treatment with the lower value,
-    e.g., '0' or 'No', after stratification. If \code{match.index} is
-    used, frequencies in histogram classes are given w.r.t. treatment
-    with the lower value and w.r.t. the original data and the matched
-    dats. It is only available if \code{plot.type}=2.}
+  \item{x.s.noncat}{a list with length according to number of continuous
+    covariates. It contains lists with frequencies in histogram classes
+    w.r.t. strata and treatment with the lower value, e.g., '0' or 'No',
+    after stratification. If \code{match.index} is used, frequencies in
+    histogram classes are given w.r.t. treatment with the lower value
+    and w.r.t. the original data and the matched dats. It is only
+    available if \code{plot.type}=2.}
 
-  \item{y.s.noncat}{a list with length according to number of
-    non-categorical covariates. It contains lists with frequencies in
-    histogram classes w.r.t. strata and treatment with the upper value,
-    e.g., '1' or 'Yes', after stratification. If \code{match.index} is
-    used, frequencies in histogram classes are given w.r.t. treatment
-    with the upper value and w.r.t. the original data and the matched
-    dats. It is only available if \code{plot.type}=2.}
-}
+  \item{y.s.noncat}{a list with length according to number of continuous
+    covariates. It contains lists with frequencies in histogram classes
+    w.r.t. strata and treatment with the upper value, e.g., '1' or
+    'Yes', after stratification. If \code{match.index} is used,
+    frequencies in histogram classes are given w.r.t. treatment with the
+    upper value and w.r.t. the original data and the matched dats. It is
+    only available if \code{plot.type}=2.}  }
 
 \author{Susanne Stampf \email{susta@imbi.uni-freiburg.de}
 }

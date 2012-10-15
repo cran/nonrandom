@@ -1,17 +1,24 @@
 \name{plot.stdf}
 \alias{plot.stdf}
+
 \title{
+
   Graphical check for standardized differences of covariates 
 }
+
 \description{
+
   Plot standardized differences of covariates
 }
+
 \usage{
-  \method{plot}{stdf}(x, sel = NULL, plot.alpha = TRUE,
+
+ \method{plot}{stdf}(x, sel = NULL, plot.alpha = TRUE,
   mymar = c(5,8,4,2), pch.p = c(1,5), col.p = c("black", "red"),
-  cex.p = 1.25, line.stdf = 1, line.alpha = 4, with.legend = TRUE,
-  legend.label = c("before", "after"), legend.cex = 1, legend.xy = NULL,
-  ...)
+  colorspace = NULL, cex.p = 1.25, line.stdf = 1, line.alpha = 4,
+  with.legend = TRUE, legend.label = c("before", "after"),
+  legend.cex = 1, legend.xy = NULL, ...)
+
 }
 
 \arguments{
@@ -21,41 +28,44 @@
   \code{ps.balance(..., method='stand.diff', ...)} is needed.}
 
   \item{sel}{a vector of strings indicating covariates to be
-    checked. The default is NULL, i.e. all variables checked in
-    \code{ps.balance()} are selected.}
+    checked. The default is NULL, i.e. all variables selected previously
+    in \code{ps.balance()} are plotted.}
 
   \item{plot.alpha}{a logical value indicating whether a vertical line
   for the significance level chosen in \code{ps.balance()} should be
-  plotted. The default is TRUE.}
+  plotted.}
 
-  \item{mymar}{a graphical parameter. The default is c(5,8,4,2).}
+  \item{mymar}{a graphical parameter, see \code{par()}.}
 
-  \item{pch.p}{a vector of two integers indicating the symbols. The
-    default is c(1,5).}
+  \item{pch.p}{a vector of two integers indicating the symbols.}
 
-  \item{col.p}{a vector of two strings indicating symbol colors in the
-    plot. The default is c("black", "red").}
+  \item{col.p}{a vector of two strings indicating symbol colors.}
 
-  \item{cex.p}{a numeric indicating the size of symbols in the plot. The
-    default is 1.25.}
+  \item{colorspace}{a logical value indicating whether
+  \code{rainbow_hcl(20)} (if TRUE) or \code{grey.colors(20)} (if FALSE)
+  should be used (argument '20' indicate that 20 colors are
+  pre-specified and can be selected using \code{col.p}). The default is
+  NULL, i.e. argument \code{col.p} is used. The colors are randomly
+  chosen when argument \code{col.p} contains strings and
+  \code{colorspace} is set to TRUE. }
 
-  \item{line.stdf}{an integer indicating the type of line that connects
-  the sympols. The default is 1.}
+  \item{cex.p}{a numeric indicating the size of symbols.}
+
+  \item{line.stdf}{an integer indicating the line type connecting the
+  sympols.}
 
   \item{line.alpha}{an integer indicating the line type presenting the
-  significance level. The default is 4.}
+  significance level.}
 
   \item{with.legend}{a logical value indicating whether the legend is
-    given. The default is TRUE.}
+    given.}
 
-  \item{legend.label}{a vector of two strings indicating the labels. The
-    default is c("before", "after").}
+  \item{legend.label}{a vector of two strings indicating the labels.}
 
-  \item{legend.cex}{a numeric indicating the size of the legend
-    font. The default is 1.}
+  \item{legend.cex}{a numeric indicating the size of the legend font.}
 
   \item{legend.xy}{a vector of two integers indicating x- and
-  y-coordinates for legend position. The default is NULL.}
+  y-coordinates for legend position.}
 
    \item{...}{further arguments for graphics.}
   

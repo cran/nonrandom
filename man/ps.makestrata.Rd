@@ -1,65 +1,73 @@
 \name{ps.makestrata}
 \alias{ps.makestrata}
 \title{Propensity score stratification}
+
 \description{
- Stratify data w.r.t.~the estimated propensity score
+
+  Stratification based on the estimated propensity score
+
 }
+
 \usage{
+
  ps.makestrata(object, breaks=NULL, name.stratum.index="stratum.index",
  stratified.by=NULL, ...)
 }
+
 \arguments{
+  
   \item{object}{an object of class 'pscore' or a data frame.}  
 
   \item{breaks}{an integer, a numeric vector or suitable \code{R}
-    function, e.g, \code{quantile()}. The default is 'NULL', i.e.,
+    function, e.g \code{quantile()}. The default is 'NULL', i.e.
     stratum bounds are automatically determined (see \code{cut()}).}
 
-  \item{name.stratum.index}{a string indicating the name of the variable
-    containing the stratum indices. The default is 'stratum.index'.}
+  \item{name.stratum.index}{a string indicating the variable name
+    containing the stratum indices.}
 
   \item{stratified.by}{an integer or a string indicating the
-    stratification variable in data. The default is NULL, i.e., if the
+    stratification variable in data. The default is NULL, i.e. if the
     class of the input object is 'pscore', object value 'pscore' is
-    automatically used as stratification variable.}
+    automatically used.}
 
   \item{...}{further arguments passed to or from other methods.}
-}  
+}
+
 \details{
+  
   Stratification by the estimated propensity score groups observations
-  with identical or similar estimated propensity score. It aims to
-  balance covariate distributions between treatment groups within
-  strata.
+  with identical or similar estimated propensity score. 
   
   If function \code{pscore()} is previously used with default settings,
-  \code{stratified.by} has not to be specified. But it is needed, if the
-  stratification variable in data is not labeled by 'pscore'.
+  \code{stratified.by} has not to be specified. It is needed if the
+  stratification variable is not labeled by 'pscore'.
   
   Several options for the argument \code{breaks} are available. The
-  default is 'NULL', i.e., values of the stratification variable are
+  default is 'NULL', i.e. values of the stratification variable are
   factorized and each factor correspond to a stratum. Using an integer,
   the number of strata is specified. If a numeric vector is given, its
-  values indicate the stratum bounds.
-}
+  values indicate the stratum bounds.  }
+
 \value{
+
   \code{ps.makestrata()} returns an object of class 'stratified.pscore'
   or 'stratified.data.frame' depending on the class of the input
   object. If the class of the input object is 'pscore', the output
   object inherits all components from the input object. The following
-  components can be available:
+  components are available:
   
   \item{data}{a data frame containing the input data, extended by
     column(s) including stratum indices labeled by
     \code{name.stratum.index}.}
 
-  \item{name.stratum.index}{a string indicating the name of stratum
-    indices generated at last.}
+  \item{name.stratum.index}{a string indicating the name of the variable
+    containing the stratum indices, generated at last.}
 
   \item{stratum.index}{a numeric vector containing the stratum indices
     labeled by 'name.stratum.index'.}
 
   \item{intervals}{a vector of characters indicating intervals
-    corresponding to 'stratum.index'.}
+    corresponding to \code{stratum.index}.}
 
   \item{stratified.by}{a string indicating the name of the
     stratification variable.}

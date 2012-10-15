@@ -13,17 +13,22 @@ ps.matchcaliper <- function(vect1,
     set.seed(seed=setseed)  
 
   
-  ## ######################################################
-  ## Treated -> untreated (default) or Untreated -> treated
-  if(!givenTmatchingC){  
+  ## ####################################################
+
+  ## Treated -> untreated (default: givenTmatchingC=TRUE)
+  ## Untreated -> treated (givenTmatchingC=FALSE)
+  
+  if(!givenTmatchingC){ ## swap vect1 (treated) and vect2 (untreated)
 
     temp  <- vect1  
-    vect1 <- vect2  ## in general: vect1 includes treated; vect2 includes untreated
+    vect1 <- vect2  ## in general: vect1 includes treated; vect2
+                    ## includes untreated
     vect2 <- temp   ## length(vect2) > length(vect1)
 
     message(paste("Argument 'givenTmatchingC'=",
                   givenTmatchingC,
-                  ": Treated elements were matched to each untreated element.", sep=""))
+                  ": Treated elements were matched to each untreated element.",
+                  sep=""))
   }
 
   ## ##############
@@ -46,16 +51,21 @@ ps.matchcaliper <- function(vect1,
   
   ## Check, whether there are enough controls for each element in vect1=nrow(D)
   list.candidates <- integer(nrow(D))
-  
+
+  ## How many potential matching partner does each treated obs (vect1) have?
   for(i in 1:nrow(D)){
     list.candidates[i] <- length(D[i, D[i,]<=caliper])
   }
 
+  ## check whether obs have not enough potential matching partners?
   if(any((list.candidates-ratio) < 0))
-    message(paste("It is not possible to find", ratio , "matching elemtent(s) for",
-                  sum((list.candidates-ratio) < 0), "element(s);\n Check the caliper size",
+    message(paste("It is not possible to find",
+                  ratio , "matching elemtent(s) for",
+                  sum((list.candidates-ratio) < 0),
+                  "element(s);\n Check the caliper size",
                   round(caliper,3), "or the ratio", ratio))
 
+  
   mv1 <- matrix(nrow=nrow(D),ncol=ratio)  
   lm  <- integer(nrow(D))           ## vector of length nrow(D) = number treated obs.
                                           
@@ -72,17 +82,25 @@ ps.matchcaliper <- function(vect1,
   ## Matching algorithm
   for(j in 1:nrow(M)){            
     
-    i <- as.integer(names(lm[j])) ## start in 1
-    l <- rep(NA,times=ncol(M))    ## length(l) = number of untreated obs
+    i <- as.integer(names(lm[j])) ## start with the obs with fewest
+                                  ## matching partners
     
-    for(k in 1:ncol(M)){         
-      if(is.na(M[i,k])==FALSE){     ## Set all possible matching elements 
-        l[k] <- k                   ## for treated element j
+    l <- rep(NA,times=ncol(M))    ## length(l) = number of untreated
+                                  ## obs; maximal number of matching
+                                  ## partners
+
+    for(k in 1:ncol(M)){
+      if(is.na(M[i,k])==FALSE){     ## obs not potential match partner
+                                    ## are set to NA
+        
+        l[k] <- k                   
       }
     }
-    l <- l[is.na(l)==FALSE]         ## potential matching elements
+    
+    l <- l[is.na(l)==FALSE]         ## only potential matching elements included
 
     if(length(l)>ratio){            ## More than ratio potential matching elements? 
+
       if(bestmatch.first){          ## TRUE: Take the |ratio| smallest 
 
         c        <- M[i,]                         ## Difference of treated/control for obs.i
@@ -94,24 +112,26 @@ ps.matchcaliper <- function(vect1,
         ## FALSE: Take a sample of size |ratio| 
         l <- sort(sample(c(l),ratio))
       }
+      
       mv1[i,]=l  ## Save the matched element(s) l to treated element j 
-    }
-    else{ ## length(l) =< ratio
+
+    }else{ ## length(l) =< ratio
 
       mv1[i,]=c(l,rep(0,times=ratio-length(l))) ## Set 0 for missing matching
                                                 ## elements 
     }
 
-    if(length(l)!= 0){ ## If there are matching elements found, ...
+    if(length(l)!= 0){     ## If there are matching elements found, ...
       M[i,-l] <- NA        ## Set the rest of row i to NA except for 
-                           ## row(s) l including match partners
+                           ## 'l' row(s) including match partners
       for(k in 1:nrow(M)){        
         if(k!=i){          ## The k treated obs. can not found matching 
-          M[k,l] <- NA     ## partners l because there were matched  
+          M[k,l] <- NA     ## partners 'l' because there were matched  
         }                  ## already to treated element i ==> set to NA
       }
-    } ## length(l)!= 0 
-  } ## for (j ...)
+    } ## length(l)!= 0
+    
+  } ## end loop over all treated (for (j))
 
 
   mv2 <- integer(ncol(M)) ## List of matched elements for each control obs.
@@ -120,21 +140,26 @@ ps.matchcaliper <- function(vect1,
   
  
   for(j in 1:nrow(M)){            
-    mv2[mv1[j, mv1[j, ] != 0]] <- j
+    mv2[mv1[j, mv1[j, ] != 0]] <- j  ## non-matched obs are zero
   }
 
   names(mv2) <- 1:ncol(M)
+  
  
-  ##if(any(mv1[is.na(mv1[,1])==FALSE,1]==0))
   if (any(mv1 == 0))  
     message("Some elements have no matching element.")
   
-  if(length(mv2[mv2[] != 0]) != nrow(M) * ratio)
+  if( length(mv2[mv2[] != 0]) != nrow(M) * ratio )
     message(paste("Some elements have no",
                   ratio,
                   "matching element(s) as desired."))
-  
-  k <- 1               ## vectors of the matching tuples (or 'pairs', if 'ratio' = 1)
+
+  ## mv1: indices for matched untreated obs 
+  ## mv2: index for matched treated obs
+
+
+  ## define vectors of matching tuples (or 'pairs', if 'ratio' = 1)
+  k <- 1               
   for(j in 1:nrow(M)){   
 
     if(any(mv1[j,]!=0)){
@@ -154,6 +179,8 @@ ps.matchcaliper <- function(vect1,
       mv2[j] <- NA
       pv2[j] <- NA
     }
+
+  
  
   if(!givenTmatchingC){
     temp <- pv1

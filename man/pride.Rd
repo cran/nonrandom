@@ -2,16 +2,18 @@
 \alias{pride}
 \docType{data}
 \title{Data example pride}
+
 \description{
-  Data dealing with lower respiratory tract infections (LRTI) in n =
-  3.078 infants and children aged less than three years in the
-  observational study Pri.DE (Pediatric Respiratory Infection,
-  Deutschland) in Germany.
-}
+  Data dealing with lower respiratory tract infections (LRTI) in n=3.078
+  infants and children aged less than three years in the observational
+  study Pri.DE (Pediatric Respiratory Infection, Deutschland) in
+  Germany.  }
+
 \usage{data(pride)
 }
+
 \format{
-  A data frame with 3078 observations on the following 15 variables.
+  A data frame with n=3078 observations on the following 15 variables.
   \describe{
     \item{PCR_RSV}{current respiratory syncytial virus (RSV) infection
       (1) or not (0)}

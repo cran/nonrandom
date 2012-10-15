@@ -2,10 +2,10 @@ summary.est.stratified.pscore <- function(object,
                                           ...)
 {
   if( object$family == "binomial" ){
-    meas <- "odds ratios"
+    meas <- "odds ratios ('or')"
     col.n <- c("or","SE[log[or]]","[95%-CI[or]]")
   }else{
-    meas <- "effects"
+    meas <- "differences ('effect')"
     col.n <- c("effect","SE[effect]","[95%-CI[effect]]")
   }
   

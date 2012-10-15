@@ -6,7 +6,7 @@ dist.plot.bars <- function(sel,
                            index,
                            compare,
                            match.T,
-                           cat.levels  = 10,
+                           cat.levels  = 2,
                            label.match = NULL,
                            ...)
 {
@@ -58,7 +58,7 @@ dist.plot.bars <- function(sel,
   ## #######################################################
   ## (2) distingiush between categorical/continuous variables
   
-  cat.index <- apply(sel,2, function(x) nlevels(as.factor(x))<cat.levels)
+  cat.index <- apply(sel,2, function(x) nlevels(as.factor(x))<=cat.levels)
   
   var.noncat <- names(sel)[1:length(sel)][cat.index == FALSE]
   var.cat    <- names(sel)[1:length(sel)][cat.index == TRUE]

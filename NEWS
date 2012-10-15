@@ -1,0 +1,58 @@
+2012-10-15, version 1.3
+
+- All help files are revised.
+
+- The vignette is revised.
+
+
+- ps.match():
+
+  * Summary and print functions are revised.
+
+
+- dist.plot():
+
+  * DEFAULT for argument 'cat.levels' is set to 2.
+
+  * Several plot parameter, e.g. mar and oma, are slightly changed.
+
+
+- ps.balance():
+
+  * DEFAULT for argument 'cat.levels' is set to 2.
+
+  * Differentiation of binary and categorical variables (visible in
+    output value 'method')
+
+  * Calculation of standardized difference for categorical variables
+    is based on the Mahalanobis distance metric (function
+    mahalanobis() is used).
+
+  * Argument 'equal' = FALSE:
+
+     + The numbers of observations per treatment group 'n0' and 'n1'
+       were confused in previous versions. It is now corrected.
+
+  * Output values for means and standard deviations for covariates are
+    deleted ($Means.x and $SDs.x)
+
+
+
+
+2012-10-02, version 1.2
+
+- Complication in compiling the vignette are solved.
+
+
+
+
+
+2011-01-12, version 1.1
+
+
+
+
+2009-12-01, version 1.0
+
+- First major version released on CRAN
+

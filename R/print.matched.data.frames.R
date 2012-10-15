@@ -30,29 +30,33 @@ print.matched.data.frames <- function(object,
   
   
   cat("\n Matching data:\n")
-  
-  print(matrix(c(length(object$match.index[[1]][object$match.index[[1]]>0])+
-                 length(object$match.index[[2]][object$match.index[[2]]>0]),
-                 
-                 length(object$match.index[[1]][object$match.index[[1]]>0]),
-                 
-                 length(object$match.index[[2]][object$match.index[[2]]>0]),
-                 
-                 length(object$match.index[[1]][object$match.index[[1]]==0])+
-                 length(object$match.index[[2]][object$match.index[[2]]==0]),
-                 
-                 length(unique(object$match.index[[1]]))-1,
-                 
-                 sum(as.numeric(table(vec.match[vec.match>0])) !=
-                     (object$match.parameters$ratio +1))),
-               nrow=6,ncol=1,
-               dimnames=
-               list(c("Number of matched obs:",
-                      "Number of matched treated obs:",
-                      "Number of matched untreated obs:",
-                      "Number of dropped obs:",
-                      "Number of matching sets:",
-                      "Number of incomplete matching sets:"), c(""))))
+
+  print(matrix(c(dim(object$data[[1]])[1],
+                    length(object$match.index[[1]][object$match.index[[1]]>0]),
+
+                    dim(object$data[[2]])[1],
+                    length(object$match.index[[2]][object$match.index[[2]]>0]),
+
+                    length(object$match.index[[1]][object$match.index[[1]]>0])+
+                    length(object$match.index[[2]][object$match.index[[2]]>0]),
+                    
+                    length(object$match.index[[1]][object$match.index[[1]]==0])+
+                    length(object$match.index[[2]][object$match.index[[2]]==0]),
+                    
+                    length(unique(vec.match))-1,
+                    
+                    sum(as.numeric(table(vec.match[vec.match>0])) !=
+                        (object$match.parameters$ratio +1))),
+                  nrow=8,ncol=1,
+                  dimnames=
+                  list(c("Number of treated obs.:",
+                         "Number of matched treated obs.:",
+                         "Number of untreated obs.:",
+                         "Number of matched untreated obs.:",
+                         "Number of matched obs.:",
+                         "Number of not matched obs.:",
+                         "Number of matching sets:",
+                         "Number of incomplete matching sets:"), c(""))))
   
 }
 

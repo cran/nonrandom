@@ -145,7 +145,7 @@ ps.match.data.frame <- function(object,
     ## ########################
     ## Check control.matched.by
     if (is.character(control.matched.by) || is.numeric(control.matched.by)){
-      A <- find.sel(data     = object.control,       ## nur für Fehlermeldung, falls 
+      A <- find.sel(data     = object.control,       ## nur fuer Fehlermeldung, falls 
                     sel      = control.matched.by,   ## control.matched.by nicht in Daten
                     sel.name = "control.matched.by")
       control.matched.by <- names(A)[1]

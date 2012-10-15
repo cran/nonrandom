@@ -4,6 +4,7 @@ plot.stdf <- function(x,
                       mymar        = c(5,8,4,2),
                       pch.p        = c(1,5),
                       col.p        = c("black", "red"),
+                      colorspace   = NULL,
                       cex.p        = 1.25,
                       line.stdf    = 1,
                       line.alpha   = 4,
@@ -16,8 +17,35 @@ plot.stdf <- function(x,
 
   object <- x
 
-  require( "colorspace", character.only=TRUE )
+  ## ################
+  ## check colorspace
+  if (!is.null(colorspace)){
+    suppressWarnings(require( "colorspace", character.only=TRUE ))
+    message("Argument 'col.p' is ignored unless it has numeric values.")
+    
+    if (colorspace==TRUE){  
+      if (any(apply(as.data.frame(col.p),1,is.numeric))==FALSE){
+        col.p <- sample(rainbow_hcl(20),2)
+        message("Plot colors are randomly chosen since 'col.p' are strings.")
+      }else{
+        col.p <- rainbow_hcl(20)[col.p]
+      }
+    }else{
+      
+      if (colorspace==FALSE){
+        if (any(apply(as.data.frame(col.p),1,is.numeric))==FALSE){
+          col.p <- sample(grey.colors(20),2)
+          message("Plot colors are randomly chosen since 'col.p' are strings.")
+        }else{
+          col.p <- grey.colors(20)[col.p]
+        }
+      }else{
+        warning("Argument 'colorspace' is ignored since it is not logical.")
+      } 
+    }
+  }
 
+   
   
   ## ############
   ## check object
@@ -27,10 +55,10 @@ plot.stdf <- function(x,
     if (any(substring(class(object)[1],1,7) == "bal.str")){
       stop("Matching is not done before.")
     }else{
-      if (is.null(object$bal.test$Standardized.differences)){
+      if (is.null(object$bal.test$Stand.diff)){
         stop("No standardized differences are available.")
       }else{
-        if (dim(object$bal.test$Standardized.differences)[1] != 2)
+        if (dim(object$bal.test$Stand.diff)[1] != 2)
           stop("Matching is not done before.")
       }
     }
@@ -39,7 +67,7 @@ plot.stdf <- function(x,
   
   ## ####################################
   ## find sel, only names are of interest
-  bal.var <- colnames(object$bal.test$Standardized.differences)
+  bal.var <- colnames(object$bal.test$Stand.diff)
 
   if(is.null(sel)){
     name.sel <- bal.var
@@ -61,9 +89,9 @@ plot.stdf <- function(x,
 
   ## ####
   ## plot
-  val.b  <- object$bal.test$Standardized.differences[1,][name.sel]
-  val.a  <- object$bal.test$Standardized.differences[2,][name.sel]
-  stdf   <- object$bal.test$Standardized.differences[,name.sel]
+  val.b  <- object$bal.test$Stand.diff[1,][name.sel]
+  val.a  <- object$bal.test$Stand.diff[2,][name.sel]
+  stdf   <- object$bal.test$Stand.diff[,name.sel]
 
   ## recode stdf for variables with Inf
   if (any(stdf==Inf)) stdf[stdf==Inf] <- NaN  

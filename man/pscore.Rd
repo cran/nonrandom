@@ -1,20 +1,28 @@
 \name{pscore}
 \alias{pscore}
 \title{Propensity score estimation}
+
 \description{
- Estimate the propensity score using a logistic regression model
+
+  Estimate the propensity score using a logistic regression model
+
 }
+
 \usage{
+
   pscore(formula, data, family="binomial", na.action=na.exclude,
   name.pscore="pscore", ...)
 }
-\arguments{
-  \item{formula}{an object of class 'formula' (or one that can be coerced
-    to that class): a symbolic description of a model to be fitted. The
-    response given in \code{formula} must be labeled with '0' and '1'
-    due to the internal use of \code{glm}.}
 
-  \item{data}{a data frame containing response, treatment and
+
+\arguments{
+
+  \item{formula}{an object of class 'formula' (or one that can be
+    coerced to that class): a symbolic description of a model to be
+    fitted. The outcome given in \code{formula} must be labeled with '0'
+    and '1' due to the internal use of \code{glm}.}
+
+  \item{data}{a data frame containing outcome and treatment variable and
     covariates.}
 
   \item{family}{the error distribution and link function to be used in the
@@ -25,20 +33,25 @@
     'NA' values are deleted (see \code{na.exclude}).}
 
   \item{name.pscore}{a string indicating the name of the estimated
-    propensity score. The default is 'pscore'.}
+    propensity score.}
   
   \item{...}{further arguments passed to or from other methods.}
-}  
+}
+
 \details{
+
   The propensity score is the conditional probability of receiving a
   certain treatment given patient's covariates. It is generally unknown
-  and has to be estimated, e.g., by using logistic
+  and has to be estimated, e.g. by using logistic
   regression. \code{pscore} can be used repeatedly and all estimated
   propensity scores are added on 'data'. But only the information of the
   propensity score estimated at last will be stored in values of the
   output object.
+
 }
+
 \value{
+  
   \code{pscore} returns an object of class 'pscore' containing the
   following components:
 
@@ -55,15 +68,14 @@
   \item{name.pscore}{a string indicating the name of the propensity
     score estimated at last.}
 
-  \item{pscore}{a numeric vector containing the estimated propensity score
-    labeled by 'name.pscore'.}
+  \item{pscore}{a numeric vector containing the estimated propensity
+    score fitted at last and labeled by 'name.pscore'.}
 
-  \item{name.treat}{a string indicating the name of treatment given in
-    \code{formula} as response.}
+  \item{name.treat}{a string indicating the name of the treatment
+    variable given in \code{formula} as outcome.}
 
-  \item{treat}{a numeric vector containing treatment labeled by
-    'name.treat'.}
-}
+  \item{treat}{a numeric vector containing the treatment labeled by
+  'name.treat'.}  }
 
 \author{Susanne Stampf \email{susta@imbi.uni-freiburg.de}
 }

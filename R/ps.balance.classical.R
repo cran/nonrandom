@@ -38,7 +38,7 @@ balance.classical <- function(sel,
     
     cov <- data[,i]
  
-    if (nlevels(as.factor(cov)) == 1){
+    if ( nlevels(as.factor(cov)) == 1 ){
 
       ##meth[i] <- "none"
       meth[i] <- ""
@@ -48,7 +48,7 @@ balance.classical <- function(sel,
     }else{
     
       ## binary/categorical covariates
-      if (nlevels(as.factor(cov)) <= cat.levels){
+      if ( nlevels(as.factor(cov)) <= cat.levels ){
 
         ## meth[i]  <- "cat"
         meth[i]  <- "chi^2"
@@ -143,8 +143,8 @@ balance.classical <- function(sel,
         if (!match.T){ ## stratification
           
           ## before stratification
-          if (any(length(na.omit(cov[treat==min(treat, na.rm=TRUE)])) == c(0,1)) |
-              any(length(na.omit(cov[treat==max(treat, na.rm=TRUE)])) == c(0,1))){
+          if ( any(length(na.omit(cov[treat==min(treat, na.rm=TRUE)])) == c(0,1)) |
+               any(length(na.omit(cov[treat==max(treat, na.rm=TRUE)])) == c(0,1)) ){
             
             Before[i] <- p.matrix[1,i] <- value.matrix[1,i] <- NA
             

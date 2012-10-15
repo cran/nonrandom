@@ -1,7 +1,7 @@
 ## plot.type=1
 dist.plot.bar.plot <- function(res, ## sel, treat, index,
-                               ## var.noncat, var.cat,
-                               ## mean, frequency
+                                    ## var.noncat, var.cat,
+                                    ## mean, frequency
                                name.treat,
                                name.index,
                                compare,
@@ -12,8 +12,8 @@ dist.plot.bar.plot <- function(res, ## sel, treat, index,
                                main.cex     = 1.2,
                                sub.cex      = 0.9,
                                bar.cex      = 0.8,
-                               myoma        = c(2,2,2,2),
-                               mymar        = c(2,4,1,2),
+                               myoma        = c(3,2,2,2),
+                               mymar        = c(5,4,1,2),
                                width        = 0.5,
                                ylim         = NULL,
                                xlim         = NULL,
@@ -34,7 +34,7 @@ dist.plot.bar.plot <- function(res, ## sel, treat, index,
   if ( !compare ){
     len.index <- nlevels(as.factor(res$index)) 
   }else{
-    len.index <- nlevels(as.factor(res$index))+1 ## for unstratified/original data
+    len.index <- nlevels(as.factor(res$index))+1 ## '+1' for original data
   }
 
   ##if ( length(label.stratum) != 1 ){
@@ -45,6 +45,7 @@ dist.plot.bar.plot <- function(res, ## sel, treat, index,
       if ( length(label.stratum) != 2 )
         stop("Argument 'label.stratum' must be of length 2.")
 
+  
   ## #########################
   ## Non-categorical variables
   if( length(res$var.noncat)>0 ){
@@ -54,77 +55,24 @@ dist.plot.bar.plot <- function(res, ## sel, treat, index,
     ## ############
     ## define y.lim : involve space between bars per stratum (0.2)
     if ( is.null(ylim) ){
-      
-      if ( !match.T ){ ## stratified        
-        if ( compare ){ ## comparison          
-          if ( with.legend ){ ## legend
+      if ( !match.T ){ ## stratified
 
-            width.bars <- rep(width, (len.index*len.treat))
-            ylim <- c(0, (2*(len.index+1)*width) + ((len.index+1)*0.2) + (2*width))
+        width.bars <- rep(width, (len.index*len.treat))
+        ylim <- c(0, sum(width.bars) + 2*width + 0.2*(len.index) )
 
-          }else{ ## no legend
-
-            width.bars <- rep(width, (len.index*len.treat))
-            ylim  <- c(0, (2*(len.index+1)*width) + ((len.index+1)*0.2))
-
-          }
-        }else{ ## no comparison          
-          if ( with.legend ){ ## legend
-
-            width.bars <- rep(width, (len.index*len.treat))
-            ylim  <- c(0, (2*len.index*width) + (len.index*0.2) + (2*width))
-
-          }else{ ## no legend
-
-            width.bars <- rep(width, (len.index*len.treat))
-            ylim  <- c(0, (2*(len.index)*width) + ((len.index)*0.2))
-
-          }
-        }        
       }else{ ## matched
-        if ( compare ){ ## comparison
-          if ( with.legend ){ ## legend
 
-            width.bars <- rep(width, (len.index*len.treat))
-            ylim <- c(0, ((len.index+1)*width) + ((len.index+1)*0.2) + (2*width))
+        width.bars <- rep(width, (len.index*len.treat))
+        ylim <- c(0, sum(width.bars[-1]) + 0.2*(len.index) )
 
-          }else{ ## no legend
-
-            width.bars <- rep(width, (len.index*len.treat))
-            ylim  <- c(0, ((len.index+1)*width) + ((len.index+1)*0.2))
-
-          }
-        }else{ ## no comparison
-
-          if ( with.legend ){ ## legend
-
-            width.bars <- rep(width, (len.index*len.treat))
-            ylim  <- c(0, (len.index*width) + (len.index*0.2) + (2*width))
-
-          }else{ ## no legend
-
-            width.bars <- rep(width, (len.index*len.treat))
-            ylim  <- c(0, ((len.index)*width) + ((len.index)*0.2))
-
-          }          
-        }
       }
     }
     
-#    if ( with.legend == TRUE ){
-#      width <- rep(0.6, (len.index*len.treat))
-#      ylim  <- c(0, (len.index*len.treat))
-#    }else{      
-#      if( is.null(width) ) ## if(missing(width))
-#        width <- rep(0.9, (len.index*len.treat))
-#      if( missing(ylim) )
-#        ylim  <- c(0, (len.index*len.treat))
-#    }
-    
     for( i in 1:length(res$var.noncat) ){        
-      if(i>1) x11()
+
+      if( i>1 ) x11()
       
-      par(oma=myoma)
+      par(oma=myoma, mar=mymar)
       
       if ( !is.null(col) ){
         co <- col
@@ -134,21 +82,30 @@ dist.plot.bar.plot <- function(res, ## sel, treat, index,
         else
           co <- heat.colors(2)
       }
+
       
       if ( !compare ){ ## no comparison
+
         if ( !match.T ){ ## stratified
           to.plot <- res$mean[[i]]
+          colnames(to.plot) <- c(paste(label.stratum[1],
+                                       colnames(to.plot)))
           
         }else{ ## matched
-          to.plot <- res$mean[[i]][,2]
+          to.plot <- as.matrix(res$mean[[i]][,2])
+          colnames(to.plot) <- colnames(res$mean[[i]])[2]
           ## ylim    <- c(0, ((len.index-1)*len.treat)) #c(0,ylim[2]-2)
         }
+        
       }else{ ## comparison
-        if (!match.T){ ## stratified
+
+        if ( !match.T ){ ## stratified
           to.plot <- cbind(res$mean[[1]][[i]],res$mean[[2]][[i]])
+          colnames(to.plot) <- c(label.stratum[2],
+                                 paste(label.stratum[1],
+                                       colnames(to.plot)[2:len.index]))
         }else{ ## matched
           to.plot <- res$mean[[i]]
-          ## ylim    <- c(0, ((len.index-1)*len.treat))
         }
       }
       
@@ -164,14 +121,18 @@ dist.plot.bar.plot <- function(res, ## sel, treat, index,
               beside    = TRUE,
               horiz     = TRUE,
               space     = c(0,0.2),
-              sub       = paste("Mean of", res$var.noncat[i]),
-              cex.sub   = sub.cex,
+              #sub       = paste("Mean of", res$var.noncat[i]),
+              #cex.sub   = sub.cex,
               col       = co,
               font.main = font.main,
               font      = font,
               main      = main,
               cex.main  = main.cex,
-              ...)                            
+              ...)
+
+      mtext(res$var.noncat[i],
+                  side = 1, outer = TRUE, line = 0,
+                  font = font, cex = sub.cex, ...)
       
       if ( with.legend == TRUE ){
                 
@@ -210,95 +171,53 @@ dist.plot.bar.plot <- function(res, ## sel, treat, index,
         co <- col
       }
       
-      if( i>1 || k>0 )  x11()             
+      if( i>1 || k>0 )
+        x11()             
 
+      
       if ( !compare ){ ## no comparison
         if ( !match.T ) ## no matching
-          ls <- nlevels(as.factor(res$index))
+          ls <- nlevels(as.factor(res$index))+1  ## +legend
         else ## matching
-          ls <- nlevels(as.factor(res$index))-1
+          ls <- nlevels(as.factor(res$index))    
       }else{ ## comparison
         if ( !match.T ) ## no matching
-          ls <- nlevels(as.factor(res$index))+1
+          ls <- nlevels(as.factor(res$index))+2  ## +legend, + original
         else ## matching
-          ls <- nlevels(as.factor(res$index))
+          ls <- nlevels(as.factor(res$index))+1  
       }
       
-      wl <- 0
-      if(with.legend == TRUE)
-        wl <- 1
-
-
-      if ( (ls+wl) > 1)
-        split.screen(c((ls+wl),1))
-      par(oma=myoma)
+      split.screen( c(ls,1) )
+      
+      par(oma=myoma, mar=mymar)
       ax <- FALSE
       
-      for( j in 1:(ls+wl) ){
+      
+      for( j in 1:ls ){
 
-        if ((ls+wl) > 1 ){
-          screen(j)
-          par(mar=mymar, oma=myoma, new=TRUE)
-        }
-                
-        if( with.legend == TRUE && j == 1 ){ ## plotting legend         
+        screen(j)
+        par(mar=mymar, oma=myoma, new=TRUE)
+
+        if( with.legend == TRUE & j==1 ){  ## plot legend       
           if ( is.null(leg.title) )
-            legend.title <- res$var.cat[i]
-
-          if ( !match.T ){ ## stratification; the more screen splits, the larger legend.y
-            if ( (ls+wl) < 6 ){
-              legend.y <- 0.75
-              y.inter <- 0.8
+            legend.title <- res$var.cat[i]     
+          if ( !match.T ){ ## stratification; the more screen splits,
+                           ## the larger legend.y
+            if ( ls < 6 ){
+              legend.y <- 0.9; y.inter <- 0.8
             }else{
               y.inter <- 0.5
-              if ( (ls+wl) <= 6 )
-                legend.y <- 1.25
-              if ( (ls+wl) > 6 )
-                legend.y <- 1.5
-              if ( (ls+wl) > 7 )
-                legend.y <- 1.75
-            }            
+              if ( ls <= 6 ) legend.y <- 1.25
+              if ( ls > 6 ) legend.y <- 1.5
+              if ( ls > 7 ) legend.y <- 1.75
+            }           
           }else{ ## matching
-            legend.y <- 0.75
-            y.inter <- 0.8
-
-           # if ( compare==TRUE ){ ## comparison
-#              legend.y <- 0.5
-#              y.inter <- 0.8   
-#            }else{ ## no comparison
-              
-#              y.inter <- 0.8
-#              legend.y <- 0.25
-#            }             
+            legend.y <- 0.75; y.inter <- 0.8 
           }
-          
-#          if ( (ls+wl) <= 5 ){            
-#            if ( match.T == TRUE ){ ## matching 
-#              if ( compare == TRUE ){ ## comparison
-#                legend.y <- 0.5
-#              }else{ ## no comparison
-#                legend.y <- 0.25
-#              } 
-#            }else{ ## no matching
-#              if ( compare == TRUE ){ ## comparison
-#                legend.y <- 0.75
-#              }else{ ## no comparison
-#                legend.y <- 0.5
-#              }
-#            }
-#          }else{ ## (ls+wl>5)
-#            if ( ls > 6 ){
-#              legend.y <- 1.75
-#            }else{
-#              legend.y <- 1.25
-#            }
-#          }
-    
-
           if ( !is.factor(res$sel[,res$var.cat[i]]) )
             leg <- levels(as.factor(round(res$sel[,res$var.cat[i]],3)))
           leg <- levels(as.factor(res$sel[,res$var.cat[i]]))
-                    
+          
           legend(x         = 0.5,
                  xjust     = 0.5,
                  y         = legend.y,
@@ -311,43 +230,43 @@ dist.plot.bar.plot <- function(res, ## sel, treat, index,
                  cex       = legend.cex,
                  horiz     = TRUE,
                  title     = legend.title)
-
+          
           if ( !is.null(main) )
             mtext(main,
                   side=3, outer=TRUE, cex=main.cex, font=font.main, ...)
+    
+        }else{
 
-        }else{ ## j==1, no legend
-       
-          if( j == (ls+wl) ){ ## last stratum
+          if ( !with.legend ){
+            if( j<ls ){
+              j <- j+1
+              screen(j)
+              par(mar=mymar, oma=myoma, new=TRUE)
+            }
+          }
+          
+          if( j == ls ){ ## last stratum
             ax  <- TRUE
-            
-            if ( compare ){  ## comparison
-              
-              if ( !match.T ){  ## no matching
-
+          
+            if ( compare ){  ## comparison         
+              if ( !match.T ){  ## no matching            
                 to.plot <- res$frequency[[1]][[i]]
-                main.plot <- label.stratum[2]
-
-              }else{ ## matching
-
+                main.plot <- label.stratum[2]             
+              }else{ ## matching          
                 to.plot <- res$frequency[[i]][,,1] ## original
                 main.plot <- levels(res$index)[1]
-              }
-
-            }else{ ## no comparison
-
-              if ( !match.T ){ ## no matching
-
-                to.plot   <- res$frequency[[i]][,,(j-wl)] ## vorher nur j
+              }         
+            }else{ ## no comparison             
+              if ( !match.T ){ ## no matching            
+                to.plot   <- res$frequency[[i]][,,(j-1)] ## vorher nur j
                 main.plot <- paste(label.stratum[1],
-                                   levels(as.factor(res$index))[(j-wl)])
-              }else{ ## matching
-
+                                   levels(as.factor(res$index))[(j-1)])
+              }else{ ## matching               
                 to.plot   <- res$frequency[[i]][,,2] 
                 main.plot <- levels(res$index)[2]
               }
             }
-  
+            
             barplot(to.plot,            
                     las       = las,
                     axes      = ax,
@@ -362,28 +281,33 @@ dist.plot.bar.plot <- function(res, ## sel, treat, index,
                     font.main = font.main,
                     font      = font,
                     ...)
+            
+            mtext(res$var.cat[i],
+                  side = 1, outer = TRUE, line = 0,
+                  font = font, cex = sub.cex, ...)
 
+            
             if ( !is.null(main) )
               mtext(main,
                     side=3, outer=TRUE, cex=main.cex, font=font.main, ...)
-          
+            
           }else{ ## not last stratum
-
+            
             if( !compare ){ ## no comparison
               if ( !match.T ){ ## no matching
-                to.plot   <- res$frequency[[i]][,,(j-wl)]
+                to.plot   <- res$frequency[[i]][,,(j-1)]
                 main.plot <- paste(label.stratum[1],
-                                   levels(as.factor(res$index))[(j-wl)])
-
+                                   levels(as.factor(res$index))[(j-1)])
+                
               }else{ ## matching
                 to.plot   <- res$frequency[[i]][,,2]   ## original
                 main.plot <- levels(res$index)[2]
               }
             }else{ ## comparison
-              if (!match.T){ ## no matching
-                to.plot   <- res$frequency[[2]][[i]][,,(j-wl)]
+              if ( !match.T ){ ## no matching
+                to.plot   <- res$frequency[[2]][[i]][,,(j-1)]
                 main.plot <- paste(label.stratum[1],
-                                   levels(as.factor(res$index))[(j-wl)])
+                                   levels(as.factor(res$index))[(j-1)])
               }else{ ## matching
                 to.plot   <- res$frequency[[i]][,,2] ## matched
                 main.plot <- levels(res$index)[2]
@@ -407,9 +331,7 @@ dist.plot.bar.plot <- function(res, ## sel, treat, index,
           }
         }
       }
-      mtext(paste("Frequency of", res$var.cat[i]),
-            side = 1, outer = TRUE, line = 0, font = font, cex = sub.cex, ...)
-      close.screen(all.screens = TRUE)    
+      close.screen(all.screens = TRUE)
     }
   }
   

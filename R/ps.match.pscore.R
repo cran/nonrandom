@@ -3,7 +3,7 @@
 ## ###################################################
 
 ps.match.pscore <- function(object,
-                            object.control     = NULL,                            
+                            object.control     = NULL,  
                             matched.by         = NULL,
                             control.matched.by = matched.by,
                             who.treated        = 1,
@@ -47,7 +47,7 @@ ps.match.pscore <- function(object,
  
   ## #######################
   ## Extract values of treat
-  if (is.null(treat)){
+  if ( is.null(treat) ){
     name.treat   <- object$name.treat
     treat        <- data[, name.treat]
     treat.values <- levels(as.factor(treat))
@@ -63,8 +63,10 @@ ps.match.pscore <- function(object,
   }
   
   if (any(treat.values == who.treated)){
-    tvect <- data[,name.treat] == treat.values[treat.values == who.treated] ## TRUE if treated
-    cvect <- data[,name.treat] == treat.values[treat.values != who.treated] ## TRUE if control
+    tvect <- data[,name.treat] == treat.values[treat.values == who.treated]
+    ## TRUE if treated
+    cvect <- data[,name.treat] == treat.values[treat.values != who.treated]
+    ## TRUE if control
   }else{
     stop("Who was treated? Define argument 'who.treated'.")
   }
@@ -88,6 +90,8 @@ ps.match.pscore <- function(object,
 
   ## #############
   ## Manage output
+
+  ## create new column where match.info is included
   data[,name.match.index] <- rep(NA,nrow(data))
 
   tvect[is.na(tvect)] <- cvect[is.na(cvect)] <- TRUE  
@@ -111,11 +115,11 @@ ps.match.pscore <- function(object,
   object$match.parameters        <- match.parameters
   object$matched.by              <- matched.by
   
-  object$treat                   <- treat      ##if name.treat is specified, 
-  object$name.treat              <- name.treat ## those arguments must be modified
-                                                ## must be modified 
-  ##class(object) <- c("matched.pscore")
-
+  object$treat                   <- treat       ## if name.treat is
+                                                ## specified,
+  object$name.treat              <- name.treat  ## those arguments
+                                                ## must be modified
+                                                
   class(object) <- c("matched.pscore",
                      class(object)[class(object)!="matched.pscore"])
   

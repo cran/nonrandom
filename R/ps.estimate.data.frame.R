@@ -237,7 +237,7 @@ ps.estimate.data.frame <- function(object,
         treat.regr <- as.data.frame(model.frame(lr.form,data.lr)[,2]) ## treat
         regr       <- as.data.frame(model.matrix(lr.form,data.lr)[,-c(1:2)]) ## w/o resp, treat
         
-        ## Falls nur eine Var in 'regr' ausgewählt, names(regr) nach
+        ## Falls nur eine Var in 'regr' ausgewaehlt, names(regr) nach
         ## model.frame funktioniert nicht, deswegen ==>
         if (length(names(regr)) != 1)
           name.regr <- names(regr)
@@ -266,7 +266,7 @@ ps.estimate.data.frame <- function(object,
         regr       <- as.data.frame(model.matrix(regr,data.lr)[,-c(1:2)]) ## w/o resp
         data.regr <- as.data.frame(cbind(resp.regr, treat.regr, regr))
         
-        ## Falls nur eine Var in 'regr' ausgewählt, names(regr) nach
+        ## Falls nur eine Var in 'regr' ausgewaehlt, names(regr) nach
         ## model.frame funktioniert nicht, deswegen ==>
         if (length(names(regr)) != 1)
           name.regr <- names(regr)
