@@ -1,8 +1,10 @@
 
-print.relative.effect <- function(object,
+print.relative.effect <- function(x,
                                   ...)
 {
 
+  object <- x
+  
   cat("\n Treatment:",object$name.treat)
   cat("\n Outcome:",object$name.resp)
   cat("\n Covariates: ",object$name.sel, "\n\n")

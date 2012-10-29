@@ -1,6 +1,8 @@
-print.bal.matched.data.frame <- function(object,
+print.bal.matched.data.frame <- function(x,
                                          ...)
-{  
+{
+  object <- x
+  
   cat("\n Summary of balance check: \n\n")
   print(object$bal.test$balance.table.summary)
 

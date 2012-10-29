@@ -1,6 +1,8 @@
 
-print.matched.data.frames <- function(object,
+print.matched.data.frames <- function(x,
                                       ...){
+
+  object <- x
   
   cat("\n Matched by: ", object$matched.by, "\n")
   

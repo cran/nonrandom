@@ -1,6 +1,9 @@
-print.bal.matched.pscore <- function(object,
+print.bal.matched.pscore <- function(x,
                                      ...)
-{  
+{
+
+  object <- x
+  
   cat("\n Summary of balance check: \n\n")
   print(object$bal.test$balance.table.summary)
 

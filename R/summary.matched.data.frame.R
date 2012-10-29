@@ -2,7 +2,6 @@
 summary.matched.data.frame <- function(object,
                                        ...){
 
-  
   mat1 <- matrix(c(round(object$match.parameters$caliper,3),
                    object$match.parameters$ratio,
                    object$match.parameters$who.treated),

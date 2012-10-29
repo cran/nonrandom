@@ -45,12 +45,13 @@ dist.plot.bar.plot <- function(res, ## sel, treat, index,
       if ( length(label.stratum) != 2 )
         stop("Argument 'label.stratum' must be of length 2.")
 
-  
+   
   ## #########################
   ## Non-categorical variables
   if( length(res$var.noncat)>0 ){
     
     k <- 1
+     
 
     ## ############
     ## define y.lim : involve space between bars per stratum (0.2)
@@ -159,9 +160,10 @@ dist.plot.bar.plot <- function(res, ## sel, treat, index,
 
   ## #####################
   ## Categorical variables
-  if( length(res$var.cat)>0 ){    
+  if( length(res$var.cat)>0 ){
+ 
     for( i in 1:length(res$var.cat) ){
-      
+     
       if( is.null(col) ){
         if( require( "colorspace", character.only=TRUE ) )
           co <- rainbow_hcl(nlevels(as.factor(res$sel[,res$var.cat[i]])))
@@ -174,170 +176,171 @@ dist.plot.bar.plot <- function(res, ## sel, treat, index,
       if( i>1 || k>0 )
         x11()             
 
-      
+      ## number of screens within a graphic
       if ( !compare ){ ## no comparison
+        
         if ( !match.T ) ## no matching
           ls <- nlevels(as.factor(res$index))+1  ## +legend
         else ## matching
           ls <- nlevels(as.factor(res$index))    
+        
       }else{ ## comparison
+        
         if ( !match.T ) ## no matching
           ls <- nlevels(as.factor(res$index))+2  ## +legend, + original
         else ## matching
           ls <- nlevels(as.factor(res$index))+1  
+
       }
-      
+          
       split.screen( c(ls,1) )
       
       par(oma=myoma, mar=mymar)
       ax <- FALSE
-      
-      
-      for( j in 1:ls ){
 
+      ## Legend is always plotted in 1st screen
+      if ( with.legend ){
+       
+        screen(1)
+        par(mar=mymar, oma=myoma, new=TRUE)
+        
+        if ( is.null(leg.title) )
+          legend.title <- res$var.cat[i]     
+        if ( !match.T ){ ## stratification; the more screen splits,
+          ## the larger legend.y
+          if ( ls < 6 ){
+            legend.y <- 0.9; y.inter <- 0.8
+          }else{
+            y.inter <- 0.5
+            if ( ls <= 6 ) legend.y <- 1.25
+            if ( ls > 6 ) legend.y <- 1.5
+            if ( ls > 7 ) legend.y <- 1.75
+          }           
+        }else{ ## matching
+          legend.y <- 0.75; y.inter <- 0.8 
+        }
+        if ( !is.factor(res$sel[,res$var.cat[i]]) )
+          leg <- levels(as.factor(round(res$sel[,res$var.cat[i]],3)))
+        leg <- levels(as.factor(res$sel[,res$var.cat[i]]))
+        
+        legend(x         = 0.5,
+               xjust     = 0.5,
+               y         = legend.y,
+               legend    = leg,
+               bty       = "n",
+               pch       = 15,
+               col       = co, 
+               x.intersp = 0.8,
+               y.intersp = y.inter,
+               cex       = legend.cex,
+               horiz     = TRUE,
+               title     = legend.title)
+        
+        if ( !is.null(main) )
+          mtext(main,
+                side=3, outer=TRUE, cex=main.cex, font=font.main, ...)
+
+      } ## end of legend
+
+
+      ## frequencies
+      for( j in 2:ls){
+        
         screen(j)
         par(mar=mymar, oma=myoma, new=TRUE)
 
-        if( with.legend == TRUE & j==1 ){  ## plot legend       
-          if ( is.null(leg.title) )
-            legend.title <- res$var.cat[i]     
-          if ( !match.T ){ ## stratification; the more screen splits,
-                           ## the larger legend.y
-            if ( ls < 6 ){
-              legend.y <- 0.9; y.inter <- 0.8
-            }else{
-              y.inter <- 0.5
-              if ( ls <= 6 ) legend.y <- 1.25
-              if ( ls > 6 ) legend.y <- 1.5
-              if ( ls > 7 ) legend.y <- 1.75
-            }           
-          }else{ ## matching
-            legend.y <- 0.75; y.inter <- 0.8 
-          }
-          if ( !is.factor(res$sel[,res$var.cat[i]]) )
-            leg <- levels(as.factor(round(res$sel[,res$var.cat[i]],3)))
-          leg <- levels(as.factor(res$sel[,res$var.cat[i]]))
           
-          legend(x         = 0.5,
-                 xjust     = 0.5,
-                 y         = legend.y,
-                 legend    = leg,
-                 bty       = "n",
-                 pch       = 15,
-                 col       = co, 
-                 x.intersp = 0.8,
-                 y.intersp = y.inter,
-                 cex       = legend.cex,
-                 horiz     = TRUE,
-                 title     = legend.title)
+        if( j == ls ){ ## last stratum
+          ax  <- TRUE
+          
+          if ( compare ){  ## comparison         
+            if ( !match.T ){  ## no matching            
+              to.plot <- res$frequency[[1]][[i]]
+              main.plot <- label.stratum[2]             
+            }else{ ## matching          
+              to.plot <- res$frequency[[i]][,,1] ## original
+              main.plot <- levels(res$index)[1]
+            }         
+          }else{ ## no comparison             
+            if ( !match.T ){ ## no matching            
+              to.plot   <- res$frequency[[i]][,,(j-1)] ## vorher nur j
+              main.plot <- paste(label.stratum[1],
+                                 levels(as.factor(res$index))[(j-1)])
+            }else{ ## matching               
+              to.plot   <- res$frequency[[i]][,,2] 
+              main.plot <- levels(res$index)[2]
+            }
+          }
+            
+          barplot(to.plot,            
+                  las       = las,
+                  axes      = ax,
+                  beside    = FALSE,
+                  width     = width, 
+                  horiz     = TRUE,
+                  space     = c(0,0.2),
+                  col       = co,  
+                  cex.main  = bar.cex,
+                  cex.sub   = sub.cex,
+                  main      = main.plot,
+                  font.main = font.main,
+                  font      = font,
+                  ...)
+            
+          mtext(res$var.cat[i],
+                side = 1, outer = TRUE, line = 0,
+                font = font, cex = sub.cex, ...)
           
           if ( !is.null(main) )
             mtext(main,
                   side=3, outer=TRUE, cex=main.cex, font=font.main, ...)
-    
-        }else{
-
-          if ( !with.legend ){
-            if( j<ls ){
-              j <- j+1
-              screen(j)
-              par(mar=mymar, oma=myoma, new=TRUE)
+          
+        }else{ ## not last stratum
+          
+          if( !compare ){ ## no comparison
+            if ( !match.T ){ ## no matching
+              to.plot   <- res$frequency[[i]][,,(j-1)]
+              main.plot <- paste(label.stratum[1],
+                                 levels(as.factor(res$index))[(j-1)])
+              
+            }else{ ## matching
+              to.plot   <- res$frequency[[i]][,,2]   ## original
+              main.plot <- levels(res$index)[2]
+            }
+          }else{ ## comparison
+            if ( !match.T ){ ## no matching
+              to.plot   <- res$frequency[[2]][[i]][,,(j-1)]
+              main.plot <- paste(label.stratum[1],
+                                 levels(as.factor(res$index))[(j-1)])
+            }else{ ## matching
+              to.plot   <- res$frequency[[i]][,,2] ## matched
+              main.plot <- levels(res$index)[2]
             }
           }
           
-          if( j == ls ){ ## last stratum
-            ax  <- TRUE
-          
-            if ( compare ){  ## comparison         
-              if ( !match.T ){  ## no matching            
-                to.plot <- res$frequency[[1]][[i]]
-                main.plot <- label.stratum[2]             
-              }else{ ## matching          
-                to.plot <- res$frequency[[i]][,,1] ## original
-                main.plot <- levels(res$index)[1]
-              }         
-            }else{ ## no comparison             
-              if ( !match.T ){ ## no matching            
-                to.plot   <- res$frequency[[i]][,,(j-1)] ## vorher nur j
-                main.plot <- paste(label.stratum[1],
-                                   levels(as.factor(res$index))[(j-1)])
-              }else{ ## matching               
-                to.plot   <- res$frequency[[i]][,,2] 
-                main.plot <- levels(res$index)[2]
-              }
-            }
-            
-            barplot(to.plot,            
-                    las       = las,
-                    axes      = ax,
-                    beside    = FALSE,
-                    width     = width, 
-                    horiz     = TRUE,
-                    space     = c(0,0.2),
-                    col       = co,  
-                    cex.main  = bar.cex,
-                    cex.sub   = sub.cex,
-                    main      = main.plot,
-                    font.main = font.main,
-                    font      = font,
-                    ...)
-            
-            mtext(res$var.cat[i],
-                  side = 1, outer = TRUE, line = 0,
-                  font = font, cex = sub.cex, ...)
-
-            
-            if ( !is.null(main) )
-              mtext(main,
-                    side=3, outer=TRUE, cex=main.cex, font=font.main, ...)
-            
-          }else{ ## not last stratum
-            
-            if( !compare ){ ## no comparison
-              if ( !match.T ){ ## no matching
-                to.plot   <- res$frequency[[i]][,,(j-1)]
-                main.plot <- paste(label.stratum[1],
-                                   levels(as.factor(res$index))[(j-1)])
-                
-              }else{ ## matching
-                to.plot   <- res$frequency[[i]][,,2]   ## original
-                main.plot <- levels(res$index)[2]
-              }
-            }else{ ## comparison
-              if ( !match.T ){ ## no matching
-                to.plot   <- res$frequency[[2]][[i]][,,(j-1)]
-                main.plot <- paste(label.stratum[1],
-                                   levels(as.factor(res$index))[(j-1)])
-              }else{ ## matching
-                to.plot   <- res$frequency[[i]][,,2] ## matched
-                main.plot <- levels(res$index)[2]
-              }
-            }
-            
-            barplot(to.plot,
-                    las       = las,
-                    axes      = ax,
-                    beside    = FALSE,
-                    width     = width, 
-                    horiz     = TRUE,
-                    space     = c(0,0.2),
-                    col       = co,
-                    main      = main.plot,
-                    cex.main  = bar.cex,
-                    font.main = font.main,
-                    font      = font,
-                    cex.sub   = sub.cex,
-                    ...)
-          }
+          barplot(to.plot,
+                  las       = las,
+                  axes      = ax,
+                  beside    = FALSE,
+                  width     = width, 
+                  horiz     = TRUE,
+                  space     = c(0,0.2),
+                  col       = co,
+                  main      = main.plot,
+                  cex.main  = bar.cex,
+                  font.main = font.main,
+                  font      = font,
+                  cex.sub   = sub.cex,
+                  ...)
         }
       }
-      close.screen(all.screens = TRUE)
     }
+    close.screen(all.screens = TRUE)
   }
   
   res$name.treat <- name.treat
   res$name.sel <- names(res$sel)
- 
+  
   if (match.T){
     res$match.index <- res$index
     res$name.match.index <- name.index
@@ -350,6 +353,5 @@ dist.plot.bar.plot <- function(res, ## sel, treat, index,
   return(res[-which(names(res)=="index")])
   
 }
-
 
 

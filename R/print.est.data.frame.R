@@ -1,6 +1,8 @@
-print.est.data.frame <- function(object,
+print.est.data.frame <- function(x,
                                  ...)
 {
+
+  object <- x
   
   cat("\n Effect estimation for treatment/exposure on outcome \n")
   cat("\n Treatment/exposure:", object$name.treat)

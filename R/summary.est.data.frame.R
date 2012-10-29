@@ -1,7 +1,6 @@
 summary.est.data.frame <- function(object,
                                    ...)
 {
-  
   if( object$family == "binomial" ){
     meas <- "odds ratios"
     col.n <- c("or","SE[log[or]]","[95%-CI[or]]")

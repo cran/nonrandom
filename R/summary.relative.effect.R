@@ -1,7 +1,7 @@
 
 summary.relative.effect <- function(object,
                                     ...){
-  
+
   results <- matrix(c(as.numeric(object$adj.treat.cov),
                       as.numeric(object$rel.eff.treat)),
                     

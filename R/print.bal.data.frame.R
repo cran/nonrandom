@@ -1,6 +1,8 @@
-print.bal.data.frame <- function(object,
+print.bal.data.frame <- function(x,
                                  ...){
 
+  object <- x
+  
   if(!is.null(object$match.index)){
     label <- "mat"
 

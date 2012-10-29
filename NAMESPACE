@@ -1,27 +1,123 @@
 export(
-       relative.effect,   
-       pscore,
-       plot.pscore,
-       ps.makestrata,
-       ps.match,   
-       dist.plot,
-       ps.balance,
-       plot.stdf,
-       ps.estimate
+  relative.effect,
+  pscore, 
+  plot.pscore,
+  ps.makestrata,
+  ps.match,   
+  dist.plot,
+  ps.balance,
+  plot.stdf,
+  ps.estimate,
+
+  print.relative.effect,
+  print.pscore,                          
+  print.stratified.data.frame,   
+  print.stratified.pscore,
+  print.matched.data.frame,
+  print.matched.data.frames,
+  print.matched.pscore,
+  print.est.data.frame,                   
+  print.est.matched.data.frame,
+  print.est.matched.pscore,            
+  print.est.stratified.data.frame,
+  print.est.stratified.pscore,
+  print.bal.data.frame,                
+  print.bal.matched.data.frame,
+  print.bal.matched.pscore,            
+  print.bal.stratified.data.frame,
+  print.bal.stratified.pscore,
+
+  print.summary.bal.data.frame, 
+  print.summary.bal.matched.data.frame,
+  print.summary.bal.matched.pscore,
+  print.summary.bal.stratified.data.frame,
+  print.summary.bal.stratified.pscore,
+  print.summary.est.data.frame,
+  print.summary.est.matched.data.frame,
+  print.summary.est.matched.pscore,
+  print.summary.est.stratified.data.frame,
+  print.summary.est.stratified.pscore,
+  print.summary.matched.data.frame,
+  print.summary.matched.data.frames,
+  print.summary.matched.pscore,
+  print.summary.pscore,
+  print.summary.relative.effect,
+  print.summary.stratified.data.frame,
+  print.summary.stratified.pscore,
+
+  summary.bal.data.frame, 
+  summary.bal.matched.data.frame,
+  summary.bal.matched.pscore,
+  summary.bal.stratified.data.frame,
+  summary.bal.stratified.pscore,
+  summary.est.data.frame,
+  summary.est.matched.data.frame,
+  summary.est.matched.pscore,
+  summary.est.stratified.data.frame,
+  summary.est.stratified.pscore,
+  summary.matched.data.frame,
+  summary.matched.data.frames,
+  summary.matched.pscore,
+  summary.pscore,
+  summary.relative.effect,
+  summary.stratified.data.frame,
+  summary.stratified.pscore
 )
 
-import(
-       lme4
-)
+S3method(print, relative.effect)
+S3method(print, pscore)                          
+S3method(print, stratified.data.frame) 
+S3method(print, stratified.pscore)
+S3method(print, matched.data.frame)
+S3method(print, matched.data.frames)
+S3method(print, matched.pscore)
+S3method(print, est.data.frame)
+S3method(print, est.matched.data.frame)
+S3method(print, est.matched.pscore)
+S3method(print, est.stratified.data.frame)
+S3method(print, est.stratified.pscore)
+S3method(print, bal.data.frame)             
+S3method(print, bal.matched.data.frame)
+S3method(print, bal.matched.pscore)
+S3method(print, bal.stratified.data.frame)
+S3method(print, bal.stratified.pscore)
 
-exportClasses(
-              pscore,	      
-              stratified.pscore,
-              stratified.data.frame,	      
-              matched.pscore,
-              matched.data.frame,
-              matched.data.frames
-)
+S3method(print, summary.relative.effect)
+S3method(print, summary.pscore)                          
+S3method(print, summary.stratified.data.frame) 
+S3method(print, summary.stratified.pscore)
+S3method(print, summary.matched.data.frame)
+S3method(print, summary.matched.data.frames)
+S3method(print, summary.matched.pscore)
+S3method(print, summary.est.data.frame)
+S3method(print, summary.est.matched.data.frame)
+S3method(print, summary.est.matched.pscore)
+S3method(print, summary.est.stratified.data.frame)
+S3method(print, summary.est.stratified.pscore)
+S3method(print, summary.bal.data.frame)             
+S3method(print, summary.bal.matched.data.frame)
+S3method(print, summary.bal.matched.pscore)
+S3method(print, summary.bal.stratified.data.frame)
+S3method(print, summary.bal.stratified.pscore)
+
+S3method(summary, relative.effect)
+S3method(summary, pscore)                          
+S3method(summary, stratified.data.frame) 
+S3method(summary, stratified.pscore)
+S3method(summary, matched.data.frame)
+S3method(summary, matched.data.frames)
+S3method(summary, matched.pscore)
+S3method(summary, est.data.frame)
+S3method(summary, est.matched.data.frame)
+S3method(summary, est.matched.pscore)
+S3method(summary, est.stratified.data.frame)
+S3method(summary, est.stratified.pscore)
+S3method(summary, bal.data.frame)             
+S3method(summary, bal.matched.data.frame)
+S3method(summary, bal.matched.pscore)
+S3method(summary, bal.stratified.data.frame)
+S3method(summary, bal.stratified.pscore)
+
 
 S3method(ps.makestrata, pscore)
 S3method(ps.makestrata, data.frame)

@@ -1,6 +1,6 @@
 summary.bal.matched.pscore <- function(object,
                                        ...)
-{
+{ 
   bal.tab.sum   <- object$bal.test$balance.table.summary
   bal.tab.short <- object$bal.test$balance.table
  

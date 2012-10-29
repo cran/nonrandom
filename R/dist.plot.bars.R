@@ -99,7 +99,7 @@ dist.plot.bars <- function(sel,
       list.cat <- lapply(var.cat,func4) ## categorical (unmatched, matched)
     
   }
-  
+
   res <- list(sel        = sel,
               treat      = treat,
               index      = index,

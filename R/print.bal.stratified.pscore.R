@@ -1,5 +1,7 @@
-print.bal.stratified.pscore <- function(object,
+print.bal.stratified.pscore <- function(x,
                                         ...){
+
+  object <- x
   
   cat("\n Summary of balance check: \n\n")
   print(object$bal.test$balance.table.summary)

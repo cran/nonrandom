@@ -1,6 +1,8 @@
-print.est.stratified.data.frame <- function(object,
+print.est.stratified.data.frame <- function(x,
                                             ...)
 {
+  object <- x
+  
   cat("\n Effect estimation for treatment/exposure on outcome \n")
   cat("\n Treatment/exposure:", object$name.treat)
   cat("\n Outcome:", object$name.resp)

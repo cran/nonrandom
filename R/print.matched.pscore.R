@@ -1,7 +1,9 @@
 
-print.matched.pscore <- function(object,
+print.matched.pscore <- function(x,
                                  ...){
 
+  object <- x
+  
   cat("\n Matched by: ", object$matched.by, "\n")
   
   cat("\n Matching parameter:\n")

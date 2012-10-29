@@ -1,8 +1,8 @@
 Package: nonrandom
 Type: Package
 Title: Stratification and matching by the propensity score
-Version: 1.3
-Date: 2012-10-15
+Version: 1.4
+Date: 2012-10-29
 Author: Susanne Stampf
 Maintainer: Susanne Stampf <susta@imbi.uni-freiburg.de>
 Description: This package offers a comprehensive data analysis if
@@ -15,6 +15,6 @@ Depends: lme4
 Suggests: colorspace
 License: GPL
 LazyLoad: yes
-Packaged: 2012-10-15 09:21:33 UTC; susta
+Packaged: 2012-10-29 20:20:42 UTC; susta
 Repository: CRAN
-Date/Publication: 2012-10-15 11:33:48
+Date/Publication: 2012-10-30 06:17:50
