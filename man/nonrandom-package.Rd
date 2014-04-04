@@ -69,7 +69,7 @@
 \author{ Susanne Stampf
 
 Maintainer:
-Susanne Stampf <susta@imbi.uni-freiburg.de>
+Susanne Stampf <susanne.stampf@usb.ch>
 }
 
 \keyword{ package }

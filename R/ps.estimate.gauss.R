@@ -122,7 +122,8 @@ ps.estimate.gauss <- function(data,
     ## accounting for matched data structure
     ## require(lme4, quietly=TRUE)
 
-    require( "lme4", character.only=TRUE )
+    ## CHG 28.3.14: loaded by package depends.
+#    require( "lme4", character.only=TRUE )
 
     lr.m <- glmer(resp.m ~ treat.m + (1|match.id.m),
                   data=data.m,

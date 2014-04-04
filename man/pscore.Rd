@@ -77,7 +77,7 @@
   \item{treat}{a numeric vector containing the treatment labeled by
   'name.treat'.}  }
 
-\author{Susanne Stampf \email{susta@imbi.uni-freiburg.de}
+\author{Susanne Stampf \email{susanne.stampf@usb.ch}
 }
 
 \seealso{

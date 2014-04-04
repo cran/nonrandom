@@ -68,7 +68,7 @@ dist.plot.hist.plot <- function(res,
     k <- 1
         
     for( i in 1:length(res$var.noncat) ){       
-      if( i>1 ) x11()
+      if( i>1 ) dev.new()  ##x11()
       
       par(oma=myoma,
           mfrow=c(trunc(sqrt(len.index)),
@@ -315,7 +315,7 @@ dist.plot.hist.plot <- function(res,
   if( length(res$var.cat)>0 ){    
     for( i in 1:length(res$var.cat) ){
      
-      if(i>1 || k>0)  x11()      
+      if(i>1 || k>0) dev.new()   ## x11()      
       
       par(mfrow=c(trunc(sqrt(len.index)),
             ceiling(len.index/trunc(sqrt(len.index)))),

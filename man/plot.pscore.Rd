@@ -73,7 +73,7 @@
   The use of \code{plot.pscore()} requires the use of \code{(pscore)}.
 }
 
-\author{Susanne Stampf \email{susta@imbi.uni-freiburg.de}
+\author{Susanne Stampf \email{susanne.stampf@usb.ch}
 }
 
 \seealso{

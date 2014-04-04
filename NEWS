@@ -1,3 +1,10 @@
+2014-03-28, version 1.41
+
+- Update of the maintainer's email address.
+
+- Some code refactoring for new CRAN requirements.
+
+
 2012-10-29, version 1.4
 
 - Print and summary functions are now available for all functions.

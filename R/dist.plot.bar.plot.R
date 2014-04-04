@@ -71,7 +71,8 @@ dist.plot.bar.plot <- function(res, ## sel, treat, index,
     
     for( i in 1:length(res$var.noncat) ){        
 
-      if( i>1 ) x11()
+##      if( i>1 ) x11()
+      if( i>1 ) dev.new()
       
       par(oma=myoma, mar=mymar)
       
@@ -174,7 +175,8 @@ dist.plot.bar.plot <- function(res, ## sel, treat, index,
       }
       
       if( i>1 || k>0 )
-        x11()             
+##        x11()             
+        dev.new()             
 
       ## number of screens within a graphic
       if ( !compare ){ ## no comparison

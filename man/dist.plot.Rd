@@ -243,7 +243,7 @@
     upper value and w.r.t. the original data and the matched dats. It is
     only available if \code{plot.type}=2.}  }
 
-\author{Susanne Stampf \email{susta@imbi.uni-freiburg.de}
+\author{Susanne Stampf \email{susanne.stampf@usb.ch}
 }
 
 \seealso{

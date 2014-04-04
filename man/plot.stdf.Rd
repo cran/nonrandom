@@ -82,7 +82,7 @@
   \code{ps.balance(..., method='stand.diff', ...)} and is only available
   when matching is done before via \code{ps.match()}.}
 
-\author{Susanne Stampf \email{susta@imbi.uni-freiburg.de}
+\author{Susanne Stampf \email{susanne.stampf@usb.ch}
 }
 
 \seealso{

@@ -142,7 +142,7 @@
   \item{treat}{a numeric vector containing the treatment index labeled
     by \code{name.treat}.}  }
 
-\author{Susanne Stampf \email{susta@imbi.uni-freiburg.de}
+\author{Susanne Stampf \email{susanne.stampf@usb.ch}
 }
 
 \examples{
